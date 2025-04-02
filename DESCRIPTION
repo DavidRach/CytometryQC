@@ -1,0 +1,43 @@
+Package: CytometryQC
+Type: Package
+Title: Tools for the Cytometry QC tracking 
+Version: 0.99.1
+Authors@R: 
+    person("David", "Rach", , "drach@som.umaryland.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-2235-5585"))
+Description:
+  Fascilitates building InstrumentQC style website for QC tracking and monitoring. 
+License: AGPL (>= 3)
+Encoding: UTF-8
+LazyData: FALSE
+URL: https://davidrach.github.io/CytometryQC/
+BugReports: https://github.com/DavidRach/CytometryQC/issues
+RoxygenNote: 7.3.2
+Imports: 
+    Biobase,
+    dplyr,
+    flowCore,
+    flowWorkspace,
+    ggcyto,
+    ggplot2,
+    gt,
+    htmltools,
+    plotly,
+    purrr,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect,
+    viridis,
+    lubridate
+Depends: R (>= 4.4.3)
+Suggests: 
+    BiocStyle,
+    data.table,
+    CytoML,
+    openCyto,
+    testthat (>= 3.0.0),
+biocViews: FlowCytometry, Preprocessing, Software, QualityControl
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+StagedInstall: no
