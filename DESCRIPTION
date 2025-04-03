@@ -30,7 +30,7 @@ Imports:
     tidyselect,
     viridis,
     lubridate
-Depends: R (>= 4.4.3)
+Depends: R (>= 4.4.1)
 Suggests: 
     BiocStyle,
     data.table,
