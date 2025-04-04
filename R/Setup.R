@@ -43,6 +43,12 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
     License <- list.files(PackageLocation, pattern="LICENSE", full.names=TRUE)
     Report <- file.copy(from=License, to=InstrumentQCPath, recursive=FALSE)
 
+    # Images
+    ImagesLocation <- file.path(PackageLocation, "extdata", "images")
+    ImageMoveLocation <- file.path(InstrumentQCPath, "images")
+    Images <- list.files(ImagesLocation, pattern="png", full.names=TRUE)
+    Report <- file.copy(from=Images, to=ImageMoveLocation, recursive=FALSE)
+
     # 404.qmd
     QMD_404(outpath=InstrumentQCPath, organization="UMGCC FCSS Instrument", 
     github_page="umgccfcss.github.io")
