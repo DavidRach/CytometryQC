@@ -132,6 +132,55 @@ This is a placeholder
   cat(content, file = StorageLocation)
 }
 
+#' Creates generic index.qmd file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic index.qmd file
+#' 
+#' @export
+QMD_index <- function(outpath){
+  StorageLocation <- file.path(outpath, "index.qmd")
+
+  content <- '---
+format:
+  dashboard:
+    orientation: columns
+aliases: 
+  - home.html
+project:
+  output-dir: docs/
+---
+
+This is a placeholder
+'
+  cat(content, file = StorageLocation)
+}
+
+#' Creates generic Data.qmd file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic Data.qmd file
+#' 
+#' @export
+QMD_Data <- function(outpath){
+  StorageLocation <- file.path(outpath, "Data.qmd")
+
+  content <- '---
+format:
+  dashboard:
+    orientation: rows
+project:
+  output-dir: docs/
+---
+
+This is a placeholder
+'
+    
+  cat(content, file = StorageLocation)
+}
+
 #' Creates generic Miscellaneous.qmd file
 #'
 #' @param outpath The file.location to save the .qmd file to

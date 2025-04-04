@@ -2,10 +2,12 @@
 
 export(FolderSetup)
 export(QMD_404)
+export(QMD_Data)
 export(QMD_Historical)
 export(QMD_Instrument)
 export(QMD_Miscellaneous)
 export(QMD_help)
+export(QMD_index)
 export(QMD_yaml)
 importFrom(quarto,quarto_render)
 importFrom(usethis,create_project)

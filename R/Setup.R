@@ -47,7 +47,7 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
 
     # Styles
     StylesLocation <- file.path(PackageLocation, "extdata")
-    Images <- list.files(ImagesLocation, pattern="styles", full.names=TRUE)
+    Styles <- list.files(StylesLocation, pattern="styles", full.names=TRUE)
     Report <- file.copy(from=Styles, to=InstrumentQCPath, recursive=FALSE)
 
     # Images
@@ -72,12 +72,18 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
     # Historical.qmd
     QMD_Historical(outpath = InstrumentQCPath)
 
+    # Historical.qmd
+    QMD_index(outpath = InstrumentQCPath)
+
+    # Historical.qmd
+    QMD_Data(outpath = InstrumentQCPath)
+
     # quarto.yaml
     QMD_yaml(outpath=InstrumentQCPath, organization="UMGCC FCSS", 
     github_page="umgccfcss.github.io", institution="University of Maryland, Baltimore")
 
     create_project(InstrumentQCPath)
-    quarto_render(input=InstrumentQCPath)
+    #quarto_render(input=InstrumentQCPath)
   }
   
   
