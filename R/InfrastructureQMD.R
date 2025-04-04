@@ -44,57 +44,71 @@ toc: true
 
 ## MFI
 
-During Daily QC, the spectral cytometers use QC beads to adjust the gains for individual detectors to ensure that .fcs files acquired on different days are comparable  across time. To monitor these adjustments, we visualize the Median Fluorescent Intensity (MFI) values of the QC bead .fcs files that are acquired before and after running daily QC. What we normally observe resembles the following plot:
+As part of daily QC, spectral flow cytometers use QC beads to adjust the gains for individual detectors to ensure the Median Fluorescent Intensity (MFI) of the beads matches lot-specific thresholds. This allows for .fcs files acquired on different days to be comparable, reducing instrumental batch effects.
+To monitor these adjustments, we can retrieve the MFI values of the QC bead directly from their acquisition .fcs files. We normally observe something like this:
 
  ![](images/MFI_B3.png){fig-align="center"}
 
- In this plot, you can notice when the instrument switched from using the Cytek QC Bead Lot 2005 to Cytek QC Bead Lot 2006. This new QC bead lot has a new setpoint MFI for each detector that the instrument accounts for. (For additional examples see the [visualized differences](https://umgccfcss.github.io/InstrumentQC/CytekQCBead) across lots.)
+ In this plot, you can notice when the QC bead lots were switched on the instrument. The new QC bead lot had different MFI setpoint for each detector, which the instrument accounts for.
 
- On some of our instruments and detectors, we have observed there is significant drift from the setpoint of samples acquired before Daily QC has been run, which is why we encourage weekend users to run Daily QC when starting up the instrument.
+ On some instruments and detectors, by monitoring MFI we can observe extensive drift from the setpoint for the before Daily QC samples. 
 
  ![](images/MFI_R1.png){fig-align="center"}
 
+ This is why we encourage weekend users to make sure DailyQC is run before acquiring their samples. 
+
 ## Gain
 
-Gain (similar to voltage on certain cytometers) is an unit which detected signal is amplified by for each detector. An instrument applies different gains to each detector, allowing for use of dim and bright fluorophores. During the Daily QC, these gains normally get minor adjustments to ensure the MFI of the QC beads stays constant, allowing for comparison of .fcs files acquired on different days.  As the individual lasers in the cytometer are used, they slowly wear down and more gain is applied to remain at that MFI setpoint. This contributes to the slowly increasing view typical of the gain plots:
+Gain (similarly voltage on certain cytometers) is an unit by which the detected signal is amplified by for each detector. An instrument applies different gains to each detector, which allows for the use of both dim and bright fluorophores.
+During the Daily QC, minor adjustments to the gains occur to ensure the MFI of the QC beads remains stays constant, allowing comparison .fcs files acquired on different days.
+As individual lasers in the cytometer get used, they slowly wear down, resulting in more gain needing to be applied to reach the MFI setpoint. This leads to the slowly increasing trend visible in some gain plots:
 
  ![](images/Gain_UV3.png){fig-align="center"}
 
-Generally, when a laser is begining to rapidly wear out, we see steeper increases in the Gain plots. When the field service engineer replaces the laser, the gain values are reset according to the new laser. In this example, you can see that pattern for the violet laser of the instrument was replaced twice (red lines indicating field service engineer visit):
+When a laser beings to rapidly wear out, we see steeper increases in the Gain plots. When a field service engineer replaces the laser with a new one, the gain values are reset.
+You can see the violet laser of an instrument was replaced twice in the following figure (red dashed lines indicating field service engineer visit):
 
  ![](images/Gain_V1.png){fig-align="center"}
 
-For the Cytek instruments, a Daily QC fail is triggered when the Gain is >100% of the original baseline Gain value. When this happens, a red flag is added to that timepoint. We have observed that .fcs files acquired on gain spike days (as seen below) may still have altered unmixing even if they have not exceeded the >100% threshold, so its worth keeping an eye on. 
+For Cytek instruments, a Daily QC fail is triggered when the Gain is >100% of the original baseline value for its detector. When this occurs, a red flag is added to that timepoint.
+For .fcs files acquired on these "gain spike" days, unmixing issues may occur even if the values did not exceed the >100% threshold, so it is worth monitoring. 
 
  ![](images/Gain_R8.png){fig-align="center"}
 
 ## %rCV
 
-The robust coefficient of variation (rCV) is a measure of the resolution between the positive and negative population for each detector. When the value is high, dim staining populations may be harder to distinguish from the negative population. For spectral instruments where entire spectrum is used to identify a fluorophore, increased rCV on the detector where a fluorophore has its main peak has impacted unmixing for users with larger panels (>20 fluorophores). The RCV plots will typically resemble the following:
+The robust coefficient of variation (rCV) is a measure of resolution for each detector, with the value shown as a percent. When this value is low, QC beads have similar MFI values (low spread). When the value is high, QC beads have more spread in their MFI values for a given detector. 
+This spread can be due to a laser coming out of alignment, debris in the flow cell, or damage to the QC bead. While diagnosing which is contributing, the increased %rCV can make resolving dim staining populations from the negative population more challenging. 
+For large spectral panels (>20 colors) where entire spectrum is used to identify a fluorophore, increased %rCV on the detector where a panel fluorophore has its main fluorescence peak can contribute to unmixing issues.
+The %rCV plots will typically resemble the following:
 
  ![](images/RCV_UV3.png){fig-align="center"}
 
-For Cytek instruments, a Daily QC fail is only triggered when %rCV exceeds either 8% for SSC, or 6% for FSC and the following detectors: UV3, V3, B3, YG3, R3. When this happens, the instrument will appear as failed on the home page:
+For Cytek instruments, a Daily QC fail is only triggered when %rCV exceeds either 8% for SSC, or 6% for FSC and the following detectors: UV3, V3, B3, YG3, R3.
+When this happens, the instrument will appear as failed on the home page:
 
  ![](images/InstrumentFail.png){fig-align="center"}
 
- When we navigate to the History tab and find that date, we can see that the rCV for UV3 failed, which was what triggered the QC fail:
+ When we navigate to the History tab and find that date, we can see that the %rCV for UV3 failed, which was what triggered the QC fail:
 
  ![](images/HistoryView.png){fig-align="center"} 
 
-But what happens if the RCV fails on any of the other detectors (UV1-> UV2, UV4 -> UV16,etc.)? Since they are not the indicator detectors, they wont trigger a Cytek QC fail. However, since we have observed unmixing issues when the RCVs of these other detectors are exceeded, we dont want to ignore them. Consequently, when a non-indicator RCV fails, we show it as failed under the Daily View:
+What if the %RCV fails on any of the other detectors (UV1-> UV2, UV4 -> UV16,etc.)?
+Since they are not the indicator detectors, they wont trigger a Cytek QC fail.
+However, we have observed unmixing issues on days when these detectors %RCV were high, so we dont ignore them. 
+When a non-indicator %RCV fails, we 1) show it as failed under the Daily View:
 
  ![](images/InstrumentCautionDaily.png){fig-align="center"} 
 
-And label the instrument as caution for that given day:
+And give the instrument the "caution" status for that given day:
 
  ![](images/InstrumentCaution.png){fig-align="center"} 
 
-How to interpret these Caution notices depends on what we see in the Levey-Jennings plots. For a few detectors (especially UV1/UV2), they exceed the 6% cutoff but are stable over time. Consequently, the impact of the increased RCV is relatively minimal.
+Interpreting these "Caution" status we need to check the Levey-Jennings plots. For a few detectors (especially UV1/UV2), they often exceed the 6% cutoff but are stable over time. The impact of this increased %RCV across acquisition days is therefore relatively minimal.
 
  ![](images/RCV_UV1Stable.png){fig-align="center"} 
 
- By contrast, is the RCV went from consistently stable, to spiking, the impact on your unmixing is likely to be significantly greater.
+ By contrast, if the %RCV went from consistently stable, to spiking, the impact on your unmixing is likely to be significantly greater.
 
  ![](images/RCV_UV16Issue.png){fig-align="center"} 
 
