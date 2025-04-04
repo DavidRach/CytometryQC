@@ -2,6 +2,8 @@
 #' 
 #' @param outpath
 #' 
+#' @importFrom purrr map
+#' 
 #' @return Updated webpage
 #' 
 #' @export
@@ -30,8 +32,7 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   # Add Instrument QMD file
 
   AddInstrumentQMD(name=name, outpath=InstrumentQCPath, organization=organization,
-    organization_website=organization_website, uv=uv, violet=violet,
-    blue=blue, yellowgreen=yellowgreen, red=red)
+    organization_website=organization_website)
   
   Items <- list.files(InstrumentQCPath, pattern=paste0(name, ".qmd"),
    full.names=TRUE)
@@ -48,9 +49,44 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
     
     RCVSegment <- grep("^## rCV", Draft)
     RCVAddition <- MFI_Display(uv=uv, violet=violet,
-      blue=blue, yellowgreen=yellowgreen, red=red)    
+      blue=blue, yellowgreen=yellowgreen, red=red) 
+    
+    Draft[MFISegment] <- paste0("## MFI\n", MFIAddition)
+    Draft[GainSegment] <- paste0("## Gain\n", GainAddition)
+    Draft[RCVSegment] <- paste0("## rCV\n", RCVAddition)
+      
+    cat(Draft, file = Items, sep = "\n")
 
   } else {stop("This shouldn't have happened")}
+  
+  # Update .yaml
+
+  Items <- list.files(InstrumentQCPath, pattern=paste0(name, ".qmd"),
+   full.names=TRUE)
+  Yaml <- list.files(InstrumentQCPath, pattern=".yml",
+   full.names=TRUE)
+  
+  if (length(Items) >1){
+    Draft <- readLines(Yaml)
+    Line1 <- '    - text: "Levey-Jennings Plots"'
+    Line2 <- '      menu:'
+    TheLocation <- str_which(Draft, fixed(Line1))
+
+    InsertOne <- "      - text: \"Instrument\""
+    InsertTwo <- "        href: Instrument.qmd"
+
+    NewInsertOne <- str_replace(InsertOne, fixed("Instrument"), name)
+    NewInsertTwo <- str_replace(InsertTwo, fixed("Instrument"), name)
+
+    if (length(TheLocation) > 0) {
+      Draft <- append(Draft, c(NewInsertOne, NewInsertTwo),
+        after = TheLocation + 1)
+    }
+
+    writeLines(Draft, Yaml)
+  }
+  
+  
   
 
   # Add Instrument Script()
