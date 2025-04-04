@@ -13,6 +13,8 @@ FolderSetup <- function(){
 OperatingSystem <- Sys.info()["sysname"]
   
 if (OperatingSystem == "Linux"){OS <- "Linux"
+  DocumentsFolder <- Sys.getenv("HOME")
+  DocumentsPath <- file.path(DocumentsFolder, "Documents")
 } else if (OperatingSystem == "FreeBSD"){OS <- "FreeBSD"
   warning("Missing next steps for your Operating System, please remind maintainer")
 }else if (OperatingSystem == "Windows"){OS <- "Windows"
@@ -36,9 +38,15 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
     message("Folders Created")
     
     PackageLocation <- system.file(package = "CytometryQC")
+
+    # License
     License <- list.files(PackageLocation, pattern="LICENSE", full.names=TRUE)
-    
     Report <- file.copy(from=License, to=InstrumentQCPath, recursive=FALSE)
+
+    # 404.qmd
+    QMD_404(outpath=InstrumentQCPath, organization="UMGCC FCSS Instrument", 
+    github_page="umgccfcss.github.io")
+
   }
   
   
