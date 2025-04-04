@@ -69,12 +69,11 @@ Repair <- Data |> filter(instrument %%in%% "%s")
 ```
 ', name, name, name, name)
 
-Section2 <- '
-
+SectionMFI <- '
 ```{r}
 x <- MFI
 x <- x |> dplyr::filter(Timepoint %%in%% c("Before", "After"))
-TheColumns <- x %%>%% select(where(~is.numeric(.)||is.integer(.))) %%>%% colnames()
+TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
 TheColumns <- setdiff(TheColumns, "TIME")
 TheIntermediate <- TheColumns[!str_detect(TheColumns, "Gain")]
 TheColumnNames <- TheIntermediate[str_detect(TheIntermediate, "-A")]
@@ -128,10 +127,12 @@ LaserPlotsMFI <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=LaserGains,
                      Metadata="Timepoint", strict = TRUE, YAxisLabel = " ",
                      RepairVisits=Repair)
 ```
+'
 
+SectionGain <- '
 ```{r}
 x <- Gain
-TheColumns <- x %%>%% select(where(~is.numeric(.)||is.integer(.))) %%>%% colnames()
+TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
 TheColumns <- setdiff(TheColumns, "TIME")
 TheColumnNames <- TheColumns[str_detect(TheColumns, "Gain")]
 
@@ -190,11 +191,10 @@ ScalingPlotsGain <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScalingGains,
 
 '
 
-Section3 <- sprintf('
-
+SectionRCV <- '
 ```{r}
 x <- Gain
-TheColumns <- x %%>%% select(where(~is.numeric(.)||is.integer(.))) %%>%% colnames()
+TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
 TheColumns <- setdiff(TheColumns, "TIME")
 
 TheColumnNames <- TheColumns[str_detect(TheColumns, "rCV")]
@@ -236,7 +236,9 @@ ScatterPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScatterGains,
                      plotType = "individual", returntype = "plots", YAxisLabel = " ",
                      RepairVisits=Repair)
 ```
-
+'
+  
+SectionPDF <- sprintf('
 ```{r}
 #| include: false
 #| echo: false
@@ -247,10 +249,9 @@ Filename <- paste0("%s")
 
 PDF <- Utility_Patchwork(x=PDFPlots, filename=Filename, returntype="pdf", outfolder=MainFolder, thecolumns=1)
 ```
-
 ', PDFValue)
 
-Section4 <- sprintf('
+Section2 <- sprintf('
 
 ## {.sidebar}
 Dashboard data for the **%s** last updated on **`r TheDate`**
@@ -276,6 +277,6 @@ This dashboard was created with [Quarto](https://quarto.org/) using [CytometryQC
 
 ', InstrumentName, organization, organization_website)
   
-cat(Section1, Section2, Section3, Section4, file = StorageLocation)
+cat(Section1, SectionMFI, SectionGain, SectionRCV, SectionPDF, Section2, file = StorageLocation)
 
 }

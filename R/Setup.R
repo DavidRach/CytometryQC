@@ -4,6 +4,8 @@
 #' @importFrom utils write.csv
 #' @importFrom usethis create_project
 #' @importFrom quarto quarto_render
+#' @importFrom usethis use_git
+#' @importFrom usethis use_github
 #' 
 #' @return If folder not present, creates folder under user Documents
 #' folder
@@ -82,13 +84,11 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
     QMD_yaml(outpath=InstrumentQCPath, organization="UMGCC FCSS", 
     github_page="umgccfcss.github.io", institution="University of Maryland, Baltimore")
 
-    create_project(InstrumentQCPath)
-    #quarto_render(input=InstrumentQCPath)
+    create_project(InstrumentQCPath, open=FALSE)
+    #setwd(InstrumentQCPath)
+    #use_git(message="Initial project setup")
+    #use_github(private=FALSE)
   }
-  
-  
-  
-  
   
   return(InstrumentQCPath)
 }
