@@ -32,11 +32,11 @@ cat(content, file = StorageLocation)
 #' @return A help.qmd file 
 #' 
 #' @export
-QMD_help <- function(outpath){
+QMD_help <- function(outpath) {
   StorageLocation <- file.path(outpath, "help.qmd")
-
-  content <- sprintf(
-'---
+  
+  content <- '
+---
 toc: true
 ---
 
@@ -114,7 +114,7 @@ Interpreting these "Caution" status we need to check the Levey-Jennings plots. F
 
 # Interactive Levey-Jennings Plots
 
-For each spectral instruments, the interactive plots are laid out in three columns (MFI, Gain, %rCV), with tabs for each of the lasers on that instrument. Additional parameters (Scatter, LaserPower, LaserDelay, LaserAreaScaling) may appear if they are recorded by that instrument.  
+For each spectral instrument, the interactive plots are laid out in three columns (MFI, Gain, %rCV), with tabs for each of the lasers on that instrument. Additional parameters (Scatter, LaserPower, LaserDelay, LaserAreaScaling) may appear if they are recorded by the instrument.  
 
 When a QC fail occurs for a given parameter, it appears as a red box on that individual date.
 
@@ -134,13 +134,12 @@ Gain and %rCV links to .csv file containing those types of data.
 
 MFI links to .csv file containing the data derrived from the before and after QC Bead .fcs files. 
 
-Both the above can be used if you want to [plot the data](https://davidrach.github.io/Luciernaga/articles/QualityControl.html#qc_plots) yourself using a different ggplot2 color-scheme in R than the one we have selected. Additionally, data for timepoints older than the current year can be found here. 
+Both the above can be used if you want to plot the data yourself using a different ggplot2 color-scheme in R than the one we have selected. Additionally, data for timepoints older than the current year can be found here. 
 
 Plots is a .pdf containing static versions of all the interactive plots (MFI, Gain, %rCV) that are visible for the Levey-Jennings Plots for the individual instrument. QC fails appear as red squares, and vertical red dashed lines correspond to dates the field service engineer was on site for repairs or preventative maintenance.
 
  ![](images/RCV_V3.png){fig-align="center"} 
-
-')
-
-  cat(content, file = StorageLocation)  
+'
+  
+  writeLines(content, StorageLocation)
 }
