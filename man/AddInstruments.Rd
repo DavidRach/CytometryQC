@@ -6,7 +6,7 @@
 \usage{
 AddInstruments(
   name,
-  manufacturer,
+  manufacturer = NULL,
   uv = 16,
   violet = 16,
   blue = 14,

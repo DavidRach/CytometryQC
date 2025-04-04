@@ -3,11 +3,15 @@
 #' @param outpath
 #' 
 #' @importFrom purrr map
+#' @importFrom stringr str_which
+#' @importFrom stringr str_detect
+#' @importFrom stringr fixed 
+#' @importFrom stringr str_replace
 #' 
 #' @return Updated webpage
 #' 
 #' @export
-AddInstruments <- function(name, manufacturer, uv=16, violet=16, blue=14,
+AddInstruments <- function(name, manufacturer=NULL, uv=16, violet=16, blue=14,
 yellowgreen=10, red=8, organization="UMGCC FCSS", 
 organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"){
 
@@ -66,7 +70,7 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   Yaml <- list.files(InstrumentQCPath, pattern=".yml",
    full.names=TRUE)
   
-  if (length(Items) >1){
+  if (length(Items) ==1){
     Draft <- readLines(Yaml)
     Line1 <- '    - text: "Levey-Jennings Plots"'
     Line2 <- '      menu:'
@@ -83,12 +87,24 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
         after = TheLocation + 1)
     }
 
+    Line1 <- "    - text: \"Historical\""
+    Line2 <- "      menu:"
+    TheLocation <- str_which(Draft, fixed(Line1))
+
+    InsertOne <- "      - text: \"Instrument\""
+    InsertTwo <- "        href: Historical.qmd"
+
+    NewInsertOne <- str_replace(InsertOne, fixed("Instrument"), name)
+    NewInsertTwo <- str_replace(InsertTwo, fixed("Historical"), name)
+
+    if (length(TheLocation) > 0) {
+      Draft <- append(Draft, c(NewInsertOne, NewInsertTwo),
+        after = TheLocation + 1)
+    }
+
     writeLines(Draft, Yaml)
   }
   
-  
-  
-
   # Add Instrument Script()
 
 
