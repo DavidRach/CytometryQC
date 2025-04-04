@@ -1,3 +1,64 @@
+#' Creates initial quarto yaml
+#' 
+#' @param outpath The file.location to save the .yaml file to
+#' 
+#' @return The .yaml file needed to generate the website
+#' 
+#' @export
+QMD_yaml <- function(outpath, organization="UMGCC FCSS",
+github_page="umgccfcss.github.io", institution="University of Maryland, Baltimore"){
+  StorageLocation <- file.path(outpath, "_quarto.yml")
+  
+  content <- sprintf('project:
+  type: website
+  output-dir: docs/
+website:
+  announcement: 
+    icon: info-circle
+    dismissable: true
+    content: "Please see left-sidebar for definitions"
+    type: info
+    position: below-navbar  
+  title: "%s"
+  site-path: "/InstrumentQC/"
+  navbar:
+    logo: images/hex.svg
+    left:
+    - text: "Home"
+      href: index.qmd
+    - text: "Levey-Jennings Plots"
+      menu:
+      - text: "Instrument"
+        href: Instrument.qmd
+    - text: "Historical"
+      menu:
+      - text: "Instrument"
+        href: Historical.qmd
+    right:
+    - text: "Help"
+      href: help.qmd
+    - text: "Download Data"
+      href: Data.qmd
+    - text: "Other"
+      menu:
+      - text: "Miscellaneous"
+        href: Miscellaneous.qmd 
+    - icon: github
+      href: %s
+      aria-label: GitHub          
+  page-footer:
+    background: light
+    left: %s
+    right: Built with [Quarto](https://quarto.org/). How? [Find Out](https://davidrach.github.io/CytometryQC/){target=_blank}
+format:
+  html:
+    theme: styles.scss
+', organization, github_page, institution)
+  
+cat(content, file = StorageLocation)    
+  
+}
+
 #' Creates the 404.qmd file
 #'
 #' @param outpath The file.location to save the .qmd file to
@@ -5,7 +66,7 @@
 #' @return A 404.qmd file
 #' 
 #' @export
-QMD_404 <- function(outpath, organization="UMGCC FCSS Instrument",
+QMD_404 <- function(outpath, organization="UMGCC FCSS",
  github_page="umgccfcss.github.io"){
   
 StorageLocation <- file.path(outpath, "404.qmd")
@@ -19,10 +80,78 @@ format: html
 
 Sorry, the page you are looking for is no longer there.
 
-To access the %s QC dashboard, please click here to go to the [homepage](%s)
+To access the %s  Instrument QC dashboard, please click here to go to the [homepage](%s)
 ', organization, Homepage)
 
 cat(content, file = StorageLocation)  
+}
+
+#' Creates generic Instrument.qmd file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic instrument.qmd file
+#' 
+#' @export
+QMD_Instrument <- function(outpath){
+  StorageLocation <- file.path(outpath, "Instrument.qmd")
+
+  content <- '---
+format:
+  dashboard:
+    orientation: columns
+    scrolling: true
+---
+
+This is a placeholder
+'
+    
+  cat(content, file = StorageLocation)
+}
+
+#' Creates generic Historical.qmd file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic Historical.qmd file
+#' 
+#' @export
+QMD_Historical <- function(outpath){
+  
+  StorageLocation <- file.path(outpath, "Historical.qmd")
+
+  content <- '---
+format:
+  dashboard:
+    orientation: columns
+    scrolling: true
+---
+
+This is a placeholder
+'
+  cat(content, file = StorageLocation)
+}
+
+#' Creates generic Miscellaneous.qmd file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic Miscellaneous.qmd file
+#' 
+#' @export
+QMD_Miscellaneous <- function(outpath){
+  
+  StorageLocation <- file.path(outpath, "Miscellaneous.qmd")
+
+  content <- '---
+project:
+  output-dir: docs/
+toc: true
+---
+
+This is a placeholder
+'
+  cat(content, file = StorageLocation)
 }
 
 #' Creates the help.qmd file

@@ -2,6 +2,8 @@
 #' creates a new one and populates with the correct folders
 #' 
 #' @importFrom utils write.csv
+#' @importFrom usethis create_project
+#' @importFrom quarto quarto_render
 #' 
 #' @return If folder not present, creates folder under user Documents
 #' folder
@@ -43,6 +45,11 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
     License <- list.files(PackageLocation, pattern="LICENSE", full.names=TRUE)
     Report <- file.copy(from=License, to=InstrumentQCPath, recursive=FALSE)
 
+    # Styles
+    StylesLocation <- file.path(PackageLocation, "extdata")
+    Images <- list.files(ImagesLocation, pattern="styles", full.names=TRUE)
+    Report <- file.copy(from=Styles, to=InstrumentQCPath, recursive=FALSE)
+
     # Images
     ImagesLocation <- file.path(PackageLocation, "extdata", "images")
     ImageMoveLocation <- file.path(InstrumentQCPath, "images")
@@ -50,9 +57,27 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
     Report <- file.copy(from=Images, to=ImageMoveLocation, recursive=FALSE)
 
     # 404.qmd
-    QMD_404(outpath=InstrumentQCPath, organization="UMGCC FCSS Instrument", 
+    QMD_404(outpath=InstrumentQCPath, organization="UMGCC FCSS", 
     github_page="umgccfcss.github.io")
 
+    # help.qmd
+    QMD_help(outpath = InstrumentQCPath)
+
+    # Miscellaneous.qmd
+    QMD_Miscellaneous(outpath = InstrumentQCPath)
+
+    # Instrument.qmd
+    QMD_Instrument(outpath = InstrumentQCPath)
+
+    # Historical.qmd
+    QMD_Historical(outpath = InstrumentQCPath)
+
+    # quarto.yaml
+    QMD_yaml(outpath=InstrumentQCPath, organization="UMGCC FCSS", 
+    github_page="umgccfcss.github.io", institution="University of Maryland, Baltimore")
+
+    create_project(InstrumentQCPath)
+    quarto_render(input=InstrumentQCPath)
   }
   
   
