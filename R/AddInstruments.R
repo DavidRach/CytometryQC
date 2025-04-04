@@ -6,10 +6,302 @@
 #' 
 #' @export
 AddInstruments <- function(name, manufacturer, uv=16, violet=16, blue=14,
-yellowgreen=10, red=8){
+yellowgreen=10, red=8, organization="UMGCC FCSS", 
+organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"){
 
-message("In preparation")
+  DocumentsPath <- OperatingSystemCheck()
+  InstrumentQC <- list.files(DocumentsPath, pattern="^InstrumentQC2$",
+   full.names=TRUE)
+  if (length(InstrumentQC) == 0){stop("Run FolderSetup step first!")}
+  
+  # Add Instrument Data Folder
 
+  InstrumentQCPath <- file.path(DocumentsPath, "InstrumentQC2")
+  DataPath <- file.path(DocumentsPath, "InstrumentQC2", "data")
+  Hits <- list.files(DataPath, pattern=name, full.names=TRUE)
+
+  if (length(Hits) == 0){
+    dir.create(file.path(DataPath, name),
+     showWarnings = FALSE)
+    dir.create(file.path(DataPath, name, "Archive"),
+     showWarnings = FALSE)
+  }
+
+  # Add Instrument QMD file
+
+  AddInstrumentQMD(name=name, outpath=InstrumentQCPath, organization=organization,
+    organization_website=organization_website, uv=uv, violet=violet,
+    blue=blue, yellowgreen=yellowgreen, red=red)
+  
+  Items <- list.files(InstrumentQCPath, pattern=paste0(name, ".qmd"),
+   full.names=TRUE)
+  
+  if (length(Items) == 1){
+    Draft <- readLines(Items)
+    MFISegment <- grep("^## MFI", Draft)
+    MFIAddition <- MFI_Display(uv=uv, violet=violet,
+      blue=blue, yellowgreen=yellowgreen, red=red)
+    
+    GainSegment <- grep("^## Gain", Draft)
+    GainAddition <- MFI_Display(uv=uv, violet=violet,
+      blue=blue, yellowgreen=yellowgreen, red=red)
+    
+    RCVSegment <- grep("^## rCV", Draft)
+    RCVAddition <- MFI_Display(uv=uv, violet=violet,
+      blue=blue, yellowgreen=yellowgreen, red=red)    
+
+  } else {stop("This shouldn't have happened")}
+  
+
+  # Add Instrument Script()
+
+
+}
+
+MFI_Display <- function(uv=uv, violet=violet,
+  blue=blue, yellowgreen=yellowgreen, red=red){
+  
+  UVCombined <- ""
+  VioletCombined <- ""
+  BlueCombined <- ""
+  YellowGreenCombined <- ""
+  RedCombined <- ""
+  
+  if (uv > 0){
+    UVDetectors <- uv
+    UVLines <- map(1:UVDetectors, ~ sprintf(
+      "ggplotly(UltraVioletPlotsMFI[[%d]])", .x))
+    UVCombined <- paste(
+      "```{r}\n#| title: UltraViolet\n",
+      paste(UVLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )
+  }
+
+  if (violet > 0){
+    VioletDetectors <- violet
+    VioletLines <- map(1:VioletDetectors, ~ sprintf(
+      "ggplotly(VioletPlotsMFI[[%d]])", .x))
+    VioletCombined <- paste(
+      "```{r}\n#| title: Violet\n",
+      paste(VioletLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )
+  }
+
+  if (blue > 0){
+    BlueDetectors <- blue
+    BlueLines <- map(1:BlueDetectors, ~ sprintf(
+      "ggplotly(BluePlotsMFI[[%d]])", .x))
+      BlueCombined <- paste(
+      "```{r}\n#| title: Blue\n",
+      paste(BlueLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )   
+  }
+
+  if (yellowgreen > 0){
+    YellowGreenDetectors <- yellowgreen
+    YellowGreenLines <- map(1:YellowGreenDetectors, ~ sprintf(
+      "ggplotly(YellowGreenPlotsMFI[[%d]])", .x))
+      YellowGreenCombined <- paste(
+      "```{r}\n#| title: YellowGreen\n",
+      paste(YellowGreenLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )    
+  }
+
+  if (red > 0){
+    RedDetectors <- red
+    RedLines <- map(1:RedDetectors, ~ sprintf(
+      "ggplotly(RedPlotsMFI[[%d]])", .x))
+      RedCombined <- paste(
+      "```{r}\n#| title: Red\n",
+      paste(RedLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )        
+  }
+
+  AllCombined <- paste(
+    UVCombined,
+    VioletCombined,
+    BlueCombined,
+    YellowGreenCombined,
+    RedCombined,
+    sep = ""
+  )
+
+  AllCombined <- trimws(AllCombined)
+  return(AllCombined)
+}
+
+Gain_Display <- function(uv=uv, violet=violet,
+  blue=blue, yellowgreen=yellowgreen, red=red){
+  
+  UVCombined <- ""
+  VioletCombined <- ""
+  BlueCombined <- ""
+  YellowGreenCombined <- ""
+  RedCombined <- ""
+  
+  if (uv > 0){
+    UVDetectors <- uv
+    UVLines <- map(1:UVDetectors, ~ sprintf(
+      "ggplotly(UltraVioletPlotsGain[[%d]])", .x))
+    UVCombined <- paste(
+      "```{r}\n#| title: UltraViolet\n",
+      paste(UVLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )
+  }
+
+  if (violet > 0){
+    VioletDetectors <- violet
+    VioletLines <- map(1:VioletDetectors, ~ sprintf(
+      "ggplotly(VioletPlotsGain[[%d]])", .x))
+    VioletCombined <- paste(
+      "```{r}\n#| title: Violet\n",
+      paste(VioletLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )
+  }
+
+  if (blue > 0){
+    BlueDetectors <- blue
+    BlueLines <- map(1:BlueDetectors, ~ sprintf(
+      "ggplotly(BluePlotsGain[[%d]])", .x))
+      BlueCombined <- paste(
+      "```{r}\n#| title: Blue\n",
+      paste(BlueLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )   
+  }
+
+  if (yellowgreen > 0){
+    YellowGreenDetectors <- yellowgreen
+    YellowGreenLines <- map(1:YellowGreenDetectors, ~ sprintf(
+      "ggplotly(YellowGreenPlotsGain[[%d]])", .x))
+      YellowGreenCombined <- paste(
+      "```{r}\n#| title: YellowGreen\n",
+      paste(YellowGreenLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )    
+  }
+
+  if (red > 0){
+    RedDetectors <- red
+    RedLines <- map(1:RedDetectors, ~ sprintf(
+      "ggplotly(RedPlotsGain[[%d]])", .x))
+      RedCombined <- paste(
+      "```{r}\n#| title: Red\n",
+      paste(RedLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )        
+  }
+
+  AllCombined <- paste(
+    UVCombined,
+    VioletCombined,
+    BlueCombined,
+    YellowGreenCombined,
+    RedCombined,
+    sep = ""
+  )
+
+  AllCombined <- trimws(AllCombined)
+  return(AllCombined)
+}
+
+RCV_Display <- function(uv=uv, violet=violet,
+  blue=blue, yellowgreen=yellowgreen, red=red){
+  
+  UVCombined <- ""
+  VioletCombined <- ""
+  BlueCombined <- ""
+  YellowGreenCombined <- ""
+  RedCombined <- ""
+  
+  if (uv > 0){
+    UVDetectors <- uv
+    UVLines <- map(1:UVDetectors, ~ sprintf(
+      "ggplotly(UltraVioletPlotsRCV[[%d]])", .x))
+    UVCombined <- paste(
+      "```{r}\n#| title: UltraViolet\n",
+      paste(UVLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )
+  }
+
+  if (violet > 0){
+    VioletDetectors <- violet
+    VioletLines <- map(1:VioletDetectors, ~ sprintf(
+      "ggplotly(VioletPlotsRCV[[%d]])", .x))
+    VioletCombined <- paste(
+      "```{r}\n#| title: Violet\n",
+      paste(VioletLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )
+  }
+
+  if (blue > 0){
+    BlueDetectors <- blue
+    BlueLines <- map(1:BlueDetectors, ~ sprintf(
+      "ggplotly(BluePlotsRCV[[%d]])", .x))
+      BlueCombined <- paste(
+      "```{r}\n#| title: Blue\n",
+      paste(BlueLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )   
+  }
+
+  if (yellowgreen > 0){
+    YellowGreenDetectors <- yellowgreen
+    YellowGreenLines <- map(1:YellowGreenDetectors, ~ sprintf(
+      "ggplotly(YellowGreenPlotsRCV[[%d]])", .x))
+      YellowGreenCombined <- paste(
+      "```{r}\n#| title: YellowGreen\n",
+      paste(YellowGreenLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )    
+  }
+
+  if (red > 0){
+    RedDetectors <- red
+    RedLines <- map(1:RedDetectors, ~ sprintf(
+      "ggplotly(RedPlotsRCV[[%d]])", .x))
+      RedCombined <- paste(
+      "```{r}\n#| title: Red\n",
+      paste(RedLines, collapse = "\n"),
+      "\n```\n",
+      sep = ""
+    )        
+  }
+
+  AllCombined <- paste(
+    UVCombined,
+    VioletCombined,
+    BlueCombined,
+    YellowGreenCombined,
+    RedCombined,
+    sep = ""
+  )
+
+  AllCombined <- trimws(AllCombined)
+  return(AllCombined)
 }
 
 AddInstrumentScript <- function(){
@@ -18,6 +310,7 @@ message("In preparation")
 
 AddInstrumentQMD <- function(name="5L", outpath="/home/david/Desktop", organization="UMGCC FCSS",
  organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"){
+  
   filename <- paste0(name, ".qmd")
   PDFValue <- paste0("QCPlots_", name)
   InstrumentName <- paste0("Cytek Aurora ", name)
@@ -72,7 +365,7 @@ Repair <- Data |> filter(instrument %%in%% "%s")
 SectionMFI <- '
 ```{r}
 x <- MFI
-x <- x |> dplyr::filter(Timepoint %%in%% c("Before", "After"))
+x <- x |> dplyr::filter(Timepoint %in% c("Before", "After"))
 TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
 TheColumns <- setdiff(TheColumns, "TIME")
 TheIntermediate <- TheColumns[!str_detect(TheColumns, "Gain")]
@@ -213,23 +506,23 @@ ScalingGains <- Luciernaga:::ColorPriority(ScalingGains)
 OtherGains <- c(ScatterGains)
 
 UltraVioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=UltraVioletGains,
-                      plotType = "individual", returntype = "plots", YAxisLabel = "%%rCV",
+                      plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
                       RepairVisits=Repair)
 
 VioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=VioletGains,
-                      plotType = "individual", returntype = "plots", strict=TRUE, YAxisLabel = "%%rCV",
+                      plotType = "individual", returntype = "plots", strict=TRUE, YAxisLabel = "%rCV",
                       RepairVisits=Repair)
 
 BluePlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=BlueGains,
-                      plotType = "individual", returntype = "plots", YAxisLabel = "%%rCV",
+                      plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
                       RepairVisits=Repair)
 
 YellowGreenPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=YellowGreenGains,
-                      plotType = "individual", returntype = "plots", YAxisLabel = "%%rCV",
+                      plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
                       RepairVisits=Repair)
 
 RedPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=RedGains,
-                     plotType = "individual", returntype = "plots", YAxisLabel = "%%rCV",
+                     plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
                      RepairVisits=Repair)
 
 ScatterPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScatterGains,
