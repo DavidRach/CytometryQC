@@ -349,7 +349,7 @@ cat(Section1, Section2, Section3, file = StorageLocation)
 QMD_index <- function(outpath){
   StorageLocation <- file.path(outpath, "index.qmd")
 
-  content <- '---
+Chunk1 <- '---
 format:
   dashboard:
     orientation: columns
@@ -359,9 +359,126 @@ project:
   output-dir: docs/
 ---
 
-This is a placeholder
+```{r}
+#| message: FALSE
+library(dplyr)
+library(purrr)
+library(stringr)
+library(plotly)
+library(Luciernaga)
+
+Computer <- getwd()
+MainFolder <- file.path(Computer, "data")
+TheList <- c("Placeholder")
+
+# Updating Data
+walk(.x=TheList, MainFolder=MainFolder, .f=Luciernaga:::DailyQCParse)
+walk(.x=TheList, .f=Luciernaga:::QCBeadParse, MainFolder=MainFolder)
+```
+```{r}
+#MFIPlaceholder
+```
 '
-  cat(content, file = StorageLocation)
+  
+Chunk2 <- '
+```{r}
+WindowOfInterest <- Sys.time() - months(12)
+
+#CurrentWindowPlaceholder
+```
+
+```{r}
+Data <- read.csv("Maintenance.csv", check.names=FALSE)
+
+#MaintenancePlaceholder
+```
+
+```{r}
+
+#VisualQCPlaceholder
+```
+
+```{r}
+
+#SmallTablePlaceholder
+```
+'
+
+Chunk3 <- '
+
+```{r}
+#| include: false
+#| echo: false
+
+#HistPlaceholder1
+
+#HistPlaceholder2
+
+Computer <- getwd()
+MainFolder <- file.path(Computer, "data")
+TheName <- "HistoricalData.csv"
+HistoricalPath <- file.path(MainFolder, TheName)
+
+write.csv(HistoricalData, HistoricalPath, row.names = FALSE)
+
+#HistoricalDataPlaceholder
+```
+
+'
+  
+Chunk4 <- '
+```{r}
+# Global Summary Placeholder1
+
+DataForPlot <- Luciernaga:::QCHistory(x=x, y=y)
+Transposed <- t(DataForPlot)
+colnames(Transposed) <- Transposed[1,]
+Transposed <- Transposed[-1,]
+DataForPlot1 <- data.frame(Transposed, check.names=FALSE)
+DataForPlot1 <- DataForPlot1 %>% tibble::rownames_to_column(., var="Date")
+DataForPlot1$Date <- as.Date(DataForPlot1$Date) 
+Data <- DataForPlot1 |> arrange(desc(Date))
+
+# Global Summary Placeholder2
+
+GlobalSummary <- Luciernaga:::SmallTableGlobal(Data)
+```
+
+```{r}
+TheDate <- Data |> slice(1) |> pull(Date)
+```
+
+```{r}
+
+#ColorStatusPlaceholder
+```
+'
+  
+Chunk6 <- '  
+## {.sidebar}
+Dashboard data last updated on **`r TheDate`**
+
+**Definitions:**
+
+**Pass:** All gains within 100% baseline and all RCVs <6% for all detectors.
+
+**Caution:** All gains within 100% baseline, but at least one detector had a RCV above the >6% cutoff. Instrument remains usable but resolution for fluorophores on the failed detector may decrease. 
+
+**Fail:** Either a gain exceeded 100% baseline, or RCVs exceeded >6% for at least one indicator detector. Significant variation and batch effects may occcur. 
+
+For additional information, navigate to the [Help](help.qmd) page.
+'
+  
+Chunk7 <- sprintf('**About**
+
+This dashboard contains the visualized QC data for the cytometers at [%s](%s)
+
+This dashboard was created with [Quarto](https://quarto.org/) using the [CytometryQC](https://github.com/DavidRach/CytometryQC) R package.
+
+', organization, organization_website)
+  
+  
+  cat(Chunk1, Chunk2, Chunk3, Chunk4, Chunk5, Chunk6, Chunk7, file = StorageLocation)
 }
 
 #' Creates generic Instrument.qmd file
@@ -492,3 +609,4 @@ format:
 cat(content, file = StorageLocation)    
   
 }
+  
