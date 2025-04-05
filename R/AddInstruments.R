@@ -104,7 +104,7 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
     NewInsertOne <- str_replace(InsertThree, fixed("Instrument"), name)
     NewInsertTwo <- str_replace(InsertFour, fixed("Historical"), HistoricalName)
 
-    QMD_HistoricalInstrument(outpath=InstrumentQCPath, name=name,
+    QMD_HistoricalInstrument(outpath=InstrumentQCPath, manufacturer=manufacturer, name=name,
        organization=organization, organization_website=organization_website)
 
     if (length(TheLocation) > 0) {
@@ -123,6 +123,12 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
      manufacturer=manufacturer, 
      TheFCSFolderPath=TheFCSFolderPath,
      CytekBioExportFolderPath=CytekBioExportFolderPath)
+  
+  # Update Index
+
+  # Update Data
+
+  
 }
 
 MFI_Display <- function(uv=uv, violet=violet,

@@ -63,6 +63,10 @@ FolderSetup <- function(){
     Styles <- list.files(StylesLocation, pattern="styles", full.names=TRUE)
     Report <- file.copy(from=Styles, to=InstrumentQCPath, recursive=FALSE)
 
+    # Maintenance.csv
+    Maintenance <- list.files(StylesLocation, pattern="Maintenance", full.names=TRUE)
+    Report <- file.copy(from=Maintenance, to=InstrumentQCPath, recursive=FALSE)
+
     # Images
     ImagesLocation <- file.path(PackageLocation, "extdata", "images")
     ImageMoveLocation <- file.path(InstrumentQCPath, "images")
@@ -86,7 +90,8 @@ FolderSetup <- function(){
     QMD_Historical(outpath = InstrumentQCPath)
 
     # Historical.qmd
-    QMD_index(outpath = InstrumentQCPath)
+    QMD_index(outpath = InstrumentQCPath, organization="UMGCC FCSS",
+     organization_website="umgccfcss.github.io")
 
     # Historical.qmd
     QMD_Data(outpath = InstrumentQCPath)

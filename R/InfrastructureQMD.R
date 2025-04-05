@@ -260,7 +260,8 @@ This is a placeholder
 #' @return A generic HistoricalInstument.qmd file
 #' 
 #' @export
-QMD_HistoricalInstrument <- function(outpath, name, organization, organization_website){
+QMD_HistoricalInstrument <- function(outpath, name, manufacturer,
+   organization, organization_website){
   
   FullName <- paste0("Historical_", name, ".qmd")
   StorageLocation <- file.path(outpath, FullName)
@@ -346,7 +347,7 @@ cat(Section1, Section2, Section3, file = StorageLocation)
 #' @return A generic index.qmd file
 #' 
 #' @export
-QMD_index <- function(outpath){
+QMD_index <- function(outpath, organization, organization_website){
   StorageLocation <- file.path(outpath, "index.qmd")
 
 Chunk1 <- '---
@@ -454,7 +455,7 @@ TheDate <- Data |> slice(1) |> pull(Date)
 ```
 '
   
-Chunk6 <- '  
+Chunk5 <- '  
 ## {.sidebar}
 Dashboard data last updated on **`r TheDate`**
 
@@ -469,7 +470,7 @@ Dashboard data last updated on **`r TheDate`**
 For additional information, navigate to the [Help](help.qmd) page.
 '
   
-Chunk7 <- sprintf('**About**
+Chunk6 <- sprintf('**About**
 
 This dashboard contains the visualized QC data for the cytometers at [%s](%s)
 
@@ -477,8 +478,7 @@ This dashboard was created with [Quarto](https://quarto.org/) using the [Cytomet
 
 ', organization, organization_website)
   
-  
-  cat(Chunk1, Chunk2, Chunk3, Chunk4, Chunk5, Chunk6, Chunk7, file = StorageLocation)
+  cat(Chunk1, Chunk2, Chunk3, Chunk4, Chunk5, Chunk6, file = StorageLocation)
 }
 
 #' Creates generic Instrument.qmd file

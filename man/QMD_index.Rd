@@ -4,7 +4,7 @@
 \alias{QMD_index}
 \title{Creates generic index.qmd file}
 \usage{
-QMD_index(outpath)
+QMD_index(outpath, organization, organization_website)
 }
 \arguments{
 \item{outpath}{The file.location to save the .qmd file to}
