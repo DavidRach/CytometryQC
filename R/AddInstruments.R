@@ -19,7 +19,16 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   InstrumentQC <- list.files(DocumentsPath, pattern="^InstrumentQC2$",
    full.names=TRUE)
   if (length(InstrumentQC) == 0){stop("Run FolderSetup step first!")}
-  
+
+  if (!manufacturer %in% c("Cytek", "BD", "Other")){
+    stop("Currently supported entries are `Cytek`, `BD`, and `Other`")
+  }
+
+  # Generalizing Out Pieces
+
+  TheFCSFolderPath <- file.path("D:", "Aurora 3_FCS Files", "Experiments", "Flow Core")
+  CytekBioExportFolderPath=file.path("C:", "CytekbioExport")
+
   # Add Instrument Data Folder
 
   InstrumentQCPath <- file.path(DocumentsPath, "InstrumentQC2")
@@ -106,6 +115,11 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   }
   
   # Add Instrument Script()
+
+  AddInstrumentScript(name=name, outpath=InstrumentQCPath,
+     manufacturer=manufacturer, 
+     TheFCSFolderPath=TheFCSFolderPath,
+     CytekBioExportFolderPath=CytekBioExportFolderPath)
 
 
 }
@@ -356,14 +370,19 @@ RCV_Display <- function(uv=uv, violet=violet,
   return(AllCombined)
 }
 
-AddInstrumentScript <- function(name, outpath){
+AddInstrumentScript <- function(name, outpath, manufacturer="Cytek", 
+  CytekBioExportFolderPath=NULL, TheFCSFolderPath=NULL){
 
-filename <- paste0("TheScript_", name, ".qmd")
+filename <- paste0("TheScript_", name, ".R")
 StorageLocation <- file.path(outpath, filename)
 
-TheCytekbioExport <- file.path("C:", "CytekbioExport")
-TheSetupFolder <- file.path(TheCytekbioExport, "Setup")
-TheFCSFolder <- file.path("D:", "Aurora 3_FCS Files", "Experiments", "Flow Core")
+if (manufacturer == "Cytek"){
+  TheCytekbioExport <- CytekBioExportFolderPath
+  TheSetupFolder <- file.path(TheCytekbioExport, "Setup")
+  TheFCSFolder <- TheFCSFolderPath
+} else if (manufacturer == "BD"){
+  TheFCSFolder <- TheFCSFolderPath
+} else {TheFCSFolder <- TheFCSFolderPath}
 
 FirstChunk <- 'library(stringr)
 library(purrr)
@@ -429,7 +448,7 @@ PotentialAppsDays <- PotentialAppsDays[-AppsRemoveIndex]
   
 FourthChunk <- sprintf('if (!length(PotentialGainDays) == 0){
 
-SetupFolder <- %s
+SetupFolder <- "%s"
 TheSetupFiles <- list.files(SetupFolder, pattern="DailyQC", full.names=TRUE)
 Dates <- as.character(PotentialGainDays)
 Dates <- gsub("-", "", Dates)
@@ -446,12 +465,12 @@ walk(.x=Instrument, .f=Luciernaga:::DailyQCParse, MainFolder=MainFolder)
 ', TheSetupFolder)
   
 FifthChunk <- sprintf('if (!length(PotentialMFIDays) == 0){
-FCSFolder <-  %s
-MonthStyle <- format(Today, "%Y-%m")
+FCSFolder <-  "%s"
+MonthStyle <- format(Today, "%%Y-%%m")
 MonthFolder <- paste0("QC ", MonthStyle)
 MonthFolder <- file.path(FCSFolder, MonthFolder)
 TheFCSFiles <- list.files(MonthFolder, pattern="fcs", full.names=TRUE, recursive=TRUE)
-days <- format(PotentialMFIDays, "%d")
+days <- format(PotentialMFIDays, "%%d")
 MFIMatches <- TheFCSFiles[str_detect(basename(TheFCSFiles), str_c(days, collapse = "|"))]
 
 if (!length(MFIMatches) == 0){
@@ -463,10 +482,10 @@ walk(.x=Instrument, .f=Luciernaga:::QCBeadParse, MainFolder=MainFolder)
 }
 ', TheFCSFolder)
 
-SixChunk <- sprint('if (!length(PotentialAppsDays) == 0){
-    SetupFolder <- %s
+SixChunk <- sprintf('if (!length(PotentialAppsDays) == 0){
+    SetupFolder <- "%s"
     TheSetupFiles <- list.files(SetupFolder, pattern="Application", full.names=TRUE)
-    MonthStyle <- format(Today, "%Y-%m")
+    MonthStyle <- format(Today, "%%Y-%%m")
     MonthStyle <- sub("([0-9]{4})-([0-9]{2})", "\\2-\\1", MonthStyle)
     MonthStyle <- gsub("-", " ", MonthStyle)
     MonthStyle <- paste0(MonthStyle, ".txt")
