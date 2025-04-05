@@ -1,0 +1,139 @@
+---
+toc: true
+---
+
+```{r}
+#| warning: false
+#| message: false
+#| include: false
+library(BiocStyle)
+```
+
+Now that you have the required software installed and a GitHub account set up, it's time to get started. 
+
+# Linking Rstudio and GitHub
+
+The next task is to get required R packages installed, and make sure that your RStudio and Git setup can communicate with each other. This allows for tracking version changes in files, and sending modified repository files to GitHub  without any issues.
+
+## Setup
+
+Let's start by opening Rstudio. If it is your first time opening it, you will get a pop-up window asking which version of R to use. Select the newest (or default) R installation. 
+
+We want to make sure make sure Rstudio can communicate with GitHub through Git. To do this we will first install the R package `r CRANpkg("devtools")`, followed by the `r CRANpkg("BiocManager")` package. To do so, copy the following lines of code invidivually into the console window (generally on the bottom left of your screen) and hit enter to run the commands:
+
+```{r}
+#| eval: FALSE
+install.packages("devtools")
+install.packages("BiocManager")
+```
+
+For coding-beginners, please note, during the installation of an R package, if you are missing required dependencies, you will be asked whether you want to install the missing packages. Select yes for these. When there are newer versions of an R package, it will ask if you want to update to the newer version, which in general is a good idea but not required if you are short on time. 
+
+During the installation process, if an error is encountered, you will get an error message and a red troubleshooting explanation describing the issue. Read this carefully, and install any missing package dependencies needed to fix the issue by swapping in the package name between the quotation marks similar to what was done in the code chunk above to install the devtools package. 
+
+Once the R packages have succesfully installed, we need to activate them for that session by calling them with the library function before continuing. 
+
+```{r}
+library(devtools)
+library(BiocManager)
+```
+
+Adjacent to your console tab on the lower left, there is another tab called terminal. Go ahead and click it.
+
+![](images/01_Terminal.png){fig-align="center" width="600"}
+
+Now that you have switched from the console to the terminal,using your mouse copy then right-click-paste the following lines of code individually into the terminal, editing the text to include your GitHub username and then email linked used for that GitHub account.
+
+```{bash}
+#| eval: false
+git config --global user.email "JohnDoe@gmail.com"
+
+git config --global user.name "John Doe"
+```
+
+
+## GitHub Token 
+
+With this done, it is now time to get an authorization GitHub Token that will allow your local computer to send/receive files from your the GitHub repository. 
+
+To do this, open a browser, and navigate back to your GitHub account, click on your profile icon on the far upper right, and then [select settings]{.underline}
+
+![](images/01_GitToken.png){fig-align="center" width="600"}
+
+From here, you will navigate to the lower left side and click on developer settings
+
+![](images/02_GitToken.png){fig-align="center" width="260"}
+
+Once you are on the next page, you will select [Tokens (classic) option]{.underline}
+
+![](images/03_GitToken.png){fig-align="center" width="600"}
+
+From there, you will now proceed to click on [Generate new token and select the classic option]{.underline}
+
+![](images/04_GitToken.png){fig-align="center"}
+
+On the next screen, things get busy. There are a few things we need to focus on. First write a note for the token containing the individual instrument name. Select for Expiration Date either the no-expiration date (to avoid needing to repeat this setup process in the near future). From here, you only need to click on the repo option to grant those associated accesses. Proceed all the way down to the bottom of the screen, and click on the green generate token button.
+
+![](images/05_GitToken.png){fig-align="center" width="600"}
+
+The website will refresh and provide you a GitHub token and the option to copy it. Copy it and temporarily store it in a .txt file (notepad) as you will need it when setting up the connection between Github and Rstudio. Please note, you will not be able to see the token code again after leaving this screen, so stash it wisely, otherwise you will need to regenerate another token. Also, make sure to be cautious and not post the token .txt file on the public internet, unless you enjoy emails from IT. 
+
+![](images/06_GitToken.png){fig-align="center"}
+
+## Rstudio
+
+Now that you have your token, go back to Rstudio, and enter the following lines of code into your console:
+
+```{r}
+#| eval: false
+gitcreds::gitcreds_set()
+```
+
+A pop-up window will appear. Follow the instructions and when prompted, provide it the Github Token code that you generated. Next hit enter. You should be all set to now pull/push (ie. receive/send) files to GitHub from your local computer. 
+
+While we are here, let's address the last thing we will need the GitHub access token for. Go ahead and enter the following line of code in the console:
+
+```{r}
+#| eval: false
+usethis::edit_r_environ()
+```
+
+This will open an .Renviron file that will likely be blank. Enter the following line of code, swapping in your specific token in its entirety between the quotation marks.
+
+```{r}
+#| eval: false
+GITHUB_PAT <- "GitHubTokenGoesHere"
+```
+
+Once this is done, save the file and close-out/restart Rstudio. 
+
+# Installing R packages
+
+We will next install the R packages needed for data processing and handling of the QC data generated daily. 
+
+## R Packages
+
+R is a programming language originally focused on statistical analyses. Through the contributions of many individuals over the years in creating additional R packages, its versatility has expanded to other areas. These R packages consist of additional code (ie. functions) that once installed (and loaded via the library call) allow you to do countless things not originally present in the original (base) code. An example of this was in the last section when we installed the `r CRANpkg("devtools")` package that allowed us to set up communication between RStudio and GitHub. 
+
+R packages are publicly available typically through either the 1) CRAN, or 2) Bioconductor repositories. Additional R packages (typically those under development) may only be available via 3) GitHub. Knowing which repository a package can be found in is important part of the installation process, as the code used to install from different repositories will differ slightly.
+
+For InstrumentQC dashboard setup, we will be downloading two R packages from GitHub using `r CRANpkg("devtools")`. One is our R package, [Luciernaga](https://github.com/DavidRach/Luciernaga), which contains the functions needed to process the QC files needed to assemble the dashboard. The other R package is [CytometryQC](https://github.com/DavidRach/CytometryQC) which is responsible for building a customized InstrumentQC website specific to your instruments. We are in the process of preparing both packages for submission to Bioconductor, but for now, they are available via GitHub.
+
+```{r}
+#| eval: FALSE
+library(devtools)
+install_github("https://github.com/DavidRach/Luciernaga", dependencies = TRUE)
+install_github("https://github.com/DavidRach/CytometryQC", dependencies = TRUE)
+```
+
+## Troubleshooting
+
+For coding-beginners, please note, during the installation of an R package, if you are missing required dependencies, you will be asked whether you want to install the missing packages. Select yes for these. When there are newer versions of an R package, it will ask if you want to update to the newer version, which in general is a good idea but not required if you are short on time. 
+
+During the installation process, if an error is encountered, you will get an error message and a red troubleshooting explanation describing the issue. Read this carefully, and search online for the missing dependency, identifying whether it is a CRAN or a Bioconductor package. Then use the corresponding installation setup as seen above to install the missing package and hopefully fix the issue. Once this is done, we can attempt to install the R package that had failed to install. 
+
+## Summary
+
+Having completed the steps above, you now have the neccessary R packages needed for CytometryQC to setup a customized InstrumentQC website for your instruments. Congratulations on making progress!
+
+If you have multiple cytometers, you will need to repeat these previous steps for each computer. Should you encounter missing dependency packages that throw errors, you will need to install these before proceeding, and please [open an issue](https://github.com/DavidRach/CytometryQC/issues) so that I can edit the code to avoid this happening to others.

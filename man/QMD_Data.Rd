@@ -4,7 +4,11 @@
 \alias{QMD_Data}
 \title{Creates generic Data.qmd file}
 \usage{
-QMD_Data(outpath)
+QMD_Data(
+  outpath,
+  organization = "UMGCC FCSS",
+  github_page = "umgccfcss.github.io"
+)
 }
 \arguments{
 \item{outpath}{The file.location to save the .qmd file to}
