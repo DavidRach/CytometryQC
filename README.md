@@ -37,7 +37,7 @@ Once required software and packages are installed, please read the [Getting Star
 
 ### Contribute
 
-Our original website was designed around use for both Cytek and BD instruments. It can be relatively easily customized to instruments from other manufacturers where QC .fcs files have been acquired daily. If you are interested in helping get these cytometers from other manufacturers set up as default options, please reach out, the more help the merrier. 
+Our original website was built to show QC data for our Cytek and BD instruments. It can be relatively easily customized to instruments from other manufacturers where QC .fcs files have been acquired daily. If you are interested in getting specific QC report formats for cytometers from other manufacturers incorporated into the default options, please reach out, the more help the merrier. 
 
 ### Found a bug? Report it!
 

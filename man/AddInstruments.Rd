@@ -6,7 +6,7 @@
 \usage{
 AddInstruments(
   name,
-  manufacturer = NULL,
+  manufacturer = "Cytek",
   uv = 16,
   violet = 16,
   blue = 14,

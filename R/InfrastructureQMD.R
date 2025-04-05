@@ -1,64 +1,3 @@
-#' Creates initial quarto yaml
-#' 
-#' @param outpath The file.location to save the .yaml file to
-#' 
-#' @return The .yaml file needed to generate the website
-#' 
-#' @export
-QMD_yaml <- function(outpath, organization="UMGCC FCSS",
-github_page="umgccfcss.github.io", institution="University of Maryland, Baltimore"){
-  StorageLocation <- file.path(outpath, "_quarto.yml")
-  
-  content <- sprintf('project:
-  type: website
-  output-dir: docs/
-website:
-  announcement: 
-    icon: info-circle
-    dismissable: true
-    content: "Please see left-sidebar for definitions"
-    type: info
-    position: below-navbar  
-  title: "%s"
-  site-path: "/InstrumentQC/"
-  navbar:
-    logo: images/hex.svg
-    left:
-    - text: "Home"
-      href: index.qmd
-    - text: "Levey-Jennings Plots"
-      menu:
-      - text: "Instrument"
-        href: Instrument.qmd
-    - text: "Historical"
-      menu:
-      - text: "Instrument"
-        href: Historical.qmd
-    right:
-    - text: "Help"
-      href: help.qmd
-    - text: "Download Data"
-      href: Data.qmd
-    - text: "Other"
-      menu:
-      - text: "Miscellaneous"
-        href: Miscellaneous.qmd 
-    - icon: github
-      href: %s
-      aria-label: GitHub          
-  page-footer:
-    background: light
-    left: %s
-    right: Built with [Quarto](https://quarto.org/). How? [Find Out](https://davidrach.github.io/CytometryQC/){target=_blank}
-format:
-  html:
-    theme: styles.scss
-', organization, github_page, institution)
-  
-cat(content, file = StorageLocation)    
-  
-}
-
 #' Creates the 404.qmd file
 #'
 #' @param outpath The file.location to save the .qmd file to
@@ -84,77 +23,6 @@ To access the %s  Instrument QC dashboard, please click here to go to the [homep
 ', organization, Homepage)
 
 cat(content, file = StorageLocation)  
-}
-
-#' Creates generic Instrument.qmd file
-#'
-#' @param outpath The file.location to save the .qmd file to
-#' 
-#' @return A generic instrument.qmd file
-#' 
-#' @export
-QMD_Instrument <- function(outpath){
-  StorageLocation <- file.path(outpath, "Instrument.qmd")
-
-  content <- '---
-format:
-  dashboard:
-    orientation: columns
-    scrolling: true
----
-
-This is a placeholder
-'
-    
-  cat(content, file = StorageLocation)
-}
-
-#' Creates generic Historical.qmd file
-#'
-#' @param outpath The file.location to save the .qmd file to
-#' 
-#' @return A generic Historical.qmd file
-#' 
-#' @export
-QMD_Historical <- function(outpath){
-  
-  StorageLocation <- file.path(outpath, "Historical.qmd")
-
-  content <- '---
-format:
-  dashboard:
-    orientation: columns
-    scrolling: true
----
-
-This is a placeholder
-'
-  cat(content, file = StorageLocation)
-}
-
-#' Creates generic index.qmd file
-#'
-#' @param outpath The file.location to save the .qmd file to
-#' 
-#' @return A generic index.qmd file
-#' 
-#' @export
-QMD_index <- function(outpath){
-  StorageLocation <- file.path(outpath, "index.qmd")
-
-  content <- '---
-format:
-  dashboard:
-    orientation: columns
-aliases: 
-  - home.html
-project:
-  output-dir: docs/
----
-
-This is a placeholder
-'
-  cat(content, file = StorageLocation)
 }
 
 #' Creates generic Data.qmd file
@@ -241,28 +109,6 @@ Section3 <- '## First Row {height="50%"}
 '
     
   cat(content, Section2, Section3, file = StorageLocation)
-}
-
-#' Creates generic Miscellaneous.qmd file
-#'
-#' @param outpath The file.location to save the .qmd file to
-#' 
-#' @return A generic Miscellaneous.qmd file
-#' 
-#' @export
-QMD_Miscellaneous <- function(outpath){
-  
-  StorageLocation <- file.path(outpath, "Miscellaneous.qmd")
-
-  content <- '---
-project:
-  output-dir: docs/
-toc: true
----
-
-This is a placeholder
-'
-  cat(content, file = StorageLocation)
 }
 
 #' Creates the help.qmd file
@@ -382,4 +228,267 @@ Plots is a .pdf containing static versions of all the interactive plots (MFI, Ga
 '
   
   writeLines(content, StorageLocation)
+}
+
+#' Creates generic Historical.qmd file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic Historical.qmd file
+#' 
+#' @export
+QMD_Historical <- function(outpath){
+  
+  StorageLocation <- file.path(outpath, "Historical.qmd")
+
+  content <- '---
+format:
+  dashboard:
+    orientation: columns
+    scrolling: true
+---
+
+This is a placeholder
+'
+  cat(content, file = StorageLocation)
+}
+
+#' Creates generic HistoricalInstument.qmd file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic HistoricalInstument.qmd file
+#' 
+#' @export
+QMD_HistoricalInstrument <- function(outpath, name, organization, organization_website){
+  
+  FullName <- paste0("Historical_", name, ".qmd")
+  StorageLocation <- file.path(outpath, FullName)
+
+  TheInstrument <- paste(manufacturer, name, sep=" ")
+
+  Section1 <- sprintf('---
+format:
+  dashboard:
+    orientation: rows
+project:
+  output-dir: docs/
+---
+
+```{r}
+library(htmltools)
+```
+
+```{r}
+TheDate <- Sys.Date()
+```
+
+## {.sidebar}
+Dashboard contains historical data for the **%s**.
+
+**Contents:**
+
+**Interactive** A redirect to the interactive Levey-Jennings plots for the respective year.
+
+**Plots** A .pdf file containing non-interactive version of all the plots for the respective year.
+
+**Gain and MFI** A .csv file containing Gain and MFI information derrived from Daily QC .fcs files used to generate the plots.
+', TheInstrument)
+  
+Section2 <- sprintf('For additional information, navigate to the [Help](help.qmd) page.
+
+**About**
+
+This dashboard contains the visualized QC data for the cytometers at [%s](%s)
+
+This dashboard was created with [Quarto](https://quarto.org/) using [CytometryQC](https://github.com/DavidRach/CytometryQC)
+', organization, organization_website)
+  
+Section3 <- '## First Row {height="50%"}
+
+### Standin1 {width="50%"}
+
+::: {.card title="" width="33%"}
+
+:::
+
+```{r}
+#| content: valuebox
+#| title: "Standin1"
+#| icon: cup-hot
+
+# HTMLStandin1
+```
+## Second Row {height="50%"}
+
+### Standin2 {width="50%"}
+
+```{r}
+#| content: valuebox
+#| title: "Standin2"
+#| icon: cup-hot
+
+#HTMLStanding2
+```
+
+::: {.card title="" width="33%"}
+
+:::
+'
+  
+cat(Section1, Section2, Section3, file = StorageLocation)
+}
+
+#' Creates generic index.qmd file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic index.qmd file
+#' 
+#' @export
+QMD_index <- function(outpath){
+  StorageLocation <- file.path(outpath, "index.qmd")
+
+  content <- '---
+format:
+  dashboard:
+    orientation: columns
+aliases: 
+  - home.html
+project:
+  output-dir: docs/
+---
+
+This is a placeholder
+'
+  cat(content, file = StorageLocation)
+}
+
+#' Creates generic Instrument.qmd file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic instrument.qmd file
+#' 
+#' @export
+QMD_Instrument <- function(outpath){
+  StorageLocation <- file.path(outpath, "Instrument.qmd")
+
+  content <- '---
+format:
+  dashboard:
+    orientation: columns
+    scrolling: true
+---
+
+This is a placeholder
+'
+    
+  cat(content, file = StorageLocation)
+}
+
+#' Creates generic Miscellaneous.qmd file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic Miscellaneous.qmd file
+#' 
+#' @export
+QMD_Miscellaneous <- function(outpath){
+  
+  StorageLocation <- file.path(outpath, "Miscellaneous.qmd")
+
+  content <- '---
+project:
+  output-dir: docs/
+toc: true
+---
+
+This is a placeholder
+'
+  cat(content, file = StorageLocation)
+}
+
+#' Creates generic README.md file
+#'
+#' @param outpath The file.location to save the .qmd file to
+#' 
+#' @return A generic README.md file
+#' 
+#' @export
+QMD_README <- function(outpath, organization, organization_website){
+  
+  StorageLocation <- file.path(outpath, "README.md")
+
+  content <- sprintf('This repository contains the code for the InstrumentQC dashboard for the [%s](%s)cytometers. 
+
+The dashboard track changes in MFI, Gain and %%RCV over time by processing .fcs files of QC beads acquired during QC in [R](https://www.r-project.org/) using the [Luciernaga](https://github.com/DavidRach/Luciernaga) package. 
+The results are then turned into a website using [Quarto](https://quarto.org/) using functions found in the [CytometryQC](https://github.com/DavidRach/CytometryQC) package. All code is available under the AGPL3-0 copyleft license. Additional how-to-replicate-this-dashboard details can be found [here](https://github.com/DavidRach/InstrumentQC_Install)
+', organization, organization_website)
+  
+  cat(content, file = StorageLocation)
+}
+
+
+
+
+#' Creates initial quarto yaml
+#' 
+#' @param outpath The file.location to save the .yaml file to
+#' 
+#' @return The .yaml file needed to generate the website
+#' 
+#' @export
+QMD_yaml <- function(outpath, organization="UMGCC FCSS",
+github_page="umgccfcss.github.io", institution="University of Maryland, Baltimore"){
+  StorageLocation <- file.path(outpath, "_quarto.yml")
+  
+  content <- sprintf('project:
+  type: website
+  output-dir: docs/
+website:
+  announcement: 
+    icon: info-circle
+    dismissable: true
+    content: "Please see left-sidebar for definitions"
+    type: info
+    position: below-navbar  
+  title: "%s"
+  site-path: "/InstrumentQC/"
+  navbar:
+    logo: images/hex.svg
+    left:
+    - text: "Home"
+      href: index.qmd
+    - text: "Levey-Jennings Plots"
+      menu:
+      - text: "Instrument"
+        href: Instrument.qmd
+    - text: "Historical"
+      menu:
+      - text: "Instrument"
+        href: Historical.qmd
+    right:
+    - text: "Help"
+      href: help.qmd
+    - text: "Download Data"
+      href: Data.qmd
+    - text: "Other"
+      menu:
+      - text: "Miscellaneous"
+        href: Miscellaneous.qmd 
+    - icon: github
+      href: %s
+      aria-label: GitHub          
+  page-footer:
+    background: light
+    left: %s
+    right: Built with [Quarto](https://quarto.org/). How? [Find Out](https://davidrach.github.io/CytometryQC/){target=_blank}
+format:
+  html:
+    theme: styles.scss
+', organization, github_page, institution)
+  
+cat(content, file = StorageLocation)    
+  
 }

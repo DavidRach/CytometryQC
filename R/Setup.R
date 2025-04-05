@@ -95,6 +95,10 @@ FolderSetup <- function(){
     QMD_yaml(outpath=InstrumentQCPath, organization="UMGCC FCSS", 
     github_page="umgccfcss.github.io", institution="University of Maryland, Baltimore")
 
+    # README.md
+    QMD_README(outpath=InstrumentQCPath, organization="UMGCC FCSS",
+     organization_website="umgccfcss.github.io")
+
     create_project(InstrumentQCPath, open=FALSE)
     #setwd(InstrumentQCPath)
     #use_git(message="Initial project setup")

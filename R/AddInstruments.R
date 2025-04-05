@@ -11,7 +11,7 @@
 #' @return Updated webpage
 #' 
 #' @export
-AddInstruments <- function(name, manufacturer=NULL, uv=16, violet=16, blue=14,
+AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16, blue=14,
 yellowgreen=10, red=8, organization="UMGCC FCSS", 
 organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"){
 
@@ -30,7 +30,6 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   CytekBioExportFolderPath=file.path("C:", "CytekbioExport")
 
   # Add Instrument Data Folder
-
   InstrumentQCPath <- file.path(DocumentsPath, "InstrumentQC2")
   DataPath <- file.path(DocumentsPath, "InstrumentQC2", "data")
   Hits <- list.files(DataPath, pattern=name, full.names=TRUE)
@@ -43,7 +42,6 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   }
 
   # Add Instrument QMD file
-
   AddInstrumentQMD(name=name, outpath=InstrumentQCPath, organization=organization,
     organization_website=organization_website)
   
@@ -73,7 +71,6 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   } else {stop("This shouldn't have happened")}
   
   # Update .yaml
-
   Items <- list.files(InstrumentQCPath, pattern=paste0(name, ".qmd"),
    full.names=TRUE)
   Yaml <- list.files(InstrumentQCPath, pattern=".yml",
@@ -100,28 +97,32 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
     Line2 <- "      menu:"
     TheLocation <- str_which(Draft, fixed(Line1))
 
-    InsertOne <- "      - text: \"Instrument\""
-    InsertTwo <- "        href: Historical.qmd"
+    InsertThree <- "      - text: \"Instrument\""
+    InsertFour <- "        href: Historical.qmd"
 
-    NewInsertOne <- str_replace(InsertOne, fixed("Instrument"), name)
-    NewInsertTwo <- str_replace(InsertTwo, fixed("Historical"), name)
+    HistoricalName <- paste0("Historical_", name)
+    NewInsertOne <- str_replace(InsertThree, fixed("Instrument"), name)
+    NewInsertTwo <- str_replace(InsertFour, fixed("Historical"), HistoricalName)
+
+    QMD_HistoricalInstrument(outpath=InstrumentQCPath, name=name,
+       organization=organization, organization_website=organization_website)
 
     if (length(TheLocation) > 0) {
       Draft <- append(Draft, c(NewInsertOne, NewInsertTwo),
         after = TheLocation + 1)
     }
 
+    # Cleaning out placeholders if present
+    Draft <- Draft[!(Draft %in% c(InsertOne, InsertTwo, InsertThree, InsertFour))]
+
     writeLines(Draft, Yaml)
   }
   
   # Add Instrument Script()
-
   AddInstrumentScript(name=name, outpath=InstrumentQCPath,
      manufacturer=manufacturer, 
      TheFCSFolderPath=TheFCSFolderPath,
      CytekBioExportFolderPath=CytekBioExportFolderPath)
-
-
 }
 
 MFI_Display <- function(uv=uv, violet=violet,
