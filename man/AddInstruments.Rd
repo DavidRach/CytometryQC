@@ -13,6 +13,7 @@ AddInstruments(
   yellowgreen = 10,
   red = 8,
   organization = "UMGCC FCSS",
+  githubusername = "UMGCCFCSS",
   organization_website = "https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"
 )
 }

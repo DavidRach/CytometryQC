@@ -588,6 +588,7 @@ server <- function(input, output, session) {
   
   selected_instrument <- reactiveVal()
   
+  #observeEventPlaceholder
   observeEvent(input$btn_PlaceHolder, { selected_instrument("PlaceHolder") })
 
   table_data <- eventReactive(input$render, {

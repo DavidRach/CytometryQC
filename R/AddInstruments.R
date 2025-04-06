@@ -12,7 +12,7 @@
 #' 
 #' @export
 AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16, blue=14,
-yellowgreen=10, red=8, organization="UMGCC FCSS", 
+yellowgreen=10, red=8, organization="UMGCC FCSS", githubusername="UMGCCFCSS",
 organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"){
 
   DocumentsPath <- OperatingSystemCheck()
@@ -125,7 +125,7 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
      CytekBioExportFolderPath=CytekBioExportFolderPath)
   
   # Update Index
-  IndexUpdate(outpath=InstrumentQCPath, name=name)
+  IndexUpdate(outpath=InstrumentQCPath, name=name, githubusername=githubusername)
   
   # Update Data
 }

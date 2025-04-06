@@ -4,7 +4,7 @@
 \alias{IndexUpdate}
 \title{Triggered by AddInstrument, adds index.qmd chunks for that instrument.}
 \usage{
-IndexUpdate(outpath, name)
+IndexUpdate(outpath, name, githubusername)
 }
 \description{
 Triggered by AddInstrument, adds index.qmd chunks for that instrument.
