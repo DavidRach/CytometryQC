@@ -487,7 +487,147 @@ This dashboard was created with [Quarto](https://quarto.org/) using the [Cytomet
 
 ', organization, organization_website)
   
-  cat(Chunk1, Chunk2, Chunk3, Chunk4, Chunk5, Chunk6, file = StorageLocation)
+ Chunk7 <- '## First {width="30%"}
+
+### Row {height="50%"}
+
+#### Column
+
+```{r}
+#| content: valuebox
+#| title: "PlaceHolder1"
+#| icon: cup-hot
+
+#PlaceHolder1
+
+```
+
+#### Column
+
+```{r}
+#| content: valuebox
+#| title: "PlaceHolder2"
+#| icon: cup-hot
+
+#PlaceHolder2
+
+```
+
+## Second {.tabset}
+
+```{r}
+#| echo: false
+#| include: false
+library(shinylive)
+```
+
+#### History
+
+'
+  
+  Chunk8 <- '```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 450
+
+webr::install("dplyr")
+webr::install("gt")
+
+library(shiny)
+library(dplyr)
+library(gt)
+
+ui <- fluidPage(
+  fluidRow(
+    column(6,
+           fluidRow(
+             column(12, align = "center",
+                    dateInput("date", label = "Select Date:", value = Sys.Date())
+             )
+           ),
+           fluidRow(
+             column(12, align = "center", #testing
+                    actionButton("btn_3L", label = "3L")
+             )
+           ),
+           fluidRow(
+             column(12, align = "center",
+                    actionButton("render", label = "Render Output")
+             )
+           ),
+           # Output Section
+           fluidRow(
+             column(12,
+                    tableOutput("qc_table")
+             )
+           )
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  
+  data_path <-                                                
+    paste(                                                  
+      "https://raw.githubusercontent.com",                  
+      "PlaceHolder", "InstrumentQC",                   
+      "main", "data", "HistoricalData.csv",                              
+      sep = "/"                                             
+    ) 
+  
+  Data <- read.csv(data_path, check.names = FALSE)
+  Data$Date <- as.Date(Data$Date) 
+  
+  function_path <-                                               
+    paste(                                                  
+      "https://raw.githubusercontent.com",                  
+      "DavidRach", "Luciernaga",                   
+      "master", "R", "DashboardHelpers.R",                              
+      sep = "/"                                             
+    )
+  source(function_path)
+  
+  selected_instrument <- reactiveVal()
+  
+  observeEvent(input$btn_PlaceHolder, { selected_instrument("PlaceHolder") })
+
+  table_data <- eventReactive(input$render, {
+    req(input$date, selected_instrument())
+    
+    InstrumentSubset <- Data |> filter(Instrument == selected_instrument())
+    DateSubset <- InstrumentSubset |> filter(Date == input$date)
+    
+    if (nrow(DateSubset) > 0) {
+      TableData <- DateSubset |> select(-Instrument, -Date)
+      SmallTable(data = TableData)
+    } else {
+      NULL
+    }
+  })
+
+  output$qc_table <- render_gt({
+    req(table_data())
+    table_data()
+  })
+}
+
+app <- shinyApp(ui = ui, server = server)
+```
+  
+
+'
+  
+Chunk9 <- '## Third {.tabset}{width="40%"}
+
+
+```{r}
+#| title: Instruments
+GlobalSummary
+```
+
+'
+  
+  cat(Chunk1, Chunk2, Chunk3, Chunk4, Chunk5, Chunk6,
+    Chunk7, Chunk8, Chunk9, file = StorageLocation)
 }
 
 #' Creates generic Instrument.qmd file
