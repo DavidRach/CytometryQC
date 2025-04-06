@@ -546,7 +546,7 @@ ui <- fluidPage(
            ),
            fluidRow(
              column(12, align = "center", #testing
-                    actionButton("btn_3L", label = "3L")
+                    actionButton("btn_Placeholder", label = "Placeholder")
              )
            ),
            fluidRow(
@@ -589,7 +589,6 @@ server <- function(input, output, session) {
   selected_instrument <- reactiveVal()
   
   #observeEventPlaceholder
-  observeEvent(input$btn_PlaceHolder, { selected_instrument("PlaceHolder") })
 
   table_data <- eventReactive(input$render, {
     req(input$date, selected_instrument())

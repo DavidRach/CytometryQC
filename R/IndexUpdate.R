@@ -1,6 +1,9 @@
 #' Triggered by AddInstrument, adds index.qmd chunks for that instrument.
 #' 
 #' @importFrom stringr str_replace_all
+#' @importFrom stringr str_starts
+#' @importFrom stringr str_replace
+#' @importFrom stringr fixed
 #' 
 IndexUpdate <- function(outpath, name, githubusername){
   InstrumentQC <- outpath
@@ -9,8 +12,6 @@ IndexUpdate <- function(outpath, name, githubusername){
   if (!length(Index) == 1){stop("No Index File Found")}
 
   Data <- readLines(Index)
-
-
 
   # Adding to TheList
   Pattern <- 'TheList <- c("Placeholder")'
@@ -215,11 +216,11 @@ IndexUpdate <- function(outpath, name, githubusername){
   Data <- append(Data, values = unlist(strsplit(Chunk10, "\n")), after = Matches[1])
 
 
-  Pattern <- '                    actionButton("btn_Placeholder", label = "Placeholder")'
+  Pattern <- '                    actionButton(\"btn_Placeholder\", label = \"Placeholder\")'
   Matches <- which(Data == Pattern)
   if (length(Matches) == 1){
   ChunkReplacement <- str_replace_all(
-    '                    actionButton("btn_Placeholder", label = "Placeholder")',
+    '                    actionButton(\"btn_Placeholder\", label = \"Placeholder\")',
     fixed("Placeholder"), name)
   Data[Matches] <- ChunkReplacement
   } else {
@@ -227,27 +228,29 @@ IndexUpdate <- function(outpath, name, githubusername){
   Matches <- which(Data == Pattern) 
   ChunkReplacement <- str_replace_all(
     '                    actionButton("btn_Placeholder", label = "Placeholder"),',
-    fixed("PlaceHolder"), name)
+    fixed("Placeholder"), name)
   Data <- append(Data, values = unlist(strsplit(ChunkReplacement, "\n")), after = Matches[1])
   }
 
-  Pattern <- '      "PlaceHolder", "InstrumentQC",'
+  Pattern <- "      \"PlaceHolder\", \"InstrumentQC\",                   "
   Matches <- which(Data == Pattern)
   if (length(Matches) == 1){
   ChunkReplacement <- str_replace_all(
-    '      "PlaceHolder", "InstrumentQC",',
+    '      \"PlaceHolder\", \"InstrumentQC\",                   ',
     fixed("PlaceHolder"), githubusername)
     Data[Matches] <- ChunkReplacement
   }
 
-  Pattern <- "#observeEventPlaceholder"
+  Pattern <- "  #observeEventPlaceholder" 
   Matches <- which(Data == Pattern)
   ChunkReplacement <- str_replace_all(
-    'observeEvent(input$btn_PlaceHolder, { selected_instrument("PlaceHolder") })',
+    '  observeEvent(input$btn_PlaceHolder, { selected_instrument(\"PlaceHolder\") })
+    ',
      fixed("PlaceHolder"), name)
-  Data[Matches] <- ChunkReplacement
+  Data <- append(Data, values = unlist(strsplit(ChunkReplacement, "\n")), after = Matches[1])
 
   Data <- gsub("^\\s?```\\s*\\{r\\}", "```{r}", Data)
+  Data <- gsub("^\\s?```\\s*\\{shinylive-r\\}", "```{shinylive-r}", Data)
   
   writeLines(Data, Index)
 }
