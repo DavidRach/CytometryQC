@@ -254,3 +254,16 @@ IndexUpdate <- function(outpath, name, githubusername){
   
   writeLines(Data, Index)
 }
+
+
+
+#' Updated the Data.qmd file
+#' 
+#' @param outpath Something
+#' @param name Something
+#' @param githubusername Something
+#' 
+DataUpdate <- function(outpath, name, githubusername){
+
+
+}

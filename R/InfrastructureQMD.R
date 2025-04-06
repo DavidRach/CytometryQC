@@ -68,12 +68,14 @@ Dashboard data last updated on **`r TheDate`**
 For additional information, navigate to the [Help](help.qmd) page.
 
 **About**
+
 '
 
 Section2 <- sprintf('
 This dashboard contains the visualized QC data for the cytometers at the [%s](%s)
 
 This dashboard was created with [Quarto](https://quarto.org/) and was created with [CytometryQC](https://github.com/DavidRach/CytometryQC)
+
 ', organization, github_page)
   
 Section3 <- '## First Row {height="50%"}
@@ -106,6 +108,7 @@ Section3 <- '## First Row {height="50%"}
 ::: {.card title="" width="33%"}
 
 :::
+  
 '
     
   cat(content, Section2, Section3, file = StorageLocation)

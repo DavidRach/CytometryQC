@@ -15,6 +15,11 @@ AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16, blue=14
 yellowgreen=10, red=8, organization="UMGCC FCSS", githubusername="UMGCCFCSS",
 organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"){
 
+  # Generalizing Out Pieces
+  TheFCSFolderPath <- file.path("D:", "Aurora 3_FCS Files", "Experiments", "Flow Core")
+  CytekBioExportFolderPath=file.path("C:", "CytekbioExport")
+
+  # General Track
   DocumentsPath <- OperatingSystemCheck()
   InstrumentQC <- list.files(DocumentsPath, pattern="^InstrumentQC2$",
    full.names=TRUE)
@@ -23,11 +28,6 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   if (!manufacturer %in% c("Cytek", "BD", "Other")){
     stop("Currently supported entries are `Cytek`, `BD`, and `Other`")
   }
-
-  # Generalizing Out Pieces
-
-  TheFCSFolderPath <- file.path("D:", "Aurora 3_FCS Files", "Experiments", "Flow Core")
-  CytekBioExportFolderPath=file.path("C:", "CytekbioExport")
 
   # Add Instrument Data Folder
   InstrumentQCPath <- file.path(DocumentsPath, "InstrumentQC2")
@@ -128,6 +128,8 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   IndexUpdate(outpath=InstrumentQCPath, name=name, githubusername=githubusername)
   
   # Update Data
+
+  
 }
 
 MFI_Display <- function(uv=uv, violet=violet,
