@@ -128,7 +128,9 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   IndexUpdate(outpath=InstrumentQCPath, name=name, githubusername=githubusername)
   
   # Update Data
+  DataUpdate(outpath=InstrumentQCPath, name=name)
 
+  # Staff Update
   
 }
 

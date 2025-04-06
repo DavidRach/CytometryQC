@@ -76,9 +76,12 @@ This dashboard contains the visualized QC data for the cytometers at the [%s](%s
 
 This dashboard was created with [Quarto](https://quarto.org/) and was created with [CytometryQC](https://github.com/DavidRach/CytometryQC)
 
+
 ', organization, github_page)
   
 Section3 <- '## First Row {height="50%"}
+
+
 ### Standin {width="50%"}
 
 ::: {.card title="" width="33%"}
@@ -93,6 +96,7 @@ Section3 <- '## First Row {height="50%"}
 #HTML_Standin1
 ```
 
+
 ## Second Row {height="50%"}
 
 ### Standin2 {width="50%"}
@@ -104,6 +108,7 @@ Section3 <- '## First Row {height="50%"}
 
 #HTML_Standin2
 ```
+
 
 ::: {.card title="" width="33%"}
 
