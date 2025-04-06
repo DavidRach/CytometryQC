@@ -4,7 +4,13 @@
 \alias{QMD_HistoricalInstrument}
 \title{Creates generic HistoricalInstument.qmd file}
 \usage{
-QMD_HistoricalInstrument(outpath, name, organization, organization_website)
+QMD_HistoricalInstrument(
+  outpath,
+  name,
+  manufacturer,
+  organization,
+  organization_website
+)
 }
 \arguments{
 \item{outpath}{The file.location to save the .qmd file to}
