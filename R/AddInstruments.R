@@ -125,12 +125,9 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
      CytekBioExportFolderPath=CytekBioExportFolderPath)
   
   # Update Index
-
+  IndexUpdate(outpath=InstrumentQCPath, name=name)
   
-
   # Update Data
-
-  
 }
 
 MFI_Display <- function(uv=uv, violet=violet,

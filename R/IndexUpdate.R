@@ -10,6 +10,8 @@ IndexUpdate <- function(outpath, name){
 
   Data <- readLines(Index)
 
+
+
   # Adding to TheList
   Pattern <- 'TheList <- c("Placeholder")'
   Matches <- which(Data == Pattern)
@@ -25,45 +27,39 @@ IndexUpdate <- function(outpath, name){
 
   Pattern <- '#MFIPlaceholder'
   Matches <- which(Data == Pattern)
-  Chunk1 <- str_replace_all('
-    MFI_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "MFI")
-    Gain_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Gain")
-    ', fixed("%s"), name)
+  Chunk1 <- str_replace_all('MFI_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "MFI")
+  Gain_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Gain")
+  ', fixed("%s"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk1, "\n")), after = Matches[1] - 1)
 
   Pattern <- '#CurrentWindowPlaceholder'
   Matches <- which(Data == Pattern)
-  Chunk2 <- str_replace_all('
-  MFI_%s <- MFI_%s |> filter(DateTime >= WindowOfInterest)
+  Chunk2 <- str_replace_all('MFI_%s <- MFI_%s |> filter(DateTime >= WindowOfInterest)
   Gain_%s <- Gain_%s |> filter(DateTime >= WindowOfInterest)
   ', fixed("%s"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk2, "\n")), after = Matches[1] - 1)
   
   Pattern <- '#MaintenancePlaceholder'
   Matches <- which(Data == Pattern)
-  Chunk3 <- str_replace_all('
-  Repair%s <- Data |> filter(instrument %in% "%s")
+  Chunk3 <- str_replace_all('Repair%s <- Data |> filter(instrument %in% "%s")
   ', fixed("%s"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk3, "\n")), after = Matches[1] - 1)
 
   Pattern <- '#VisualQCPlaceholder'
   Matches <- which(Data == Pattern)
-  Chunk4 <- str_replace_all('
-  The%s <- Luciernaga:::VisualQCSummary(x=Gain_%s)
+  Chunk4 <- str_replace_all('The%s <- Luciernaga:::VisualQCSummary(x=Gain_%s)
   ', fixed("%s"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk4, "\n")), after = Matches[1] - 1)
 
   Pattern <- '#SmallTablePlaceholder'
   Matches <- which(Data == Pattern)
-  Chunk5 <- str_replace_all('
-  Table%s <- Luciernaga:::SmallTable(data=The%s)
+  Chunk5 <- str_replace_all('Table%s <- Luciernaga:::SmallTable(data=The%s)
   ', fixed("%s"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk5, "\n")), after = Matches[1] - 1)
 
   Pattern <- '#HistPlaceholder1'
   Matches <- which(Data == Pattern)
-  Chunk6 <- str_replace_all('
-  Data%s <- Luciernaga:::ShinyQCSummary(x=Gain_%s, Instrument="%s")
+  Chunk6 <- str_replace_all('Data%s <- Luciernaga:::ShinyQCSummary(x=Gain_%s, Instrument="%s")
   ', fixed("%s"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk6, "\n")), after = Matches[1] - 1)
   
@@ -81,18 +77,59 @@ IndexUpdate <- function(outpath, name){
     Data[Matches] <- ThisString
   }
 
-  
-#x <-  c("3L", "4L", "5L", "CS")
-#y <- list(Gain_3L, Gain_4L, Gain_5L, Gain_CS)
-  
-Chunk7 <- str_replace_all('```{r}
-TheStatus%s <- CurrentStatus(x="%s", data=Data) %>% InstrumentText(.)
-TheColor%s <- CurrentStatus(x="%s", data=Data) %>% InstrumentColor(.)
-```', fixed("%s"), name)
-  
-Chunk8 <- sprintf('
+  # Replacing Global Summary Placeholder1
+  Pattern <- '# Global Summary Placeholder1'
+  Matches <- which(Data == Pattern)
+  if (length(Matches) == 1){
+    TheReplacement <- paste0("x <- c(\"", name, "\")")
+    Data[Matches] <- str_replace(Data[Matches],
+      fixed("# Global Summary Placeholder1"), TheReplacement)
+  } else {
+    Pattern <- 'x <- c('
+    Matches <- which(str_starts(Data, fixed(Pattern)))
+    ThisString <- Data[Matches]
+    ThisString <- sub("\\)$", paste0(", \"", name, "\")"), ThisString)
+    Data[Matches] <- ThisString
+  }
 
-', name)
+  # Replacing Global Summary Placeholder2
+  Pattern <- '# Global Summary Placeholder2'
+  Matches <- which(Data == Pattern)
+  if (length(Matches) == 1){
+    TheReplacement <- paste0("y <- list(\"", name, "\")")
+    Data[Matches] <- str_replace(Data[Matches],
+      fixed("# Global Summary Placeholder2"), TheReplacement)
+  } else {
+    Pattern <- 'y <- list('
+    Matches <- which(str_starts(Data, fixed(Pattern)))
+    ThisString <- Data[Matches]
+    ThisString <- sub("\\)$", paste0(", \"", name, "\")"), ThisString)
+    Data[Matches] <- ThisString
+  }
 
+  # Replacing Global Summary Placeholder3
+  Pattern <- '# Global Summary Placeholder3'
+  Matches <- which(Data == Pattern)
+  if (length(Matches) == 1){
+    TheReplacement <- paste0('Data <- Data |> relocate("', name, '", .after="Date")')
+    Data[Matches] <- str_replace(Data[Matches],
+      fixed("# Global Summary Placeholder3"), TheReplacement)
+  } else {
+    Pattern <- 'Data <- Data |> relocate('
+    Matches <- which(str_starts(Data, fixed(Pattern)))
+    ThisString <- Data[Matches]
+    ThisString <- sub("\\.after", paste0("\"", name, "\", .after"), ThisString)
+    Data[Matches] <- ThisString
+  }
 
+  Pattern <- '#ColorStatusPlaceholder'
+  Matches <- which(Data == Pattern)
+  Chunk7 <- str_replace_all('TheStatus%s <- CurrentStatus(x="%s", data=Data) %>% InstrumentText(.)
+  TheColor%s <- CurrentStatus(x="%s", data=Data) %>% InstrumentColor(.)
+  ', fixed("%s"), name)
+  Data <- append(Data, values = unlist(strsplit(Chunk7, "\n")), after = Matches[1] - 1)
+  
+  Data <- gsub("^\\s?```\\s*\\{r\\}", "```{r}", Data)
+  
+  writeLines(Data, Index)
 }

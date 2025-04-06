@@ -376,17 +376,22 @@ TheList <- c("Placeholder")
 walk(.x=TheList, MainFolder=MainFolder, .f=Luciernaga:::DailyQCParse)
 walk(.x=TheList, .f=Luciernaga:::QCBeadParse, MainFolder=MainFolder)
 ```
+
+
 ```{r}
+
 #MFIPlaceholder
 ```
+
+
 '
   
-Chunk2 <- '
-```{r}
+Chunk2 <- '```{r}
 WindowOfInterest <- Sys.time() - months(12)
 
 #CurrentWindowPlaceholder
 ```
+
 
 ```{r}
 Data <- read.csv("Maintenance.csv", check.names=FALSE)
@@ -394,20 +399,21 @@ Data <- read.csv("Maintenance.csv", check.names=FALSE)
 #MaintenancePlaceholder
 ```
 
+
 ```{r}
 
 #VisualQCPlaceholder
 ```
 
+
 ```{r}
 
 #SmallTablePlaceholder
 ```
+
 '
 
-Chunk3 <- '
-
-```{r}
+Chunk3 <- '```{r}
 #| include: false
 #| echo: false
 
@@ -427,9 +433,10 @@ write.csv(HistoricalData, HistoricalPath, row.names = FALSE)
 
 '
   
-Chunk4 <- '
-```{r}
+Chunk4 <- '```{r}
 # Global Summary Placeholder1
+
+# Global Summary Placeholder2
 
 DataForPlot <- Luciernaga:::QCHistory(x=x, y=y)
 Transposed <- t(DataForPlot)
@@ -440,23 +447,25 @@ DataForPlot1 <- DataForPlot1 %>% tibble::rownames_to_column(., var="Date")
 DataForPlot1$Date <- as.Date(DataForPlot1$Date) 
 Data <- DataForPlot1 |> arrange(desc(Date))
 
-# Global Summary Placeholder2
+# Global Summary Placeholder3
 
 GlobalSummary <- Luciernaga:::SmallTableGlobal(Data)
 ```
+
 
 ```{r}
 TheDate <- Data |> slice(1) |> pull(Date)
 ```
 
+
 ```{r}
 
 #ColorStatusPlaceholder
 ```
+
 '
   
-Chunk5 <- '  
-## {.sidebar}
+Chunk5 <- '## {.sidebar}
 Dashboard data last updated on **`r TheDate`**
 
 **Definitions:**
