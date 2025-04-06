@@ -156,7 +156,52 @@ IndexUpdate <- function(outpath, name){
     Chunk9 <- str_replace_all('list(value = paste0("QC Status: ", TheStatusPlaceholder), color = TheColorPlaceholder)',
      fixed("Placeholder"), name)
     Data[Matches] <- Chunk9
-  } else {message("Creating New Row")
+  } else {
+
+    ChunkReplacement <- '
+### Row {height="50%"}
+
+#### Column
+
+```{r}
+#| content: valuebox
+#| title: "PlaceHolder1"
+#| icon: cup-hot
+
+#PlaceHolder1
+
+```
+
+#### Column
+
+```{r}
+#| content: valuebox
+#| title: "PlaceHolder2"
+#| icon: cup-hot
+
+#PlaceHolder2
+
+```
+
+'
+  Pattern <- '## Second {.tabset}'
+  Matches <- which(Data == Pattern)  
+  Data <- append(Data, values = unlist(strsplit(ChunkReplacement, "\n")), after = Matches[1] - 1)
+  Pattern1 <- '#| title: \"PlaceHolder1\"'
+  Matches1 <- which(Data == Pattern1)
+
+  if (length(Matches1) == 1){
+    Pattern <- "#| title: \"PlaceHolder1\""
+    Matches <- which(Data == Pattern)
+    Chunk8 <- str_replace_all("#| title: \"PlaceHolder1\"", fixed("PlaceHolder1"), name)
+    Data[Matches] <- Chunk8
+
+    Pattern <- "#PlaceHolder1"
+    Matches <- which(Data == Pattern)
+    Chunk9 <- str_replace_all('list(value = paste0("QC Status: ", TheStatusPlaceholder), color = TheColorPlaceholder)',
+     fixed("Placeholder"), name)
+    Data[Matches] <- Chunk9
+    }
   }
 
   Pattern <- '## Second {.tabset}'
@@ -168,6 +213,8 @@ IndexUpdate <- function(outpath, name){
 
   ', fixed("Placeholder"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk10, "\n")), after = Matches[1])
+
+  
   
   Pattern <- '             column(12, align = "center", #testing'
   Chunk11 <- '                    actionButton("btn_Placeholder", label = "Placeholder")'
