@@ -12,7 +12,7 @@
 
 ## `CytometryQC`: You get a QC website, you get a QC website, everyone gets a QC website.
 
-Building off infrastructure used to build the [UMGCCFCSS InstrumentQC](https://umgccfcss.github.io/InstrumentQC/index.html) website, this R package generalizes and automates the process to allow other flow cytometry cores to quickly generate equivalent InstrumentQC webpages for their own respective instruments. 
+Building off infrastructure used to build the [UMGCCFCSS InstrumentQC](https://umgccfcss.github.io/InstrumentQC/index.html) website, this R package generalizes and automates the process to allow other flow cytometry cores to quickly generate equivalent InstrumentQC webpages for their own respective instruments. Let's get started. 
 
 ### Installation
 
