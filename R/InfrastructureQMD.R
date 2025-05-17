@@ -1,10 +1,12 @@
 #' Creates the 404.qmd file
 #'
 #' @param outpath The file.location to save the .qmd file to
+#' @param organization internal
+#' @param github_page internal
 #' 
 #' @return A 404.qmd file
 #' 
-#' @export
+#' @noRd
 QMD_404 <- function(outpath, organization="UMGCC FCSS",
  github_page="umgccfcss.github.io"){
   
@@ -28,10 +30,12 @@ cat(content, file = StorageLocation)
 #' Creates generic Data.qmd file
 #'
 #' @param outpath The file.location to save the .qmd file to
+#' @param organization internal
+#' @param github_page
 #' 
 #' @return A generic Data.qmd file
 #' 
-#' @export
+#' @noRd
 QMD_Data <- function(outpath, organization="UMGCC FCSS",
 github_page="umgccfcss.github.io"){
   StorageLocation <- file.path(outpath, "Data.qmd")
@@ -125,7 +129,7 @@ Section3 <- '## First Row {height="50%"}
 #' 
 #' @return A help.qmd file 
 #' 
-#' @export
+#' @noRd
 QMD_help <- function(outpath) {
   StorageLocation <- file.path(outpath, "help.qmd")
   
@@ -244,7 +248,7 @@ Plots is a .pdf containing static versions of all the interactive plots (MFI, Ga
 #' 
 #' @return A generic Historical.qmd file
 #' 
-#' @export
+#' @noRd
 QMD_Historical <- function(outpath){
   
   StorageLocation <- file.path(outpath, "Historical.qmd")
@@ -264,10 +268,14 @@ This is a placeholder
 #' Creates generic HistoricalInstument.qmd file
 #'
 #' @param outpath The file.location to save the .qmd file to
+#' @param name internal
+#' @param manufacturer internal
+#' @param organization internal
+#' @param organization_website internal
 #' 
 #' @return A generic HistoricalInstument.qmd file
 #' 
-#' @export
+#' @noRd
 QMD_HistoricalInstrument <- function(outpath, name, manufacturer,
    organization, organization_website){
   
@@ -351,10 +359,12 @@ cat(Section1, Section2, Section3, file = StorageLocation)
 #' Creates generic index.qmd file
 #'
 #' @param outpath The file.location to save the .qmd file to
+#' @param organization internal
+#' @param organization_website internal
 #' 
 #' @return A generic index.qmd file
 #' 
-#' @export
+#' @noRd
 QMD_index <- function(outpath, organization, organization_website){
   StorageLocation <- file.path(outpath, "index.qmd")
 
@@ -644,7 +654,7 @@ GlobalSummary
 #' 
 #' @return A generic instrument.qmd file
 #' 
-#' @export
+#' @noRd
 QMD_Instrument <- function(outpath){
   StorageLocation <- file.path(outpath, "Instrument.qmd")
 
@@ -667,7 +677,7 @@ This is a placeholder
 #' 
 #' @return A generic Miscellaneous.qmd file
 #' 
-#' @export
+#' @noRd
 QMD_Miscellaneous <- function(outpath){
   
   StorageLocation <- file.path(outpath, "Miscellaneous.qmd")
@@ -686,10 +696,12 @@ This is a placeholder
 #' Creates generic README.md file
 #'
 #' @param outpath The file.location to save the .qmd file to
+#' @param organization internal
+#' @param organization_website internal
 #' 
 #' @return A generic README.md file
 #' 
-#' @export
+#' @noRd
 QMD_README <- function(outpath, organization, organization_website){
   
   StorageLocation <- file.path(outpath, "README.md")
@@ -709,10 +721,13 @@ The results are then turned into a website using [Quarto](https://quarto.org/) u
 #' Creates initial quarto yaml
 #' 
 #' @param outpath The file.location to save the .yaml file to
+#' @param organization internal
+#' @param github_page internal
+#' @param institution internal
 #' 
 #' @return The .yaml file needed to generate the website
 #' 
-#' @export
+#' @noRd
 QMD_yaml <- function(outpath, organization="UMGCC FCSS",
 github_page="umgccfcss.github.io", institution="University of Maryland, Baltimore"){
   StorageLocation <- file.path(outpath, "_quarto.yml")

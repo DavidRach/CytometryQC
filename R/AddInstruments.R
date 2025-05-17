@@ -148,6 +148,17 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   
 }
 
+#' Internal
+#' 
+#' @param uv Number detectors
+#' @param violet Number detectors
+#' @param blue Number detectors
+#' @param yellowgreen Number detectors
+#' @param red Number detectors
+#' 
+#' @return An internal
+#' 
+#' @noRd
 MFI_Display <- function(uv=uv, violet=violet,
   blue=blue, yellowgreen=yellowgreen, red=red){
   
@@ -230,6 +241,17 @@ MFI_Display <- function(uv=uv, violet=violet,
   return(AllCombined)
 }
 
+#' Internal
+#' 
+#' @param uv Number detectors
+#' @param violet Number detectors
+#' @param blue Number detectors
+#' @param yellowgreen Number detectors
+#' @param red Number detectors
+#' 
+#' @return An internal
+#' 
+#' @noRd
 Gain_Display <- function(uv=uv, violet=violet,
   blue=blue, yellowgreen=yellowgreen, red=red){
   
@@ -312,6 +334,17 @@ Gain_Display <- function(uv=uv, violet=violet,
   return(AllCombined)
 }
 
+#' Internal
+#' 
+#' @param uv Number detectors
+#' @param violet Number detectors
+#' @param blue Number detectors
+#' @param yellowgreen Number detectors
+#' @param red Number detectors
+#' 
+#' @return An internal
+#' 
+#' @noRd
 RCV_Display <- function(uv=uv, violet=violet,
   blue=blue, yellowgreen=yellowgreen, red=red){
   
@@ -394,6 +427,17 @@ RCV_Display <- function(uv=uv, violet=violet,
   return(AllCombined)
 }
 
+#' Internal
+#' 
+#' @param name internal
+#' @param outpath internal
+#' @param manufacturer internal
+#' @param CytekBioExportFolderPath internal
+#' @param TheFCSFolderPath internal
+#' 
+#' @return An internal
+#' 
+#' @noRd
 AddInstrumentScript <- function(name, outpath, manufacturer="Cytek", 
   CytekBioExportFolderPath=NULL, TheFCSFolderPath=NULL){
 

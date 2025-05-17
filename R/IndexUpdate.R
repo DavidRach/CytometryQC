@@ -1,10 +1,15 @@
 #' Triggered by AddInstrument, adds index.qmd chunks for that instrument.
 #' 
+#' @param outpath To desired location
+#' @param name Desired name
+#' @param githubusername The githubusername associated with
+#' 
 #' @importFrom stringr str_replace_all
 #' @importFrom stringr str_starts
 #' @importFrom stringr str_replace
 #' @importFrom stringr fixed
 #' 
+#' @noRd
 IndexUpdate <- function(outpath, name, githubusername){
   InstrumentQC <- outpath
   Index <- list.files(InstrumentQC, pattern="index.qmd", full.names=TRUE)
