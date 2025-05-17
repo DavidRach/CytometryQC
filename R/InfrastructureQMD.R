@@ -83,7 +83,8 @@ This dashboard was created with [Quarto](https://quarto.org/) and was created wi
 
 ', organization, github_page)
   
-Section3 <- '## First Row {height="50%"}
+Section3 <- '
+## First Row {height="50%"}
 
 
 ### Standin {width="50%"}
@@ -321,7 +322,8 @@ This dashboard contains the visualized QC data for the cytometers at [%s](%s)
 This dashboard was created with [Quarto](https://quarto.org/) using [CytometryQC](https://github.com/DavidRach/CytometryQC)
 ', organization, organization_website)
   
-Section3 <- '## First Row {height="50%"}
+Section3 <- '
+## First Row {height="50%"}
 
 ### Standin1 {width="50%"}
 
@@ -443,8 +445,7 @@ Computer <- getwd()
 MainFolder <- file.path(Computer, "data")
 TheName <- "HistoricalData.csv"
 HistoricalPath <- file.path(MainFolder, TheName)
-
-write.csv(HistoricalData, HistoricalPath, row.names = FALSE)
+ShinyData <- read.csv(HistoricalPath, check.names = FALSE)
 
 #HistoricalDataPlaceholder
 ```
@@ -456,16 +457,22 @@ Chunk4 <- '```{r}
 
 # Global Summary Placeholder2
 
-DataForPlot <- Luciernaga:::QCHistory(x=x, y=y)
+DataForPlot <- Luciernaga:::QCHistoryArchive(x=x, historydata=ShinyData, timewindow=24)
 Transposed <- t(DataForPlot)
-colnames(Transposed) <- Transposed[1,]
-Transposed <- Transposed[-1,]
 DataForPlot1 <- data.frame(Transposed, check.names=FALSE)
+colnames(DataForPlot1) <- DataForPlot1[1,]
 DataForPlot1 <- DataForPlot1 %>% tibble::rownames_to_column(., var="Date")
+DataForPlot1 <- DataForPlot1[-1,]
 DataForPlot1$Date <- as.Date(DataForPlot1$Date) 
 Data <- DataForPlot1 |> arrange(desc(Date))
 
 # Global Summary Placeholder3
+
+LastColumn <- ncol(Data)
+
+Data[2:LastColumn] <- Data[2:LastColumn] |> mutate(across(everything(), ~ na_if(., "Unknown")))
+
+AltData <- Data #|> dplyr::filter(Date > lubridate::ymd("2023-04-10"))
 
 GlobalSummary <- Luciernaga:::SmallTableGlobal(Data)
 ```
@@ -483,7 +490,8 @@ TheDate <- Data |> slice(1) |> pull(Date)
 
 '
   
-Chunk5 <- '## {.sidebar}
+Chunk5 <- '
+## {.sidebar}
 Dashboard data last updated on **`r TheDate`**
 
 **Definitions:**
@@ -502,10 +510,10 @@ Chunk6 <- sprintf('**About**
 This dashboard contains the visualized QC data for the cytometers at [%s](%s)
 
 This dashboard was created with [Quarto](https://quarto.org/) using the [CytometryQC](https://github.com/DavidRach/CytometryQC) R package.
-
 ', organization, organization_website)
   
- Chunk7 <- '## First {width="30%"}
+ Chunk7 <- '
+## First {width="30%"}
 
 ### Row {height="50%"}
 
@@ -634,7 +642,8 @@ app <- shinyApp(ui = ui, server = server)
 
 '
   
-Chunk9 <- '## Third {.tabset}{width="40%"}
+Chunk9 <- '
+## Third {.tabset}{width="40%"}
 
 
 ```{r}
@@ -736,6 +745,8 @@ github_page="umgccfcss.github.io", institution="University of Maryland, Baltimor
   type: website
   output-dir: docs/
 website:
+  google-analytics: 
+    tracking-id: "G-BYJ5XE4WD4"
   announcement: 
     icon: info-circle
     dismissable: true

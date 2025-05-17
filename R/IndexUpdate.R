@@ -130,8 +130,8 @@ IndexUpdate <- function(outpath, name, githubusername){
 
   Pattern <- '#ColorStatusPlaceholder'
   Matches <- which(Data == Pattern)
-  Chunk7 <- str_replace_all('TheStatus%s <- CurrentStatus(x="%s", data=Data) %>% InstrumentText(.)
-  TheColor%s <- CurrentStatus(x="%s", data=Data) %>% InstrumentColor(.)
+  Chunk7 <- str_replace_all('TheStatus%s <- Luciernaga:::CurrentStatus(x="%s", data=Data) %>% Luciernaga:::InstrumentText(.)
+  TheColor%s <- Luciernaga:::CurrentStatus(x="%s", data=Data) %>% Luciernaga:::InstrumentColor(.)
   ', fixed("%s"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk7, "\n")), after = Matches[1] - 1)
 
@@ -215,7 +215,7 @@ IndexUpdate <- function(outpath, name, githubusername){
   Chunk10 <- str_replace_all('```{r}
   #| title: Placeholder
   TablePlaceholder
-  ```
+```
 
   ', fixed("Placeholder"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk10, "\n")), after = Matches[1])
@@ -327,7 +327,8 @@ DataUpdate <- function(outpath, name){
 
   } else {
 
-    Section3 <- '## Next Row {height="50%"}
+    Section3 <- '
+## Next Row {height="50%"}
 
 
 ### Standin {width="50%"}
