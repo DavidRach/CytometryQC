@@ -3,6 +3,11 @@
 #' @return The Path to the Documents Folder
 #' 
 #' @export
+#' 
+#' @examples
+#' 
+#' A <- 2 + 2
+#' 
 OperatingSystemCheck <- function(){
   OperatingSystem <- Sys.info()["sysname"]
   
@@ -35,6 +40,10 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
 #' folder
 #' 
 #' @export
+#' 
+#' @examples
+#' 
+#' A <- 2 + 2
 #' 
 FolderSetup <- function(){
 

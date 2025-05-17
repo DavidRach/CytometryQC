@@ -18,11 +18,34 @@ AddInstruments(
 )
 }
 \arguments{
-\item{outpath}{}
+\item{name}{Desired name for the instrument}
+
+\item{manufacturer}{Instrument Manufacturer}
+
+\item{uv}{Number of UV detectors}
+
+\item{violet}{Number of violet detectors}
+
+\item{blue}{Number of blue detectors}
+
+\item{yellowgreen}{Number of yellow-green detectors}
+
+\item{red}{Number of red detectors}
+
+\item{organization}{Name of the organization to include on the page}
+
+\item{githubusername}{GitHub user name, used for path setting.}
+
+\item{organization_website}{Link to organization website to include on the page}
 }
 \value{
 Updated webpage
 }
 \description{
 Adds Instruments to the base Webpage
+}
+\examples{
+
+A <- 2 + 2
+
 }

@@ -15,3 +15,8 @@ folder
 Checks for existing InstrumentQC folder, if none present
 creates a new one and populates with the correct folders
 }
+\examples{
+
+A <- 2 + 2
+
+}

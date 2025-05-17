@@ -12,3 +12,8 @@ The Path to the Documents Folder
 \description{
 Checks Operating System, sets appropiate file path
 }
+\examples{
+
+A <- 2 + 2
+
+}

@@ -1,6 +1,15 @@
 #' Adds Instruments to the base Webpage
 #' 
-#' @param outpath
+#' @param name Desired name for the instrument
+#' @param manufacturer Instrument Manufacturer
+#' @param uv Number of UV detectors
+#' @param violet Number of violet detectors
+#' @param blue Number of blue detectors
+#' @param yellowgreen Number of yellow-green detectors
+#' @param red Number of red detectors
+#' @param githubusername GitHub user name, used for path setting. 
+#' @param organization Name of the organization to include on the page
+#' @param organization_website Link to organization website to include on the page
 #' 
 #' @importFrom purrr map
 #' @importFrom stringr str_which
@@ -11,6 +20,11 @@
 #' @return Updated webpage
 #' 
 #' @export
+#' 
+#' @examples
+#' 
+#' A <- 2 + 2
+#' 
 AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16, blue=14,
 yellowgreen=10, red=8, organization="UMGCC FCSS", githubusername="UMGCCFCSS",
 organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"){

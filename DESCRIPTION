@@ -24,10 +24,12 @@ Imports:
     htmltools,
     plotly,
     purrr,
+    quarto,
     stringr,
     tibble,
     tidyr,
     tidyselect,
+    usethis,
     viridis,
     lubridate
 Depends: R (>= 4.4.1)
