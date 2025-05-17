@@ -27,11 +27,18 @@
 #' 
 AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16, blue=14,
 yellowgreen=10, red=8, organization="UMGCC FCSS", githubusername="UMGCCFCSS",
-organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"){
+organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
+TheFCSFolderPath="/home/david/Desktop/C:/CytekbioExport/Setup/DailyQC",
+CytekBioExportFolderPath="/home/david/Desktop/C:/CytekbioExport"){
 
   # Generalizing Out Pieces
-  TheFCSFolderPath <- file.path("D:", "Aurora 3_FCS Files", "Experiments", "Flow Core")
-  CytekBioExportFolderPath=file.path("C:", "CytekbioExport")
+  if (is.null(TheFCSFolderPath)){
+    TheFCSFolderPath <- file.path("D:", "Aurora 3_FCS Files", "Experiments", "Flow Core")
+  }
+
+  if (is.null(CytekBioExportFolderPath)){
+    CytekBioExportFolderPath=file.path("C:", "CytekbioExport")
+  }
 
   # General Track
   DocumentsPath <- OperatingSystemCheck()
@@ -145,6 +152,11 @@ organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
   DataUpdate(outpath=InstrumentQCPath, name=name)
 
   # Staff Update
+
+  # Create Initial Processing Script
+  InitialData(name=name, outpath=InstrumentQCPath, manufacturer=manufacturer,
+    TheFCSFolderPath=TheFCSFolderPath,
+    CytekBioExportFolderPath=CytekBioExportFolderPath)
   
 }
 
@@ -427,13 +439,70 @@ RCV_Display <- function(uv=uv, violet=violet,
   return(AllCombined)
 }
 
+#' Personalized Script that runs the first processing run of the data
+#' 
+#' @param name Desired name for the instrument
+#' @param outpath internal
+#' @param manufacturer Instrument Manufacturer
+#' @param TheFCSFolderPath internal
+#' @param CytekBioExportFolderPath internal
+#' 
+#' @return Archive.csv files appear in their folder
+#' 
+#' @noRd
+InitialData <- function(name, outpath, manufacturer, 
+  TheFCSFolderPath, CytekBioExportFolderPath){
+  
+  filename <- paste0("InitialData_", name, ".R")
+  StorageLocation <- file.path(outpath, filename)
+  
+  if (manufacturer=="Cytek"){
+    TheSetup <- file.path(CytekBioExportFolderPath, "Setup")
+  } else {TheSetup <- CytekBioExportFolderPath}
+
+  FirstChunk <- sprintf('library(purrr)
+  name <- "%s"
+  Computer <- getwd()
+  MainFolder <- file.path(Computer, "data", name)
+  WorkingFolder <- file.path(Computer, "data")
+  Archive <- file.path(MainFolder, "Archive")
+  TheProcessed <- list.files(Archive)
+
+  if(!any(stringr::str_detect(TheProcessed, "Application"))){
+    SetupFolder <- "%s"
+    TheSetupFiles <- list.files(SetupFolder, pattern="Application", full.names=TRUE)
+    AppMatches <- TheSetupFiles
+    file.copy(AppMatches, MainFolder)
+    walk(.x=name, .f=Luciernaga:::AppQCParse, MainFolder=WorkingFolder)
+  }
+
+  if(!any(stringr::str_detect(TheProcessed, "Archived"))){
+    SetupFolder <- "%s"
+    TheSetupFiles <- list.files(SetupFolder, pattern="DailyQCR", full.names=TRUE)
+    GainMatches <- TheSetupFiles
+    if (!length(GainMatches) == 0){
+      file.copy(GainMatches, MainFolder)
+      walk(.x=name, .f=Luciernaga:::DailyQCParse, MainFolder=WorkingFolder)
+    }
+  } 
+
+  if(!any(stringr::str_detect(TheProcessed, "Bead"))){
+    FCSFolder <-  "%s"
+    TheFCSFiles <- list.files(FCSFolder, pattern="fcs", full.names=TRUE)
+    file.copy(TheFCSFiles, MainFolder)
+    walk(.x=name, .f=Luciernaga:::QCBeadParse, MainFolder=WorkingFolder)
+  }', name, TheSetup, TheSetup, TheFCSFolderPath)
+
+  cat(FirstChunk, file = StorageLocation)
+}
+
 #' Internal
 #' 
-#' @param name internal
-#' @param outpath internal
-#' @param manufacturer internal
-#' @param CytekBioExportFolderPath internal
-#' @param TheFCSFolderPath internal
+#' @param name Name of the Instrument being added
+#' @param outpath Passed folder location
+#' @param manufacturer Options are Cytek/none
+#' @param CytekBioExportFolderPath Location to the CytekbioExport folder
+#' @param TheFCSFolderPath Location to the QC .fcs files to process
 #' 
 #' @return An internal
 #' 
@@ -637,7 +706,7 @@ Gain <- Gain |> filter(DateTime >= WindowOfInterest)
 ```
 
 ```{r}
-Data <- read.csv("AuroraMaintenance.csv", check.names=FALSE)
+Data <- read.csv("Maintenance.csv", check.names=FALSE)
 
 Data <- Data |> filter(!str_detect(reason, "lean"))
 

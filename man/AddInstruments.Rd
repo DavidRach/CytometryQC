@@ -14,7 +14,9 @@ AddInstruments(
   red = 8,
   organization = "UMGCC FCSS",
   githubusername = "UMGCCFCSS",
-  organization_website = "https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"
+  organization_website = "https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
+  TheFCSFolderPath = "/home/david/Desktop/C:/CytekbioExport/Setup/DailyQC",
+  CytekBioExportFolderPath = "/home/david/Desktop/C:/CytekbioExport"
 )
 }
 \arguments{
