@@ -2,6 +2,9 @@
 #'  checks for historical data and creates a year page for each, wraps up by updating
 #'  the main webpage links
 #' 
+#' @param githubusername lower case no spaces
+#' @param Archive Whether to use Bead or Holistic data. 
+#' 
 #' @importFrom purrr walk
 #' 
 #' @export
@@ -11,7 +14,7 @@
 #' @examples
 #' 
 #' A <- 2 + 2
-HistoricalPages <- function(githubusername="umgccfcss"){
+HistoricalPages <- function(githubusername="umgccfcss", Archive="Bead"){
   DocumentsPath <- OperatingSystemCheck()
   InstrumentQC <- list.files(DocumentsPath, pattern="^InstrumentQC2$",
    full.names=TRUE)
@@ -19,14 +22,17 @@ HistoricalPages <- function(githubusername="umgccfcss"){
 
   TheInstruments <- list.dirs(DataFolder, full.names=FALSE, recursive=FALSE)
 
-  # x <- TheInstruments[3]
-  walk(.x=TheInstruments, .f=InstrumentHistory, githubusername=githubusername)
+  # x <- TheInstruments[1]
+  walk(.x=TheInstruments, .f=InstrumentHistory, githubusername=githubusername,
+  Archive=Archive)
 }
 
 #' Internal use Historical Pages, takes iterated instrument and creates website
 #' 
+#' @importFrom dplyr %>%
+#' 
 #' @noRd
-InstrumentHistory <- function(x, githubusername){
+InstrumentHistory <- function(x, githubusername, Archive){
   DocumentsPath <- OperatingSystemCheck()
   InstrumentQC <- list.files(DocumentsPath, pattern="^InstrumentQC2$",
    full.names=TRUE)
@@ -89,7 +95,114 @@ InstrumentHistory <- function(x, githubusername){
   Old <- file.path(NewFolder, pattern)
   New <- file.path(NewFolder, "Year.qmd")
   file.rename(from = Old, to = New)
+  GeneralizingYear(InstrumentFolder=NewFolder, githubusername = githubusername)
 
+  # Iterate out the years
+
+  Dataset <- file.path(InstrumentQCPath, "data", x, "Archive")
+
+  if (Archive == "Bead"){
+    DataFile <- list.files(Dataset, pattern="Bead", full.names=TRUE)
+  } else if (Archive == "Holistic"){
+    DataFile <- list.files(Dataset, pattern="Holistic", full.names=TRUE)
+  }
+
+  Dataset <- read.csv(DataFile, check.names=FALSE)
+  Dataset$DATE <- lubridate::ymd(Dataset$DATE)
+  TheseYears <- Dataset |> dplyr::arrange(DATE) |>
+    dplyr::pull(DATE) |> lubridate::year() |> unique()
+
+  Instrument <- x
+  # x <- TheseYears[1]
+  walk(.x=TheseYears, .f=YearIterate, TheFile=New,
+     Instrument=Instrument)
+  
+  # Update the .yml again
+  TheYearQMDs <- list.files(NewFolder, pattern="Year")
+  TheYearQMDs <- TheYearQMDs[!str_detect(TheYearQMDs, "^Year.qmd$")]
+
+  Yaml <- list.files(NewFolder, pattern="_quarto.yml", full.names=TRUE)
+  if (!length(Yaml) == 1){stop("No YML File Found")}
+  Data <- readLines(Yaml)
+
+  # Returning index.qmd
+  Pattern <- "      - text: \"THIS\""
+  Pattern <- sub("THIS", Instrument, Pattern)
+  Matches <- which(str_detect(Data, Pattern))
+  Este <- tail(Matches, 1)+1
+  Value <- Data[Este]
+  Replacement <- paste0("href: ", "index", ".qmd")
+  Value <- sub("href:.*", Replacement, Value)
+  Data[Este] <- Value
+  
+  # Adding Years
+
+  String3<- '
+    - text: "Year"
+      menu:'
+  String3 <- unlist(strsplit(String3, "\n"))
+
+  Returned <- unlist(map(.x=TheseYears, .f=YearAppend))
+  Assembled <- c(String3, Returned) %>% .[. != ""]
+
+  endpattern <- '    right:'
+  Matches <- which(str_detect(Data, endpattern))
+  Matches <- head(Matches, 1)
+
+  Data1 <- c(Data[1:(Matches-1)], Assembled, Data[Matches:length(Data)])
+  
+  # Returning Yml
+  writeLines(Data1, Yaml)
+
+
+  
+
+}
+
+#' Small internal for yml assembly in historical instrument pages
+#' 
+#' @return yml text with year inserted. 
+#' 
+#' @noRd
+YearAppend <- function(x){
+  String4 <- '
+      - text: "Placeholder"
+        href: YearPlaceholder.qmd'
+
+  String4 <- gsub("Placeholder", x, String4)
+  String4 <- unlist(strsplit(String4, "\n"))
+  return(String4)
+}
+
+#' Internal, iterates out Year.qmd files for the Historical instrument repository
+#' 
+#' @param x The iterated year
+#' @param TheFile Location of the Year.qmd template file
+#' @param Instrument Name of the instrument
+#' 
+#' @importFrom stringr str_extract
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_remove_all
+#' 
+#' @return A new Year.qmd file for respective year
+#' 
+#' @noRd
+YearIterate <- function(x, TheFile, Instrument){
+  Data <- readLines(TheFile)
+  Data <- gsub("THISYEAR", x, Data)
+
+  Pattern <- 'Dashboard data for the '
+  Matches <- Data[which(str_detect(Data, Pattern))]
+  Here <- which(str_detect(Data, Pattern))
+  TheInstrumentName <- str_extract(Matches, "\\*\\*(.*?)\\*\\*") |> 
+    str_remove_all("\\*")
+
+  NewLine <- paste0("Dashboard contains historical data from **", x, '** for the **', TheInstrumentName, '**.')
+  Data[Here] <- NewLine
+
+  NewFileName <- paste0("Year", x, ".qmd")
+  NewFileLocation <- sub("Year.qmd", NewFileName, TheFile)
+  writeLines(Data, NewFileLocation)
 }
 
 HistoricalYAML <- function(InstrumentFolder, githubusername){

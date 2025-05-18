@@ -6,7 +6,12 @@
  checks for historical data and creates a year page for each, wraps up by updating
  the main webpage links}
 \usage{
-HistoricalPages(githubusername = "umgccfcss")
+HistoricalPages(githubusername = "umgccfcss", Archive = "Bead")
+}
+\arguments{
+\item{githubusername}{lower case no spaces}
+
+\item{Archive}{Whether to use Bead or Holistic data.}
 }
 \value{
 Assembled Historical Websites
