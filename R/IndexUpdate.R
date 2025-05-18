@@ -328,9 +328,6 @@ DataUpdate <- function(outpath, name){
   } else {
 
     Section3 <- '
-## Next Row {height="50%"}
-
-
 ### Standin {width="50%"}
 
 ::: {.card title="" width="33%"}
@@ -344,10 +341,9 @@ DataUpdate <- function(outpath, name){
 
 #HTML_Standin1
 ```
+'
 
-
-## Second Row {height="50%"}
-
+Section4 <- '
 ### Standin2 {width="50%"}
 
 ```{r}
@@ -364,8 +360,17 @@ DataUpdate <- function(outpath, name){
 :::
   
 '
+
+Pattern <- '## Second Row {height="50%"}'
+Matches <- which(Data == Pattern)-1
 Section3 <- strsplit(Section3, "\n")[[1]]
-Data <- append(Data, Section3)
+
+Pattern <- '::: {.card title="" width="33%"}'
+Matches2 <- which(Data == Pattern)
+ThisOne <- Matches2[length(Matches2)] +2   
+Section4 <- strsplit(Section4, "\n")[[1]]   
+    
+Data <- c(Data[1:Matches], Section3, Data[(Matches+1):ThisOne], Section4)
     
 Pattern <- '### Standin {width=\"50%\"}'
 Matches <- which(Data == Pattern)

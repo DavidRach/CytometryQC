@@ -83,9 +83,9 @@ CytekBioExportFolderPath="/home/david/Desktop/C:/CytekbioExport"){
     RCVAddition <- MFI_Display(uv=uv, violet=violet,
       blue=blue, yellowgreen=yellowgreen, red=red) 
     
-    Draft[MFISegment] <- paste0("## MFI\n", MFIAddition)
-    Draft[GainSegment] <- paste0("## Gain\n", GainAddition)
-    Draft[RCVSegment] <- paste0("## rCV\n", RCVAddition)
+    Draft[MFISegment] <- paste0("## MFI {.tabset}\n", MFIAddition)
+    Draft[GainSegment] <- paste0("## Gain {.tabset}\n", GainAddition)
+    Draft[RCVSegment] <- paste0("## rCV {.tabset}\n", RCVAddition)
       
     cat(Draft, file = Items, sep = "\n")
 
