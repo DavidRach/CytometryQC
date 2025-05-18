@@ -715,7 +715,7 @@ QMD_README <- function(outpath, organization, organization_website){
   
   StorageLocation <- file.path(outpath, "README.md")
 
-  content <- sprintf('This repository contains the code for the InstrumentQC dashboard for the [%s](%s)cytometers. 
+  content <- sprintf('This repository contains the code for the InstrumentQC dashboard for the [%s](%s) cytometers. 
 
 The dashboard track changes in MFI, Gain and %%RCV over time by processing .fcs files of QC beads acquired during QC in [R](https://www.r-project.org/) using the [Luciernaga](https://github.com/DavidRach/Luciernaga) package. 
 The results are then turned into a website using [Quarto](https://quarto.org/) using functions found in the [CytometryQC](https://github.com/DavidRach/CytometryQC) package. All code is available under the AGPL3-0 copyleft license. Additional how-to-replicate-this-dashboard details can be found [here](https://github.com/DavidRach/InstrumentQC_Install)
@@ -738,9 +738,11 @@ The results are then turned into a website using [Quarto](https://quarto.org/) u
 #' 
 #' @noRd
 QMD_yaml <- function(outpath, organization="UMGCC FCSS",
-github_page="umgccfcss.github.io", institution="University of Maryland, Baltimore"){
+githubusername="umgccfcss", institution="University of Maryland, Baltimore"){
   StorageLocation <- file.path(outpath, "_quarto.yml")
-  
+
+  GithubPage <- paste0("https://", githubusername, ".github.io/InstrumentQC2/")
+
   content <- sprintf('project:
   type: website
   output-dir: docs/
@@ -776,18 +778,18 @@ website:
     - text: "Other"
       menu:
       - text: "Miscellaneous"
-        href: Miscellaneous.qmd 
+        href: Miscellaneous.qmd
     - icon: github
       href: %s
       aria-label: GitHub          
   page-footer:
     background: light
     left: %s
-    right: Built with [Quarto](https://quarto.org/). How? [Find Out](https://davidrach.github.io/CytometryQC/){target=_blank}
+    right: This dashboard was created with [Quarto](https://quarto.org/) using [CytometryQC](https://github.com/DavidRach/CytometryQC)
 format:
   html:
     theme: styles.scss
-', organization, github_page, institution)
+', organization, GithubPage, institution)
   
 cat(content, file = StorageLocation)    
   

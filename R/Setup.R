@@ -45,7 +45,7 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
 #' 
 #' A <- 2 + 2
 #' 
-FolderSetup <- function(){
+FolderSetup <- function(SetUpGit=FALSE){
 
   DocumentsPath <- OperatingSystemCheck()
   InstrumentQC <- list.files(DocumentsPath, pattern="^InstrumentQC2$",
@@ -107,17 +107,20 @@ FolderSetup <- function(){
 
     # quarto.yaml
     QMD_yaml(outpath=InstrumentQCPath, organization="UMGCC FCSS", 
-    github_page="umgccfcss.github.io", institution="University of Maryland, Baltimore")
+    githubusername="umgccfcss", institution="University of Maryland, Baltimore")
 
     # README.md
     QMD_README(outpath=InstrumentQCPath, organization="UMGCC FCSS",
      organization_website="umgccfcss.github.io")
 
     create_project(InstrumentQCPath, open=FALSE)
-    #setwd(InstrumentQCPath)
-    #use_git(message="Initial project setup")
-    #use_github(private=FALSE)
-  }
+
+    if (SetUpGit == TRUE){
+        setwd(InstrumentQCPath)
+        use_git(message="Initial project setup")
+        use_github(private=FALSE)
+      }
+    }
   
   return(InstrumentQCPath)
 }

@@ -5,7 +5,7 @@
 \title{Checks for existing InstrumentQC folder, if none present
 creates a new one and populates with the correct folders}
 \usage{
-FolderSetup()
+FolderSetup(SetUpGit = FALSE)
 }
 \value{
 If folder not present, creates folder under user Documents
