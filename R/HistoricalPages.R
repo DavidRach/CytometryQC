@@ -159,7 +159,20 @@ InstrumentHistory <- function(x, githubusername, Archive){
 
   # Updating original index.qmd with hyperlinks
 
+  Yml <- list.files(InstrumentQCPath, pattern=".yml",
+    full.names=TRUE)
+  
+  Data <- readLines(Yml)
+  Pattern <- paste0("Historical_", Instrument, ".qmd")
+  Match <- which(str_detect(Data, Pattern))
+  Phrase <- Data[Match]
+  NewURL <- paste0("https://", githubusername, ".github.io/", Instrument, "/")
+  Chunk1 <- str_replace_all(Phrase, fixed(Pattern), NewURL)
+  Data[Match] <- Chunk1
+  writeLines(Data, Yml)
+
   # Remove Year Files
+  file.remove(New)
 
 }
 
