@@ -3,7 +3,6 @@
 export(AddInstruments)
 export(FolderSetup)
 export(HistoricalPages)
-export(OperatingSystemCheck)
 export(RenderWebsite)
 importFrom(Biobase,exprs)
 importFrom(dplyr,"%>%")

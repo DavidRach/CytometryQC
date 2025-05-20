@@ -1,17 +1,16 @@
 #' Creates the 404.qmd file
 #'
-#' @param outpath The file.location to save the .qmd file to
-#' @param organization internal
-#' @param github_page internal
+#' @param outpath File storage location, by default the Instrument QC folder
+#' @param organization_name Name of the organization, ex. UMGCC FCSS
+#' @param githubusername GitHub user name, ex. umgccfcss. 
 #' 
 #' @return A 404.qmd file
 #' 
 #' @noRd
-QMD_404 <- function(outpath, organization="UMGCC FCSS",
- github_page="umgccfcss.github.io"){
+QMD_404 <- function(outpath, organization_name, githubusername){
   
 StorageLocation <- file.path(outpath, "404.qmd")
-Homepage <- paste0("https://", github_page, "/InstrumentQC")
+Homepage <- paste0("https://", githubusername, "/InstrumentQC")
   
 content <- sprintf(
 '---
@@ -21,23 +20,24 @@ format: html
 
 Sorry, the page you are looking for is no longer there.
 
-To access the %s  Instrument QC dashboard, please click here to go to the [homepage](%s)
-', organization, Homepage)
+To access the %s  InstrumentQC dashboard, please click here to go to the [homepage](%s)
+', organization_name, Homepage)
 
 cat(content, file = StorageLocation)  
 }
 
 #' Creates generic Data.qmd file
 #'
-#' @param outpath The file.location to save the .qmd file to
-#' @param organization internal
-#' @param github_page
+#' @param outpath The location to save the file to, default is InstrumentQC folder
+#' @param organization_name Name of the organization, ex. UMGCC FCSS
+#' @param organization_website The organizations website
 #' 
-#' @return A generic Data.qmd file
+#' @return A Data.qmd placeholder
 #' 
 #' @noRd
-QMD_Data <- function(outpath, organization="UMGCC FCSS",
-github_page="umgccfcss.github.io"){
+QMD_Data <- function(outpath, organization_name,
+organization_website){
+
   StorageLocation <- file.path(outpath, "Data.qmd")
 
   content <- '---
@@ -81,7 +81,7 @@ This dashboard contains the visualized QC data for the cytometers at the [%s](%s
 This dashboard was created with [Quarto](https://quarto.org/) and was created with [CytometryQC](https://github.com/DavidRach/CytometryQC)
 
 
-', organization, github_page)
+', organization_name, organization_website)
   
 Section3 <- '
 ## First Row {height="50%"}
@@ -126,7 +126,7 @@ Section3 <- '
 
 #' Creates the help.qmd file
 #' 
-#' @param outpath The file.location to save the .qmd file to
+#' @param outpath Location where file is being saved to, default is InstrumentQC folder. 
 #' 
 #' @return A help.qmd file 
 #' 
@@ -245,9 +245,9 @@ Plots is a .pdf containing static versions of all the interactive plots (MFI, Ga
 
 #' Creates generic Historical.qmd file
 #'
-#' @param outpath The file.location to save the .qmd file to
+#' @param outpath The location to save the file, default is InstrumentQC folder
 #' 
-#' @return A generic Historical.qmd file
+#' @return A Historical.qmd file placeholder
 #' 
 #' @noRd
 QMD_Historical <- function(outpath){
@@ -360,14 +360,14 @@ cat(Section1, Section2, Section3, file = StorageLocation)
 
 #' Creates generic index.qmd file
 #'
-#' @param outpath The file.location to save the .qmd file to
-#' @param organization internal
-#' @param organization_website internal
+#' @param outpath Location to save the file, default is InstrumentQC folder 
+#' @param organization_name Name of the organization, ex. UMGCC FCSS
+#' @param organization_website The organizations website
 #' 
-#' @return A generic index.qmd file
+#' @return A index.qmd placeholder
 #' 
 #' @noRd
-QMD_index <- function(outpath, organization, organization_website){
+QMD_index <- function(outpath, organization_name, organization_website){
   StorageLocation <- file.path(outpath, "index.qmd")
 
 Chunk1 <- '---
@@ -406,7 +406,8 @@ walk(.x=TheList, .f=Luciernaga:::QCBeadParse, MainFolder=MainFolder)
 
 '
   
-Chunk2 <- '```{r}
+Chunk2 <- '
+```{r}
 WindowOfInterest <- Sys.time() - months(12)
 
 #CurrentWindowPlaceholder
@@ -433,7 +434,8 @@ Data <- read.csv("Maintenance.csv", check.names=FALSE)
 
 '
 
-Chunk3 <- '```{r}
+Chunk3 <- '
+```{r}
 #| include: false
 #| echo: false
 
@@ -452,7 +454,8 @@ ShinyData <- read.csv(HistoricalPath, check.names = FALSE)
 
 '
   
-Chunk4 <- '```{r}
+Chunk4 <- '
+```{r}
 # Global Summary Placeholder1
 
 # Global Summary Placeholder2
@@ -510,7 +513,7 @@ Chunk6 <- sprintf('**About**
 This dashboard contains the visualized QC data for the cytometers at [%s](%s)
 
 This dashboard was created with [Quarto](https://quarto.org/) using the [CytometryQC](https://github.com/DavidRach/CytometryQC) R package.
-', organization, organization_website)
+', organization_name, organization_website)
   
  Chunk7 <- '
 ## First {width="30%"}
@@ -551,7 +554,8 @@ library(shinylive)
 
 '
   
-  Chunk8 <- '```{shinylive-r}
+  Chunk8 <- '
+```{shinylive-r}
 #| standalone: true
 #| viewerHeight: 450
 
@@ -659,9 +663,9 @@ GlobalSummary
 
 #' Creates generic Instrument.qmd file
 #'
-#' @param outpath The file.location to save the .qmd file to
+#' @param outpath Location to save file to, default is InstrumentQC folder
 #' 
-#' @return A generic instrument.qmd file
+#' @return A instrument.qmd file placeholder
 #' 
 #' @noRd
 QMD_Instrument <- function(outpath){
@@ -682,9 +686,9 @@ This is a placeholder
 
 #' Creates generic Miscellaneous.qmd file
 #'
-#' @param outpath The file.location to save the .qmd file to
+#' @param outpath Location to save the file, default is the InstrumentQC folder
 #' 
-#' @return A generic Miscellaneous.qmd file
+#' @return A Miscellaneous.qmd file placeholder
 #' 
 #' @noRd
 QMD_Miscellaneous <- function(outpath){
@@ -705,13 +709,13 @@ This is a placeholder
 #' Creates generic README.md file
 #'
 #' @param outpath The file.location to save the .qmd file to
-#' @param organization internal
+#' @param organization_name internal
 #' @param organization_website internal
 #' 
 #' @return A generic README.md file
 #' 
 #' @noRd
-QMD_README <- function(outpath, organization, organization_website){
+QMD_README <- function(outpath, organization_name, organization_website){
   
   StorageLocation <- file.path(outpath, "README.md")
 
@@ -719,7 +723,7 @@ QMD_README <- function(outpath, organization, organization_website){
 
 The dashboard track changes in MFI, Gain and %%RCV over time by processing .fcs files of QC beads acquired during QC in [R](https://www.r-project.org/) using the [Luciernaga](https://github.com/DavidRach/Luciernaga) package. 
 The results are then turned into a website using [Quarto](https://quarto.org/) using functions found in the [CytometryQC](https://github.com/DavidRach/CytometryQC) package. All code is available under the AGPL3-0 copyleft license. Additional how-to-replicate-this-dashboard details can be found [here](https://github.com/DavidRach/InstrumentQC_Install)
-', organization, organization_website)
+', organization_name, organization_website)
   
   cat(content, file = StorageLocation)
 }
@@ -729,16 +733,16 @@ The results are then turned into a website using [Quarto](https://quarto.org/) u
 
 #' Creates initial quarto yaml
 #' 
-#' @param outpath The file.location to save the .yaml file to
-#' @param organization internal
-#' @param github_page internal
-#' @param institution internal
+#' @param outpath The location to save the file to, default is InstrumentQC folder
+#' @param organization_name The name of the organization, ex. UMGCC FCSS
+#' @param githubusername The githubusername, ex. umgccfcss
+#' @param institution_name The name of the institution, ex. University of Maryland, Baltimore
 #' 
 #' @return The .yaml file needed to generate the website
 #' 
 #' @noRd
-QMD_yaml <- function(outpath, organization="UMGCC FCSS",
-githubusername="umgccfcss", institution="University of Maryland, Baltimore"){
+QMD_yaml <- function(outpath, organization_name,
+githubusername, institution_name="University of Maryland, Baltimore"){
   StorageLocation <- file.path(outpath, "_quarto.yml")
 
   GithubPage <- paste0("https://", githubusername, ".github.io/InstrumentQC2/")
@@ -789,7 +793,7 @@ website:
 format:
   html:
     theme: styles.scss
-', organization, GithubPage, institution)
+', organization_name, GithubPage, institution_name)
   
 cat(content, file = StorageLocation)    
   

@@ -2,21 +2,40 @@
 % Please edit documentation in R/Setup.R
 \name{FolderSetup}
 \alias{FolderSetup}
-\title{Checks for existing InstrumentQC folder, if none present
-creates a new one and populates with the correct folders}
+\title{Checks for an existing InstrumentQC folder, if not present creates the folder
+and populates it with the required website components}
 \usage{
-FolderSetup(SetUpGit = FALSE)
+FolderSetup(
+  SetUpGit = FALSE,
+  organization_name = "UMGCC FCSS",
+  organization_website = "https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
+  githubusername = "umgccfcss",
+  institution_name = "University of Maryland, Baltimore"
+)
+}
+\arguments{
+\item{SetUpGit}{Default is FALSE, when git token credentials are present, 
+it will generate a git repository for the folder and push to GitHub.}
+
+\item{organization_name}{The organization name, ex. UMGCC FCSS}
+
+\item{organization_website}{The organizations website, ex. https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/}
+
+\item{githubusername}{The GitHub user name, ex. umgccfcss}
+
+\item{institution_name}{The institution name, ex. University of Maryland, Baltimore}
 }
 \value{
-If folder not present, creates folder under user Documents
-folder
+A generalized InstrumentQC folder to which additional elements can be added
 }
 \description{
-Checks for existing InstrumentQC folder, if none present
-creates a new one and populates with the correct folders
+Checks for an existing InstrumentQC folder, if not present creates the folder
+and populates it with the required website components
 }
 \examples{
 
-A <- 2 + 2
+\dontrun{
+FolderSetup()
+}
 
 }

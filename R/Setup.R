@@ -1,13 +1,8 @@
-#' Checks Operating System, sets appropiate file path
+#' Checks Operating System, sets appropiate file path to Documents folder
 #' 
-#' @return The Path to the Documents Folder
+#' @return File path to Documents folder
 #' 
-#' @export
-#' 
-#' @examples
-#' 
-#' A <- 2 + 2
-#' 
+#' @noRd 
 OperatingSystemCheck <- function(){
   OperatingSystem <- Sys.info()["sysname"]
   
@@ -27,8 +22,15 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
 }
 
 
-#' Checks for existing InstrumentQC folder, if none present
-#' creates a new one and populates with the correct folders
+#' Checks for an existing InstrumentQC folder, if not present creates the folder
+#' and populates it with the required website components
+#' 
+#' @param organization_name The organization name, ex. UMGCC FCSS
+#' @param organization_website The organizations website, ex. https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/
+#' @param githubusername The GitHub user name, ex. umgccfcss
+#' @param institution_name The institution name, ex. University of Maryland, Baltimore
+#' @param SetUpGit Default is FALSE, when git token credentials are present, 
+#' it will generate a git repository for the folder and push to GitHub. 
 #' 
 #' @importFrom utils write.csv
 #' @importFrom usethis create_project
@@ -36,16 +38,21 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
 #' @importFrom usethis use_git
 #' @importFrom usethis use_github
 #' 
-#' @return If folder not present, creates folder under user Documents
-#' folder
+#' @return A generalized InstrumentQC folder to which additional elements can be added
 #' 
 #' @export
 #' 
 #' @examples
 #' 
-#' A <- 2 + 2
+#' \dontrun{
+#' FolderSetup()
+#' }
 #' 
-FolderSetup <- function(SetUpGit=FALSE){
+FolderSetup <- function(SetUpGit=FALSE, organization_name="UMGCC FCSS",
+  organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
+  githubusername="umgccfcss", institution_name="University of Maryland, Baltimore"){
+  
+  TheURL <- paste0("https://", githubusername, ".github.io/InstrumentQC2/")
 
   DocumentsPath <- OperatingSystemCheck()
   InstrumentQC <- list.files(DocumentsPath, pattern="^InstrumentQC2$",
@@ -83,8 +90,8 @@ FolderSetup <- function(SetUpGit=FALSE){
     Report <- file.copy(from=Images, to=ImageMoveLocation, recursive=FALSE)
 
     # 404.qmd
-    QMD_404(outpath=InstrumentQCPath, organization="UMGCC FCSS", 
-    github_page="umgccfcss.github.io")
+    QMD_404(outpath=InstrumentQCPath, organization_name=organization_name, 
+    githubusername=githubusername)
 
     # help.qmd
     QMD_help(outpath = InstrumentQCPath)
@@ -99,19 +106,20 @@ FolderSetup <- function(SetUpGit=FALSE){
     QMD_Historical(outpath = InstrumentQCPath)
 
     # Historical.qmd
-    QMD_index(outpath = InstrumentQCPath, organization="UMGCC FCSS",
-     organization_website="umgccfcss.github.io")
+    QMD_index(outpath = InstrumentQCPath, organization_name=organization_name,
+     organization_website=organization_website)
 
     # Historical.qmd
-    QMD_Data(outpath = InstrumentQCPath)
+    QMD_Data(outpath = InstrumentQCPath, organization_name=organization_name,
+      organization_website=organization_website)
 
     # quarto.yaml
-    QMD_yaml(outpath=InstrumentQCPath, organization="UMGCC FCSS", 
-    githubusername="umgccfcss", institution="University of Maryland, Baltimore")
+    QMD_yaml(outpath=InstrumentQCPath, organization_name=organization_name, 
+    githubusername=githubusername, institution_name=institution_name)
 
     # README.md
-    QMD_README(outpath=InstrumentQCPath, organization="UMGCC FCSS",
-     organization_website="umgccfcss.github.io")
+    QMD_README(outpath=InstrumentQCPath, organization_name=organization_name,
+     organization_website=organization_website)
 
     create_project(InstrumentQCPath, open=FALSE)
 
