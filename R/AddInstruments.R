@@ -7,9 +7,17 @@
 #' @param blue Number of blue detectors
 #' @param yellowgreen Number of yellow-green detectors
 #' @param red Number of red detectors
-#' @param githubusername GitHub user name, used for path setting. 
-#' @param organization Name of the organization to include on the page
-#' @param organization_website Link to organization website to include on the page
+#' @param organization_name Name of the organization, default NULL defaults to 
+#' value provided during FolderSetup
+#' @param organization_website Link to organization website, default NULL defaults
+#' to value provided during FolderSetup
+#' @param githubusername GitHub user name, default NULL defaults to value provided 
+#' during FolderSetup
+#' @param TheFCSFolderPath Default NULL sets path to Cytek file.path 
+#' 'C:/CytekbioExport/Setup/DailyQC', for alternate file locations or manufacturers, please
+#' provide a file.path to the fcs folder location
+#' @param CytekbioExportFolderPath Default NULL sets path to Cytek file.path 'C:/CytekbioExport',
+#'  for alternate locations of the CytekbioExport folder, please provide a file path.  
 #' 
 #' @importFrom purrr map
 #' @importFrom stringr str_which
@@ -23,36 +31,65 @@
 #' 
 #' @examples
 #' 
-#' A <- 2 + 2
+#' AddInstruments(name="5L", manufacturer="Cytek", uv=16, violet=16, blue=14,
+#' yellowgreen=10, red=8, TheFCSFolderPath="C:/CytekbioExport/Setup/DailyQC")
 #' 
 AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16, blue=14,
-yellowgreen=10, red=8, organization="UMGCC FCSS", githubusername="UMGCCFCSS",
-organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
-TheFCSFolderPath="/home/david/Desktop/C:/CytekbioExport/Setup/DailyQC",
-CytekBioExportFolderPath="/home/david/Desktop/C:/CytekbioExport"){
+yellowgreen=10, red=8, organization_name=NULL, organization_website=NULL, githubusername=NULL,
+TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL){
 
-  # Generalizing Out Pieces
-  if (is.null(TheFCSFolderPath)){
-    TheFCSFolderPath <- file.path("D:", "Aurora 3_FCS Files", "Experiments", "Flow Core")
-  }
-
-  if (is.null(CytekBioExportFolderPath)){
-    CytekBioExportFolderPath=file.path("C:", "CytekbioExport")
-  }
-
-  # General Track
+# Start Checks
   DocumentsPath <- OperatingSystemCheck()
   InstrumentQC <- list.files(DocumentsPath, pattern="^InstrumentQC2$",
-   full.names=TRUE)
+    full.names=TRUE)
+
   if (length(InstrumentQC) == 0){stop("Run FolderSetup step first!")}
-
-  if (!manufacturer %in% c("Cytek", "BD", "Other")){
-    stop("Currently supported entries are `Cytek`, `BD`, and `Other`")
-  }
-
-  # Add Instrument Data Folder
+    
   InstrumentQCPath <- file.path(DocumentsPath, "InstrumentQC2")
   DataPath <- file.path(DocumentsPath, "InstrumentQC2", "data")
+
+# Extracting previous inputs for Organization and URLs
+  Yml <- list.files(InstrumentQCPath, pattern="yml", full.names=TRUE)
+  Data <- readLines(Yml)
+  pattern <- "  title:"
+  Index <- which(str_detect(Data, pattern))
+  Match <- Data[Index]
+
+  if (is.null(organization_name)){
+    organization_name <- gsub('.*\\"(.*?)\\".*', '\\1', Match)
+  }
+
+  pattern <- '      href: https:'
+  Index <- which(str_detect(Data, pattern))
+  Match <- Data[Index]
+
+  if (is.null(githubusername)){
+  githubusername <- str_extract(Match, "(?<=https://)[^/.]+(?=\\.github)")
+  }
+
+  
+  README <- list.files(InstrumentQCPath, pattern="READ", full.names=TRUE)
+  Data <- readLines(README)
+  pattern <- "This"
+  Index <- which(str_detect(Data, pattern))
+  Match <- Data[Index]
+
+  if (is.null(organization_website)){
+  organization_website <- str_extract(Match, "(?<=\\()[^)]+(?=\\))")
+  }
+
+  # Manufacturer Forks
+
+  if (!manufacturer %in% c("Cytek", "BD")){
+    message("
+    CytometryQC currently supported entries are `Cytek` and `BD`. 
+    Refer to the vignettes for adding instruments from other manufacturers (https://davidrach.github.io/CytometryQC).
+    If you want to help add support, please open a Discussion (https://github.com/DavidRach/CytometryQC/discussions)
+    ")
+  }
+
+  # Creating Instrument Specific Folder
+  
   Hits <- list.files(DataPath, pattern=name, full.names=TRUE)
 
   if (length(Hits) == 0){
@@ -63,11 +100,12 @@ CytekBioExportFolderPath="/home/david/Desktop/C:/CytekbioExport"){
   }
 
   # Add Instrument QMD file
-  AddInstrumentQMD(name=name, outpath=InstrumentQCPath, organization=organization,
-    organization_website=organization_website)
+  AddInstrumentQMD(name=name, manufacturer=manufacturer, outpath=InstrumentQCPath,
+    organization_name=organization_name, organization_website=organization_website)
   
   Items <- list.files(InstrumentQCPath, pattern=paste0(name, ".qmd"),
    full.names=TRUE)
+  
   
   if (length(Items) == 1){
     Draft <- readLines(Items)
@@ -89,7 +127,7 @@ CytekBioExportFolderPath="/home/david/Desktop/C:/CytekbioExport"){
       
     cat(Draft, file = Items, sep = "\n")
 
-  } else {stop("This shouldn't have happened")}
+  } else {stop("This shouldn't have happened, check the InstrumentQC folder for a repeated Instrument.qmd file")}
   
   # Update .yaml
   Items <- list.files(InstrumentQCPath, pattern=paste0(name, ".qmd"),
@@ -126,7 +164,7 @@ CytekBioExportFolderPath="/home/david/Desktop/C:/CytekbioExport"){
     NewInsertTwo <- str_replace(InsertFour, fixed("Historical"), HistoricalName)
 
     QMD_HistoricalInstrument(outpath=InstrumentQCPath, manufacturer=manufacturer, name=name,
-       organization=organization, organization_website=organization_website)
+       organization_name=organization_name, organization_website=organization_website)
 
     if (length(TheLocation) > 0) {
       Draft <- append(Draft, c(NewInsertOne, NewInsertTwo),
@@ -139,11 +177,18 @@ CytekBioExportFolderPath="/home/david/Desktop/C:/CytekbioExport"){
     writeLines(Draft, Yaml)
   }
   
-  # Add Instrument Script()
-  AddInstrumentScript(name=name, outpath=InstrumentQCPath,
-     manufacturer=manufacturer, 
-     TheFCSFolderPath=TheFCSFolderPath,
-     CytekBioExportFolderPath=CytekBioExportFolderPath)
+  # Add Instrument Script
+
+  if (is.null(TheFCSFolderPath)){
+    TheFCSFolderPath <- "/home/david/Desktop/C:/CytekbioExport/Setup/DailyQC"
+  }
+
+  if (is.null(CytekbioExportFolderPath)){
+    CytekbioExportFolderPath <- "/home/david/Desktop/C:/CytekbioExport"
+  }
+
+  AddInstrumentScript(name=name, outpath=InstrumentQCPath, manufacturer=manufacturer, 
+     TheFCSFolderPath=TheFCSFolderPath, CytekbioExportFolderPath=CytekbioExportFolderPath)
   
   # Update Index
   IndexUpdate(outpath=InstrumentQCPath, name=name, githubusername=githubusername)
@@ -151,24 +196,26 @@ CytekBioExportFolderPath="/home/david/Desktop/C:/CytekbioExport"){
   # Update Data
   DataUpdate(outpath=InstrumentQCPath, name=name)
 
-  # Staff Update
-
   # Create Initial Processing Script
   InitialData(name=name, outpath=InstrumentQCPath, manufacturer=manufacturer,
     TheFCSFolderPath=TheFCSFolderPath,
-    CytekBioExportFolderPath=CytekBioExportFolderPath)
+    CytekbioExportFolderPath=CytekbioExportFolderPath)
+  
+  # Staff Update
   
 }
 
-#' Internal
-#' 
-#' @param uv Number detectors
+#' Internal adds the necessary number of plotly MFI arguments the plots
+#'  
+#' @param uv Number of blue detectors
 #' @param violet Number detectors
 #' @param blue Number detectors
 #' @param yellowgreen Number detectors
 #' @param red Number detectors
 #' 
-#' @return An internal
+#' @importFrom purrr map
+#' 
+#' @return Updated code chunk to add to the Instrument.qmd file
 #' 
 #' @noRd
 MFI_Display <- function(uv=uv, violet=violet,
@@ -253,15 +300,17 @@ MFI_Display <- function(uv=uv, violet=violet,
   return(AllCombined)
 }
 
-#' Internal
+#' Internal, adds the necessary number of plotly Gain arguments the plots
 #' 
-#' @param uv Number detectors
-#' @param violet Number detectors
-#' @param blue Number detectors
-#' @param yellowgreen Number detectors
-#' @param red Number detectors
+#' @param uv Number of UV detectors
+#' @param violet Number of Violet detectors
+#' @param blue Number of Blue detectors
+#' @param yellowgreen Number of YellowGreen detectors
+#' @param red Number of Red detectors
 #' 
-#' @return An internal
+#' @importFrom purrr map
+#' 
+#' @return Updated code chunk to add to the Instrument.qmd file
 #' 
 #' @noRd
 Gain_Display <- function(uv=uv, violet=violet,
@@ -346,15 +395,17 @@ Gain_Display <- function(uv=uv, violet=violet,
   return(AllCombined)
 }
 
-#' Internal
+#' Internal, adds the necessary number of plotly RCV arguments the plots
 #' 
-#' @param uv Number detectors
-#' @param violet Number detectors
-#' @param blue Number detectors
-#' @param yellowgreen Number detectors
-#' @param red Number detectors
+#' @param uv Number of UV detectors
+#' @param violet Number of Violet detectors
+#' @param blue Number of Blue detectors
+#' @param yellowgreen Number of YellowGreen detectors
+#' @param red Number of Red detectors
 #' 
-#' @return An internal
+#' @importFrom purrr map
+#' 
+#' @return Updated code chunk to add to the Instrument.qmd file
 #' 
 #' @noRd
 RCV_Display <- function(uv=uv, violet=violet,
@@ -445,20 +496,20 @@ RCV_Display <- function(uv=uv, violet=violet,
 #' @param outpath internal
 #' @param manufacturer Instrument Manufacturer
 #' @param TheFCSFolderPath internal
-#' @param CytekBioExportFolderPath internal
+#' @param CytekbioExportFolderPath internal
 #' 
 #' @return Archive.csv files appear in their folder
 #' 
 #' @noRd
 InitialData <- function(name, outpath, manufacturer, 
-  TheFCSFolderPath, CytekBioExportFolderPath){
+  TheFCSFolderPath, CytekbioExportFolderPath){
   
   filename <- paste0("InitialData_", name, ".R")
   StorageLocation <- file.path(outpath, filename)
   
   if (manufacturer=="Cytek"){
-    TheSetup <- file.path(CytekBioExportFolderPath, "Setup")
-  } else {TheSetup <- CytekBioExportFolderPath}
+    TheSetup <- file.path(CytekbioExportFolderPath, "Setup")
+  } else {TheSetup <- CytekbioExportFolderPath}
 
   FirstChunk <- sprintf('library(purrr)
   name <- "%s"
@@ -496,25 +547,25 @@ InitialData <- function(name, outpath, manufacturer,
   cat(FirstChunk, file = StorageLocation)
 }
 
-#' Internal
+#' Internal, adds an Instrument.R script for regular data processing
 #' 
-#' @param name Name of the Instrument being added
-#' @param outpath Passed folder location
-#' @param manufacturer Options are Cytek/none
-#' @param CytekBioExportFolderPath Location to the CytekbioExport folder
-#' @param TheFCSFolderPath Location to the QC .fcs files to process
+#' @param name See \code{\link{AddInstruments}}
+#' @param outpath Location to save file, default is InstrumentQC folder
+#' @param manufacturer See \code{\link{AddInstruments}}
+#' @param TheFCSFolderPath See \code{\link{AddInstruments}}
+#' @param CytekbioExportFolderPath See \code{\link{AddInstruments}}
 #' 
-#' @return An internal
+#' @return An instrument.R file
 #' 
 #' @noRd
-AddInstrumentScript <- function(name, outpath, manufacturer="Cytek", 
-  CytekBioExportFolderPath=NULL, TheFCSFolderPath=NULL){
+AddInstrumentScript <- function(name, outpath, manufacturer, 
+  TheFCSFolderPath, CytekbioExportFolderPath){
 
 filename <- paste0("TheScript_", name, ".R")
 StorageLocation <- file.path(outpath, filename)
 
 if (manufacturer == "Cytek"){
-  TheCytekbioExport <- CytekBioExportFolderPath
+  TheCytekbioExport <- CytekbioExportFolderPath
   TheSetupFolder <- file.path(TheCytekbioExport, "Setup")
   TheFCSFolder <- TheFCSFolderPath
 } else if (manufacturer == "BD"){
@@ -660,12 +711,23 @@ SeventhChunk <- 'if (any(length(PotentialGainDays)|length(PotentialMFIDays)|leng
   SeventhChunk, file = StorageLocation)
 }
 
-AddInstrumentQMD <- function(name="5L", outpath="/home/david/Desktop", organization="UMGCC FCSS",
- organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/"){
+
+#' Internal for AddInstruments, creates initial template for an instrument.qmd file
+#' 
+#' @param name See \code{\link{AddInstruments}}
+#' @param manufacturer See \code{\link{AddInstruments}}
+#' @param outpath Location to save file, default is the InstrumentQC folder
+#' @param organization_name See \code{\link{AddInstruments}}
+#' @param organization_website See \code{\link{AddInstruments}}
+#' 
+#' @return The Instrument.qmd template to the designated location
+#' 
+#' @noRd
+AddInstrumentQMD <- function(name, manufacturer, outpath, organization_name, organization_website){
   
   filename <- paste0(name, ".qmd")
   PDFValue <- paste0("QCPlots_", name)
-  InstrumentName <- paste0("Cytek Aurora ", name)
+  InstrumentName <- paste0(manufacturer, " ", name)
 
   StorageLocation <- file.path(outpath, filename)
 
@@ -920,7 +982,7 @@ This dashboard was created with [Quarto](https://quarto.org/) using [CytometryQC
 
 ## rCV {.tabset}
 
-', InstrumentName, organization, organization_website)
+', InstrumentName, organization_name, organization_website)
   
 cat(Section1, SectionMFI, SectionGain, SectionRCV, SectionPDF, Section2, file = StorageLocation)
 

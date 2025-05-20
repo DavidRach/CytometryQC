@@ -266,19 +266,19 @@ This is a placeholder
   cat(content, file = StorageLocation)
 }
 
-#' Creates generic HistoricalInstument.qmd file
+#' Creates a HistoricalInstument.qmd placeholder
 #'
-#' @param outpath The file.location to save the .qmd file to
-#' @param name internal
-#' @param manufacturer internal
-#' @param organization internal
-#' @param organization_website internal
+#' @param outpath The location file is saved to, default is InstrumentQC
+#' @param name See \code{\link{AddInstruments}}
+#' @param manufacturer See \code{\link{AddInstruments}}
+#' @param organization_name See \code{\link{AddInstruments}}
+#' @param organization_website See \code{\link{AddInstruments}}
 #' 
-#' @return A generic HistoricalInstument.qmd file
+#' @return A HistoricalInstument.qmd placeholder
 #' 
 #' @noRd
 QMD_HistoricalInstrument <- function(outpath, name, manufacturer,
-   organization, organization_website){
+   organization_name, organization_website){
   
   FullName <- paste0("Historical_", name, ".qmd")
   StorageLocation <- file.path(outpath, FullName)
@@ -320,7 +320,7 @@ Section2 <- sprintf('For additional information, navigate to the [Help](help.qmd
 This dashboard contains the visualized QC data for the cytometers at [%s](%s)
 
 This dashboard was created with [Quarto](https://quarto.org/) using [CytometryQC](https://github.com/DavidRach/CytometryQC)
-', organization, organization_website)
+', organization_name, organization_website)
   
 Section3 <- '
 ## First Row {height="50%"}
@@ -750,6 +750,9 @@ githubusername, institution_name="University of Maryland, Baltimore"){
   content <- sprintf('project:
   type: website
   output-dir: docs/
+  render:
+    - "!index.qmd"
+    - "*.qmd"
 website:
   google-analytics: 
     tracking-id: "G-BYJ5XE4WD4"

@@ -1,8 +1,8 @@
 #' Triggered by AddInstrument, adds index.qmd chunks for that instrument.
 #' 
-#' @param outpath To desired location
-#' @param name Desired name
-#' @param githubusername The githubusername associated with
+#' @param outpath Location to save file, default in InstrumentQC folder
+#' @param name See \code{\link{AddInstruments}}
+#' @param githubusername See \code{\link{AddInstruments}}
 #' 
 #' @importFrom stringr str_replace_all
 #' @importFrom stringr str_starts
@@ -264,11 +264,13 @@ IndexUpdate <- function(outpath, name, githubusername){
 
 #' Updated the Data.qmd file
 #' 
-#' @param outpath Something
-#' @param name Something
+#' @param outpath Location to store the file, default in InstrumentQC folder
+#' @param name See \code{\link{AddInstruments}}
 #' 
 #' @importFrom stringr str_replace_all
 #' @importFrom stringr fixed
+#' 
+#' @return An updated Data.qmd file
 #' 
 #' @noRd
 DataUpdate <- function(outpath, name){

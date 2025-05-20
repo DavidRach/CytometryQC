@@ -12,11 +12,11 @@ AddInstruments(
   blue = 14,
   yellowgreen = 10,
   red = 8,
-  organization = "UMGCC FCSS",
-  githubusername = "UMGCCFCSS",
-  organization_website = "https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
-  TheFCSFolderPath = "/home/david/Desktop/C:/CytekbioExport/Setup/DailyQC",
-  CytekBioExportFolderPath = "/home/david/Desktop/C:/CytekbioExport"
+  organization_name = NULL,
+  organization_website = NULL,
+  githubusername = NULL,
+  TheFCSFolderPath = NULL,
+  CytekbioExportFolderPath = NULL
 )
 }
 \arguments{
@@ -34,11 +34,21 @@ AddInstruments(
 
 \item{red}{Number of red detectors}
 
-\item{organization}{Name of the organization to include on the page}
+\item{organization_name}{Name of the organization, default NULL defaults to 
+value provided during FolderSetup}
 
-\item{githubusername}{GitHub user name, used for path setting.}
+\item{organization_website}{Link to organization website, default NULL defaults
+to value provided during FolderSetup}
 
-\item{organization_website}{Link to organization website to include on the page}
+\item{githubusername}{GitHub user name, default NULL defaults to value provided 
+during FolderSetup}
+
+\item{TheFCSFolderPath}{Default NULL sets path to Cytek file.path 
+'C:/CytekbioExport/Setup/DailyQC', for alternate file locations or manufacturers, please
+provide a file.path to the fcs folder location}
+
+\item{CytekbioExportFolderPath}{Default NULL sets path to Cytek file.path 'C:/CytekbioExport',
+for alternate locations of the CytekbioExport folder, please provide a file path.}
 }
 \value{
 Updated webpage
@@ -48,6 +58,7 @@ Adds Instruments to the base Webpage
 }
 \examples{
 
-A <- 2 + 2
+AddInstruments(name="5L", manufacturer="Cytek", uv=16, violet=16, blue=14,
+yellowgreen=10, red=8, TheFCSFolderPath="C:/CytekbioExport/Setup/DailyQC")
 
 }
