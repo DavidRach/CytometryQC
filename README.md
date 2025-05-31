@@ -12,7 +12,9 @@
 
 ## `CytometryQC`: You get a QC website, you get a QC website, everyone gets a QC website.
 
-Building off infrastructure used to build the [UMGCCFCSS InstrumentQC](https://umgccfcss.github.io/InstrumentQC/index.html) website, this R package generalizes and automates the process to allow other flow cytometry cores to quickly generate equivalent InstrumentQC webpages for their own respective instruments. Let's get started. 
+Building off infrastructure used to build the [UMGCCFCSS InstrumentQC](https://umgccfcss.github.io/InstrumentQC/index.html) website, and the replication guidelines in the original [installation tutorial](https://github.com/DavidRach/InstrumentQC_Install), this R package generalizes and automates the process to allow other flow cytometry cores to quickly generate equivalent InstrumentQC webpages for their own respective instruments.
+
+CYTO attendees, we are nearly finished with the click once and done installation for Cytek and BD instruments. There are a couple things David has to generalize first for the instrument scripts. Reach out if you are interested in getting started this week rather than next month, reach I out and we will gladly help you work around the couple remaining issues on our end.
 
 ### Installation
 
