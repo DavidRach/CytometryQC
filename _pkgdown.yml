@@ -1,8 +1,6 @@
 url: https://davidrach.github.io/Coereba/
 template:
   bootstrap: 5
-  includes:
-    in_header: <script async src="https://www.googletagmanager.com/gtag/js?id=G-BYJ5XE4WD4"></script>
 articles:
 - title: Articles
   navbar: ~
@@ -10,6 +8,15 @@ articles:
     - GettingStarted
     - GitAndRstudio
     - CytometryQC
-website:
-  google-analytics: 
-    tracking-id: "G-BYJ5XE4WD4"
+  includes:
+    in_header: |
+       <!-- Global site tag (gtag.js) - Google Analytics -->
+       <script async src="https://www.googletagmanager.com/gtag/js?id={G-BYJ5XE4WD4}" ></script>
+       <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+
+         gtag('config', '{G-BYJ5XE4WD4}');
+       </script>
+       <!-- Google tag (gtag.js) -->
