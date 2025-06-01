@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>gitandrstudio • CytometryQC</title>
+<title>GitAndRstudio • CytometryQC</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="GitAndRstudio_files/libs/quarto-html/popper.min.js"></script><script src="GitAndRstudio_files/libs/quarto-html/tippy.umd.min.js"></script><link href="GitAndRstudio_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="GitAndRstudio_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="gitandrstudio">
+<!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="GitAndRstudio">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -36,8 +36,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/GettingStarted.html">UNKNOWN TITLE</a></li>
-    <li><a class="dropdown-item" href="../articles/GitAndRstudio.html">UNKNOWN TITLE</a></li>
+<li><a class="dropdown-item" href="../articles/GettingStarted.html">Getting Started</a></li>
+    <li><a class="dropdown-item" href="../articles/GitAndRstudio.html">GitAndRstudio</a></li>
   </ul>
 </li>
       </ul>
@@ -55,10 +55,10 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1></h1>
+      <h1>GitAndRstudio</h1>
 
-
-
+      <p class="author">David Rach</p>
+      <p class="date">2025-06-01</p>
 
       <small class="dont-index">Source: <a href="https://github.com/DavidRach/CytometryQC/blob/HEAD/vignettes/GitAndRstudio.qmd" class="external-link"><code>vignettes/GitAndRstudio.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -105,7 +105,7 @@ Attaching package: 'BiocManager'</code></pre>
 </div>
 <p>Adjacent to your console tab on the lower left, there is another tab called terminal. Go ahead and click it.</p>
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img src="images/01_Terminal.png" class="quarto-figure quarto-figure-center" width="600"></p>
+<figure><p><img src="01_Terminal.png" class="quarto-figure quarto-figure-center" width="600"></p>
 </figure>
 </div>
 <p>Now that you have switched from the console to the terminal,using your mouse copy then right-click-paste the following lines of code individually into the terminal, editing the text to include your GitHub username and then email linked used for that GitHub account.</p>
@@ -119,32 +119,32 @@ Attaching package: 'BiocManager'</code></pre>
 <p>With this done, it is now time to get an authorization GitHub Token that will allow your local computer to send/receive files from your the GitHub repository.</p>
 <p>To do this, open a browser, and navigate back to your GitHub account, click on your profile icon on the far upper right, and then <u>select settings</u></p>
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img src="images/01_GitToken.png" class="quarto-figure quarto-figure-center" width="600"></p>
+<figure><p><img src="01_GitToken.png" class="quarto-figure quarto-figure-center" width="600"></p>
 </figure>
 </div>
 <p>From here, you will navigate to the lower left side and click on developer settings</p>
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img src="images/02_GitToken.png" class="quarto-figure quarto-figure-center" width="260"></p>
+<figure><p><img src="02_GitToken.png" class="quarto-figure quarto-figure-center" width="260"></p>
 </figure>
 </div>
 <p>Once you are on the next page, you will select <u>Tokens (classic) option</u></p>
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img src="images/03_GitToken.png" class="quarto-figure quarto-figure-center" width="600"></p>
+<figure><p><img src="03_GitToken.png" class="quarto-figure quarto-figure-center" width="600"></p>
 </figure>
 </div>
 <p>From there, you will now proceed to click on <u>Generate new token and select the classic option</u></p>
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img src="images/04_GitToken.png" class="quarto-figure quarto-figure-center"></p>
+<figure><p><img src="04_GitToken.png" class="quarto-figure quarto-figure-center"></p>
 </figure>
 </div>
 <p>On the next screen, things get busy. There are a few things we need to focus on. First write a note for the token containing the individual instrument name. Select for Expiration Date either the no-expiration date (to avoid needing to repeat this setup process in the near future). From here, you only need to click on the repo option to grant those associated accesses. Proceed all the way down to the bottom of the screen, and click on the green generate token button.</p>
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img src="images/05_GitToken.png" class="quarto-figure quarto-figure-center" width="600"></p>
+<figure><p><img src="05_GitToken.png" class="quarto-figure quarto-figure-center" width="600"></p>
 </figure>
 </div>
 <p>The website will refresh and provide you a GitHub token and the option to copy it. Copy it and temporarily store it in a .txt file (notepad) as you will need it when setting up the connection between Github and Rstudio. Please note, you will not be able to see the token code again after leaving this screen, so stash it wisely, otherwise you will need to regenerate another token. Also, make sure to be cautious and not post the token .txt file on the public internet, unless you enjoy emails from IT.</p>
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img src="images/06_GitToken.png" class="quarto-figure quarto-figure-center"></p>
+<figure><p><img src="06_GitToken.png" class="quarto-figure quarto-figure-center"></p>
 </figure>
 </div>
 </section><section class="level2"><h3 id="rstudio">Rstudio<a class="anchor" aria-label="anchor" href="#rstudio"></a>

@@ -1,6 +1,20 @@
 ---
 title: "CytometryQC"
-format: html
+date: "`r BiocStyle::doc_date()`"
+author:
+- name: David Rach
+  email: drach@som.umaryland.edu
+  affiliation: University of Maryland, Baltimore
+package: "`r BiocStyle::pkg_ver('CytometryQC')`"
+resource_files:
+  - images
+output:
+  BiocStyle::html_document
+vignette: |
+  %\VignetteIndexEntry{CytometryQC}
+  %\VignettePackage{CytometryQC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 The end goal is to enable everyone to with little hassle set up their own InstrumentQC websites without needing to be as aware of R, Quarto and Git concepts as is currently required by following the [How-To-Tutorial](https://github.com/UMGCCFCSS/InstrumentQC).

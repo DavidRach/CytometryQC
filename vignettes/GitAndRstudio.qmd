@@ -1,4 +1,20 @@
 ---
+title: "GitAndRstudio"
+date: "`r BiocStyle::doc_date()`"
+author:
+- name: David Rach
+  email: drach@som.umaryland.edu
+  affiliation: University of Maryland, Baltimore
+package: "`r BiocStyle::pkg_ver('CytometryQC')`"
+resource_files:
+  - images
+output:
+  BiocStyle::html_document
+vignette: |
+  %\VignetteIndexEntry{GitAndRstudio}
+  %\VignettePackage{CytometryQC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 toc: true
 ---
 
@@ -40,7 +56,7 @@ library(BiocManager)
 
 Adjacent to your console tab on the lower left, there is another tab called terminal. Go ahead and click it.
 
-![](images/01_Terminal.png){fig-align="center" width="600"}
+![](01_Terminal.png){fig-align="center" width="600"}
 
 Now that you have switched from the console to the terminal,using your mouse copy then right-click-paste the following lines of code individually into the terminal, editing the text to include your GitHub username and then email linked used for that GitHub account.
 
@@ -58,27 +74,27 @@ With this done, it is now time to get an authorization GitHub Token that will al
 
 To do this, open a browser, and navigate back to your GitHub account, click on your profile icon on the far upper right, and then [select settings]{.underline}
 
-![](images/01_GitToken.png){fig-align="center" width="600"}
+![](01_GitToken.png){fig-align="center" width="600"}
 
 From here, you will navigate to the lower left side and click on developer settings
 
-![](images/02_GitToken.png){fig-align="center" width="260"}
+![](02_GitToken.png){fig-align="center" width="260"}
 
 Once you are on the next page, you will select [Tokens (classic) option]{.underline}
 
-![](images/03_GitToken.png){fig-align="center" width="600"}
+![](03_GitToken.png){fig-align="center" width="600"}
 
 From there, you will now proceed to click on [Generate new token and select the classic option]{.underline}
 
-![](images/04_GitToken.png){fig-align="center"}
+![](04_GitToken.png){fig-align="center"}
 
 On the next screen, things get busy. There are a few things we need to focus on. First write a note for the token containing the individual instrument name. Select for Expiration Date either the no-expiration date (to avoid needing to repeat this setup process in the near future). From here, you only need to click on the repo option to grant those associated accesses. Proceed all the way down to the bottom of the screen, and click on the green generate token button.
 
-![](images/05_GitToken.png){fig-align="center" width="600"}
+![](05_GitToken.png){fig-align="center" width="600"}
 
 The website will refresh and provide you a GitHub token and the option to copy it. Copy it and temporarily store it in a .txt file (notepad) as you will need it when setting up the connection between Github and Rstudio. Please note, you will not be able to see the token code again after leaving this screen, so stash it wisely, otherwise you will need to regenerate another token. Also, make sure to be cautious and not post the token .txt file on the public internet, unless you enjoy emails from IT. 
 
-![](images/06_GitToken.png){fig-align="center"}
+![](06_GitToken.png){fig-align="center"}
 
 ## Rstudio
 

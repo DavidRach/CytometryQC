@@ -1,6 +1,13 @@
 url: https://davidrach.github.io/Coereba/
 template:
   bootstrap: 5
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+    - GettingStarted
+    - GitAndRstudio
+    - CytometryQC
 website:
   google-analytics: 
     tracking-id: "G-BYJ5XE4WD4"
