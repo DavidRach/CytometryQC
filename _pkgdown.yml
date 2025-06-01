@@ -1,6 +1,8 @@
 url: https://davidrach.github.io/Coereba/
 template:
   bootstrap: 5
+  includes:
+    in_header: <script async src="https://www.googletagmanager.com/gtag/js?id=G-BYJ5XE4WD4"></script>
 articles:
 - title: Articles
   navbar: ~
