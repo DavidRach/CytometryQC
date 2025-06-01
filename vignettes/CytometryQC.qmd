@@ -1,0 +1,113 @@
+---
+title: "CytometryQC"
+format: html
+---
+
+The end goal is to enable everyone to with little hassle set up their own InstrumentQC websites without needing to be as aware of R, Quarto and Git concepts as is currently required by following the [How-To-Tutorial](https://github.com/UMGCCFCSS/InstrumentQC).
+
+CytometryQC is a rather non-traditional in terms on an R package. Namely, it's sole purpose is to write code tailored to your individual instrument computers, that can then be run automatically to process the QC data present at particular folders.
+
+CytometryQC also generates .qmd that make up the stylistic elements that are visible on the InstrumentQC website after rendering. 
+
+It additionally sets out to set up the taskscheduling that allows for automated processing; the creation of the GitHub repositories and the basic git commands to ensure the processed data gets archived and is available for visualization by the website. 
+
+As of May 31 at the Cyto conference, a good chunk of the above is now complete. However, still bugs I am working to enable fully smooth setup for both the Cytek and BD instruments. This will take a few weekends worth of free time to work out, so circle back later if you would prefer. 
+
+For those currently curious how this automated setup differs compared to the previously outline [How-To-Tutorial](https://github.com/UMGCCFCSS/InstrumentQC), follow along for the bulletpoint version of the current workflow.
+
+# Setup the InstrumentQC folder
+
+All the elements of our InstrumentQC website start off in an InstrumentQC folder that is tracked by Git. Everything within is used either for processing data, passing the data to GitHub, or is used to produce the Quarto website. 
+
+Consequently, everyone trying to get set up will need to have this folder, with some customization for their own individual institution. 
+
+To do so, we would first go to the main instrument computer (ideally connected to the internet) and run the following:
+
+```{r}
+library(CytometryQC)
+```
+
+```{r}
+#| eval: FALSE
+FolderSetup(organization_name="", organization_website="",
+githubusername="", institution_name = "")
+```
+
+Filling in the values between the quotation marks. For our institution, this would look like this:
+
+```{r}
+#| eval: FALSE
+FolderSetup(
+  SetUpGit = FALSE,
+  organization_name = "UMGCC FCSS",
+  organization_website = "https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
+  githubusername = "umgccfcss",
+  institution_name = "University of Maryland, Baltimore"
+)
+```
+
+This in turn produces an InstrumentQC2 folder containing most of the website framework components. 
+
+# Adding the Instruments
+
+Next step is adding the instruments. Note, some of the code chunks in the .qmd and .R files are the previously mentioned things not ready before Cyto I need a couple weekends to work out, but the majority of the code works as intended, so if you want to edit these manually, reach out and I can walk through the locations. Or hurry up my editing. Either way :D 
+
+We would run something like this for each Cytek instrument being added:
+
+```{r}
+#| eval: FALSE
+
+AddInstruments(
+  name="The5Laser",
+  manufacturer = "Cytek",
+  uv = 16,
+  violet = 16,
+  blue = 14,
+  yellowgreen = 10,
+  red = 8,
+  TheFCSFolderPath = NULL,
+  CytekbioExportFolderPath = NULL
+)
+```
+
+This code would add all the required components to the existing InstrumentQC2 backbone to allow for the processing and rendering of the QC data. TheFCSFolderPath and CytekExportFolderPath arguments are in case the folders are different from traditional location after SpectroFlo installation on your individual computer. 
+
+For the BD instruments, the process above is similar, but specifying FCS path argument the location of the .fcs QC files. 
+
+For non-Cytek and non-BD instruments, option of adding is retained, as long as you know how the detector configuration is set up. I am interested in adding other spectral cytometry platforms in as I work out existing bugs, so reach out if you have one and are wanting to get it working on your eventual dashboard. 
+
+After this is done, you could either add all other instruments right now while you are thinking about it, or wait until you are on their respective computers later when you can check the file path. 
+
+# Render the Website
+
+Having everything setup, we would now make sure the website can render, see how-to-tutorial for details while we are under development. 
+
+# Push data to a new GitHub repository
+
+We would create and move the data to a new repository on Github, see how-to-tutorial for details while we are under development.
+
+# Repeat checks on other instruments
+
+# Set task scheduler to run at time of your choice
+
+# Ensure that the GitHub actions runs correctly to automatically render the website after QC data gets sent in the morning
+
+# Generate the historical data repositories. 
+
+Once the regular website is in working order, it is time to generate the historical elements. Basically, for each instrument present on the website, CytometryQC will produce an additional repository for, and then for every year of data, CytometryQC will need to create a webpage to visualize. Then these new webpages get linked in to the main website so that when you click, you automatically navigate over without realizing you made the switch.
+
+To do so in the current workflow, you run the following:
+
+```{r}
+#| eval: FALSE
+HistoricalPages(githubusername="", Archive="Bead")
+```
+
+With arguments provided being the githubusername to which to save the new repositories to, and whether to use Bead or Holistic format for referencing stored datasets. 
+
+# Conclusion
+
+This is the extent of what we are working on, stay tuned later this summer once everything gets completed. 
+
+Best-
+David
