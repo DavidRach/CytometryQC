@@ -1,5 +1,10 @@
 #' Quarto renders the project to produce the website, checks for git, sends to GitHub. 
 #' 
+#' @param FolderName Default is InstrumentQC2, if folder/repository was named as
+#'  something else, please specify
+#' @param GitArchive Default FALSE, when set true will (create if needed) and back up
+#' to GitHub
+#' 
 #' @importFrom quarto quarto_render
 #' @importFrom usethis use_git
 #' @importFrom usethis use_github
@@ -15,9 +20,10 @@
 #' 
 #' A <- 2 + 2
 #' 
-RenderWebsite <- function(){
+RenderWebsite <- function(FolderName="InstrumentQC2", GitArchive=FALSE){
+  FolderPattern <- paste0("^", FolderName, "$")
   DocumentsPath <- OperatingSystemCheck()
-  InstrumentQC <- list.files(DocumentsPath, pattern="^InstrumentQC2$",
+  InstrumentQC <- list.files(DocumentsPath, pattern=FolderPattern,
    full.names=TRUE)
   if (length(InstrumentQC) == 0){stop("Run FolderSetup step first!")}
 
@@ -29,15 +35,18 @@ RenderWebsite <- function(){
     git2r::pull(TheRepo)
   }
 
+  #quarto_render(input=InstrumentQC)
+
   setwd(InstrumentQC)
-  #quarto::quarto_render(input=InstrumentQC) #Rstudio only
   ExecuteThis <- paste("quarto render")
   system(ExecuteThis)
+
+  if (GitArchive == TRUE){
 
   if (length(GitPresent) == 0){
     setwd(InstrumentQC)
     use_git(message="Initial project setup")
-    use_github(private=FALSE)
+    use_github(private=FALSE) # Needs pre-established credential setup
   } else {
     Today <- Sys.Date()
     Today <- as.Date(Today)
@@ -49,5 +58,6 @@ RenderWebsite <- function(){
     #cred <- git2r::cred_token(token = "GITHUB_PAT")
     #git2r::push(TheRepo, credentials=cred)
   }
+  } else {message("Website rendered")}
 
 }

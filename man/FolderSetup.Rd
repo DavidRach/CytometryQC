@@ -10,7 +10,8 @@ FolderSetup(
   organization_name = "UMGCC FCSS",
   organization_website = "https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
   githubusername = "umgccfcss",
-  institution_name = "University of Maryland, Baltimore"
+  institution_name = "University of Maryland, Baltimore",
+  FolderName = "InstrumentQC2"
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ it will generate a git repository for the folder and push to GitHub.}
 \item{githubusername}{The GitHub user name, ex. umgccfcss}
 
 \item{institution_name}{The institution name, ex. University of Maryland, Baltimore}
+
+\item{FolderName}{Default InstrumentQC2, sets folder/repository name}
 }
 \value{
 A generalized InstrumentQC folder to which additional elements can be added

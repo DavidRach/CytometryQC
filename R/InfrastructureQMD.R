@@ -2,26 +2,27 @@
 #'
 #' @param outpath File storage location, by default the Instrument QC folder
 #' @param organization_name Name of the organization, ex. UMGCC FCSS
-#' @param githubusername GitHub user name, ex. umgccfcss. 
+#' @param githubusername GitHub user name, ex. umgccfcss.
+#' @param FolderName Passed from FolderSetup 
 #' 
 #' @return A 404.qmd file
 #' 
 #' @noRd
-QMD_404 <- function(outpath, organization_name, githubusername){
+QMD_404 <- function(outpath, organization_name, githubusername,
+FolderName){
   
 StorageLocation <- file.path(outpath, "404.qmd")
-Homepage <- paste0("https://", githubusername, "/InstrumentQC")
+Homepage <- paste0("https://", githubusername, ".github.io/", FolderName, "/")
   
 content <- sprintf(
 '---
-title: "Page not found"
-format: html
+title: Page Not Found
 ---
 
 Sorry, the page you are looking for is no longer there.
 
-To access the %s  InstrumentQC dashboard, please click here to go to the [homepage](%s)
-', organization_name, Homepage)
+To access the %s  %s dashboard, please click here to go to the [homepage](%s)
+', organization_name, FolderName, Homepage)
 
 cat(content, file = StorageLocation)  
 }
@@ -737,15 +738,18 @@ The results are then turned into a website using [Quarto](https://quarto.org/) u
 #' @param organization_name The name of the organization, ex. UMGCC FCSS
 #' @param githubusername The githubusername, ex. umgccfcss
 #' @param institution_name The name of the institution, ex. University of Maryland, Baltimore
+#' @param FolderName Passed from FolderSetup
 #' 
 #' @return The .yaml file needed to generate the website
 #' 
 #' @noRd
-QMD_yaml <- function(outpath, organization_name,
-githubusername, institution_name="University of Maryland, Baltimore"){
+QMD_yaml <- function(outpath, organization_name, githubusername,
+   institution_name, FolderName){
   StorageLocation <- file.path(outpath, "_quarto.yml")
 
-  GithubPage <- paste0("https://", githubusername, ".github.io/InstrumentQC2/")
+  GithubPage <- paste0("https://", githubusername, ".github.io/", FolderName, "/")
+
+  SitePath <- paste0("/", FolderName, "/")
 
   content <- sprintf('project:
   type: website
@@ -763,7 +767,7 @@ website:
     type: info
     position: below-navbar  
   title: "%s"
-  site-path: "/InstrumentQC/"
+  site-path: "%s"
   navbar:
     logo: images/hex.svg
     left:
@@ -796,7 +800,7 @@ website:
 format:
   html:
     theme: styles.scss
-', organization_name, GithubPage, institution_name)
+', organization_name, SitePath, GithubPage, institution_name)
   
 cat(content, file = StorageLocation)    
   

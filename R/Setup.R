@@ -30,7 +30,8 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
 #' @param githubusername The GitHub user name, ex. umgccfcss
 #' @param institution_name The institution name, ex. University of Maryland, Baltimore
 #' @param SetUpGit Default is FALSE, when git token credentials are present, 
-#' it will generate a git repository for the folder and push to GitHub. 
+#' it will generate a git repository for the folder and push to GitHub.
+#' @param FolderName Default InstrumentQC2, sets folder/repository name
 #' 
 #' @importFrom utils write.csv
 #' @importFrom usethis create_project
@@ -50,17 +51,19 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
 #' 
 FolderSetup <- function(SetUpGit=FALSE, organization_name="UMGCC FCSS",
   organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
-  githubusername="umgccfcss", institution_name="University of Maryland, Baltimore"){
+  githubusername="umgccfcss", institution_name="University of Maryland, Baltimore", 
+  FolderName="InstrumentQC2"){
   
-  TheURL <- paste0("https://", githubusername, ".github.io/InstrumentQC2/")
+  TheURL <- paste0("https://", githubusername, ".github.io/", FolderName, "/")
+
+  FolderPattern <- paste0("^", FolderName, "$")
 
   DocumentsPath <- OperatingSystemCheck()
-  InstrumentQC <- list.files(DocumentsPath, pattern="^InstrumentQC2$",
+  InstrumentQC <- list.files(DocumentsPath, pattern=FolderPattern,
    full.names=TRUE)
   
-  if (length(InstrumentQC) > 0){message("InstrumentQC folder found")
-  } else {message("InstrumentQC folder not found, creating")
-    FolderName <- "InstrumentQC2"
+  if (length(InstrumentQC) > 0){message(FolderName, " folder found")
+  } else {message(FolderName, " folder not found, creating")
     dir.create(file.path(DocumentsPath, FolderName), showWarnings = FALSE)
     InstrumentQCPath <- file.path(DocumentsPath, FolderName)
     dir.create(file.path(InstrumentQCPath, "data"), showWarnings = FALSE)
@@ -91,7 +94,7 @@ FolderSetup <- function(SetUpGit=FALSE, organization_name="UMGCC FCSS",
 
     # 404.qmd
     QMD_404(outpath=InstrumentQCPath, organization_name=organization_name, 
-    githubusername=githubusername)
+    githubusername=githubusername, FolderName = FolderName)
 
     # help.qmd
     QMD_help(outpath = InstrumentQCPath)
@@ -115,7 +118,8 @@ FolderSetup <- function(SetUpGit=FALSE, organization_name="UMGCC FCSS",
 
     # quarto.yaml
     QMD_yaml(outpath=InstrumentQCPath, organization_name=organization_name, 
-    githubusername=githubusername, institution_name=institution_name)
+    githubusername=githubusername, institution_name=institution_name,
+    FolderName = FolderName)
 
     # README.md
     QMD_README(outpath=InstrumentQCPath, organization_name=organization_name,
