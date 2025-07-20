@@ -64,7 +64,7 @@ Dashboard data last updated on **`r TheDate`**
 
 **Gain and RCV** A .csv file containing the Daily QC data used for the Gain and RCV plots. 
 
-**MFI** A .csv file containing Gain and MFI information derrived from before and after Daily QC .fcs files. 
+**MFI** A .csv file containing Gain and MFI information derrived from Daily QC .fcs files. 
 
 **Gain and MFI** A .csv file containing Gain and MFI information derrived from Daily QC .fcs files.
 
