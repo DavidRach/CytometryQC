@@ -23,7 +23,7 @@ if (manufacturer == "Cytek"){
   CytekScript(name=name, TheFCSFolderPath=TheFCSFolderPath,
     CytekbioExportFolderPath=CytekbioExportFolderPath,
     timepointType=timepointType, StorageLocation=StorageLocation,
-    FolderName=FolderName, timepointType=timepointType
+    FolderName=FolderName
   )
 
 } else if (manufacturer != "Cytek"){
@@ -66,7 +66,7 @@ OtherScript <- function(name, outpath, manufacturer,
 #' 
 #' @noRd
 CytekScript <- function(name, TheFCSFolderPath, CytekbioExportFolderPath,
-   FolderName, timepointType){
+   FolderName, timepointType, StorageLocation){
 
 TheSetupFolder <- file.path(CytekbioExportFolderPath, "Setup")
 
@@ -216,7 +216,7 @@ if (!length(PotentialAppsDays) == 0){
 } else {message("QC data has already been transferred")
     AppMatches <- NULL
 }
-', TheCytekbioExportPath)
+', CytekbioExportFolderPath)
 
 SeventhChunk <- '
 if (any(length(PotentialGainDays)|length(PotentialMFIDays)|length(PotentialAppsDays) > 0)){

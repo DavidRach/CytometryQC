@@ -220,7 +220,8 @@ TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL, FolderName="InstrumentQC2"
   # Create Initial Processing Script
   InitialData(name=name, outpath=InstrumentQCPath, manufacturer=manufacturer,
     TheFCSFolderPath=TheFCSFolderPath,
-    CytekbioExportFolderPath=CytekbioExportFolderPath)
+    CytekbioExportFolderPath=CytekbioExportFolderPath,
+    timepointType=timepointType)
   
   # Staff Update
   

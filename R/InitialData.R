@@ -10,15 +10,11 @@
 #' 
 #' @noRd
 InitialData <- function(name, outpath, manufacturer, 
-  TheFCSFolderPath, CytekbioExportFolderPath){
+  TheFCSFolderPath, CytekbioExportFolderPath, timepointType){
   
   filename <- paste0("InitialData_", name, ".R")
   StorageLocation <- file.path(outpath, filename)
   
-  if (manufacturer=="Cytek"){
-    TheSetup <- file.path(CytekbioExportFolderPath, "Setup")
-  } else {TheSetup <- CytekbioExportFolderPath}
-
   FirstChunk <- sprintf('library(purrr)
   name <- "%s"
   Computer <- getwd()
@@ -26,16 +22,21 @@ InitialData <- function(name, outpath, manufacturer,
   WorkingFolder <- file.path(Computer, "data")
   Archive <- file.path(MainFolder, "Archive")
   TheProcessed <- list.files(Archive)
+  ', name)
+  
+  if (manufacturer=="Cytek"){
+    TheSetup <- file.path(CytekbioExportFolderPath, "Setup")
 
-  if(!any(stringr::str_detect(TheProcessed, "Application"))){
-    SetupFolder <- "%s"
-    TheSetupFiles <- list.files(SetupFolder, pattern="Application", full.names=TRUE)
-    AppMatches <- TheSetupFiles
-    file.copy(AppMatches, MainFolder)
-    walk(.x=name, .f=Luciernaga:::AppQCParse, MainFolder=WorkingFolder)
-  }
+SecondChunk <- sprintf('
+if(!any(stringr::str_detect(TheProcessed, "Application"))){
+      SetupFolder <- "%s"
+      TheSetupFiles <- list.files(SetupFolder, pattern="Application", full.names=TRUE)
+      AppMatches <- TheSetupFiles
+      file.copy(AppMatches, MainFolder)
+      walk(.x=name, .f=Luciernaga:::AppQCParse, MainFolder=WorkingFolder)
+    }
 
-  if(!any(stringr::str_detect(TheProcessed, "Archived"))){
+if(!any(stringr::str_detect(TheProcessed, "Archived"))){
     SetupFolder <- "%s"
     TheSetupFiles <- list.files(SetupFolder, pattern="DailyQCR", full.names=TRUE)
     GainMatches <- TheSetupFiles
@@ -43,14 +44,41 @@ InitialData <- function(name, outpath, manufacturer,
       file.copy(GainMatches, MainFolder)
       walk(.x=name, .f=Luciernaga:::DailyQCParse, MainFolder=WorkingFolder)
     }
-  } 
+  }
 
-  if(!any(stringr::str_detect(TheProcessed, "Bead"))){
+', CytekbioExportFolderPath, TheSetup)
+    
+  } else {
+SecondChunk <- '
+
+'
+}
+
+if (timepointType=="single"){
+
+ThirdChunk <- sprintf('
+if(!any(stringr::str_detect(TheProcessed, "Holistic"))){
+    FCSFolder <-  "%s"
+    TheFCSFiles <- list.files(FCSFolder, pattern="fcs", full.names=TRUE)
+    file.copy(TheFCSFiles, MainFolder)
+    walk(.x=name, .f=Luciernaga:::HolisticQCParse, MainFolder=WorkingFolder,
+    Template=CSTGates, subsets="Staining")
+}  
+  
+', TheFCSFolderPath)
+  
+} else {
+ThirdChunk <- sprintf('
+ 
+if(!any(stringr::str_detect(TheProcessed, "Bead"))){
     FCSFolder <-  "%s"
     TheFCSFiles <- list.files(FCSFolder, pattern="fcs", full.names=TRUE)
     file.copy(TheFCSFiles, MainFolder)
     walk(.x=name, .f=Luciernaga:::QCBeadParse, MainFolder=WorkingFolder)
-  }', name, TheSetup, TheSetup, TheFCSFolderPath)
+}
+    
+', TheFCSFolderPath)
+}
 
-  cat(FirstChunk, file = StorageLocation)
+  cat(FirstChunk, SecondChunk, ThirdChunk, file = StorageLocation)
 }
