@@ -213,7 +213,7 @@ TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL, FolderName="InstrumentQC2"
 
   AddInstrumentScript(name=name, outpath=InstrumentQCPath, manufacturer=manufacturer, 
      TheFCSFolderPath=TheFCSFolderPath, CytekbioExportFolderPath=CytekbioExportFolderPath,
-     timepointType=timepointType)
+     timepointType=timepointType, FolderName=FolderName)
   
   # Update Index
   IndexUpdate(outpath=InstrumentQCPath, name=name, githubusername=githubusername)
