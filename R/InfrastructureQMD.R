@@ -803,6 +803,5 @@ format:
 ', organization_name, SitePath, GithubPage, institution_name)
   
 cat(content, file = StorageLocation)    
-  
 }
   

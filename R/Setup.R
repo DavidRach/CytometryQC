@@ -34,10 +34,7 @@ if (OperatingSystem == "Linux"){OS <- "Linux"
 #' @param FolderName Default InstrumentQC2, sets folder/repository name
 #' 
 #' @importFrom utils write.csv
-#' @importFrom usethis create_project
-#' @importFrom quarto quarto_render
-#' @importFrom usethis use_git
-#' @importFrom usethis use_github
+#' @importFrom usethis create_project use_git use_github
 #' 
 #' @return A generalized InstrumentQC folder to which additional elements can be added
 #' 

@@ -27,9 +27,13 @@ HistoricalPages <- function(githubusername="umgccfcss", Archive="Bead"){
   Archive=Archive)
 }
 
-#' Internal use Historical Pages, takes iterated instrument and creates website
+#' Internal use Historical Pages takes iterated instrument and creates website
 #' 
-#' @importFrom dplyr %>%
+#' @importFrom purrr walk map
+#' @importFrom dplyr arrange pull %>%
+#' @importFrom utils read.csv
+#' @importFrom lubridate ymd year
+#' @importFrom stringr str_replace_all str_detect fixed
 #' 
 #' @noRd
 InstrumentHistory <- function(x, githubusername, Archive){
@@ -108,9 +112,9 @@ InstrumentHistory <- function(x, githubusername, Archive){
   }
 
   Dataset <- read.csv(DataFile, check.names=FALSE)
-  Dataset$DATE <- lubridate::ymd(Dataset$DATE)
-  TheseYears <- Dataset |> dplyr::arrange(DATE) |>
-    dplyr::pull(DATE) |> lubridate::year() |> unique()
+  Dataset$DATE <- ymd(Dataset$DATE)
+  TheseYears <- Dataset |> arrange(DATE) |>
+   pull(DATE) |> year() |> unique()
 
   Instrument <- x
   # x <- TheseYears[1]
@@ -183,7 +187,7 @@ InstrumentHistory <- function(x, githubusername, Archive){
 #' @param years A vector of years to insert
 #' @param instrument name of the instrument, for pathing of links
 #' 
-#' @importFrom stringr str_replace_all
+#' @importFrom stringr str_replace_all fixed
 #' 
 #' @return An updated index.qmd file
 #' 
@@ -356,9 +360,7 @@ YearAppend <- function(x){
 #' @param TheFile Location of the Year.qmd template file
 #' @param Instrument Name of the instrument
 #' 
-#' @importFrom stringr str_extract
-#' @importFrom stringr str_detect
-#' @importFrom stringr str_remove_all
+#' @importFrom stringr str_extract str_detect str_remove_all
 #' 
 #' @return A new Year.qmd file for respective year
 #' 
@@ -381,6 +383,11 @@ YearIterate <- function(x, TheFile, Instrument){
   writeLines(Data, NewFileLocation)
 }
 
+#' Internal function that does as written. 
+#' 
+#' @importFrom stringr str_detect
+#' 
+#' @noRd
 HistoricalYAML <- function(InstrumentFolder, githubusername){
   # githubusername <- "umgccfcss"
   TheURL <- paste0("https://", githubusername, ".github.io/InstrumentQC2/")

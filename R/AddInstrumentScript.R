@@ -48,10 +48,9 @@ if (manufacturer == "Cytek"){
 OtherScript <- function(name, outpath, manufacturer, 
   TheFCSFolderPath, CytekbioExportFolderPath){
   
+  print("Upps")
+  
 }
-
-
-
 
 
 #' Internal, adds a Cytek-specific Instrument.R script for regular data processing

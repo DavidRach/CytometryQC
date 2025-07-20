@@ -5,11 +5,8 @@
 #' @param GitArchive Default FALSE, when set true will (create if needed) and back up
 #' to GitHub
 #' 
-#' @importFrom quarto quarto_render
-#' @importFrom usethis use_git
-#' @importFrom usethis use_github
-#' @importFrom git2r repository
-#' @importFrom git2r pull
+#' @importFrom usethis use_git use_github
+#' @importFrom git2r repository add commit
 #' 
 #' @return Rendered .html files containing the website to the docs folder, pushes changes
 #' to GitHub

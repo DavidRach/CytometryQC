@@ -21,11 +21,7 @@
 #' @param FolderName Default is InstrumentQC2
 #' @param timepointType Whether QC .fcs files are "single" or "double" (ie, before and after)
 #' 
-#' @importFrom purrr map
-#' @importFrom stringr str_which
-#' @importFrom stringr str_detect
-#' @importFrom stringr fixed 
-#' @importFrom stringr str_replace
+#' @importFrom stringr str_which str_detect fixed str_replace
 #' 
 #' @return Updated webpage
 #' 

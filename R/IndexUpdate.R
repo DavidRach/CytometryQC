@@ -4,10 +4,7 @@
 #' @param name See \code{\link{AddInstruments}}
 #' @param githubusername See \code{\link{AddInstruments}}
 #' 
-#' @importFrom stringr str_replace_all
-#' @importFrom stringr str_starts
-#' @importFrom stringr str_replace
-#' @importFrom stringr fixed
+#' @importFrom stringr str_replace_all str_starts str_replace fixed
 #' 
 #' @noRd
 IndexUpdate <- function(outpath, name, githubusername){
@@ -267,8 +264,7 @@ IndexUpdate <- function(outpath, name, githubusername){
 #' @param outpath Location to store the file, default in InstrumentQC folder
 #' @param name See \code{\link{AddInstruments}}
 #' 
-#' @importFrom stringr str_replace_all
-#' @importFrom stringr fixed
+#' @importFrom stringr str_replace_all fixed
 #' 
 #' @return An updated Data.qmd file
 #' 
@@ -398,8 +394,6 @@ if (length(Matches) == 1){
   Chunk2 <- str_replace_all(TheHTML, fixed("Placeholder"), name)
   Data[Matches] <- Chunk2
 }
-
-
 
   }
 
