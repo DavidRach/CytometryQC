@@ -8,6 +8,8 @@
 #' @param timepointType Whether QC .fcs files are "single" or "double" (ie, before and after)
 #' @param references The reference data.frame of laser detectors for the instrument
 #' 
+#' @importFrom dplyr filter pull
+#' 
 #' @return The Instrument.qmd template to the designated location
 #' 
 #' @noRd
@@ -64,7 +66,7 @@ Data <- Data |> filter(!str_detect(reason, "lean"))
 
 Repair <- Data |> filter(instrument %%in%% "%s")
 ```
-', name, name, name, name)
+', name, name, name)
 
 SectionMFI <- '
 ```{r}
@@ -92,7 +94,7 @@ ScalingGains <- Luciernaga:::ColorPriority(ScalingGains)
 OtherGains <- c(ScatterGains, LaserGains, ScalingGains)
 '
 
-TheseLasers <- references |> filter(Detector > 0) |> pull(Laser)
+TheseLasers <- references |> dplyr::filter(Detector > 0) |> dplyr::pull(Laser)
   
 SectionMFI_2 <- '
 
@@ -107,7 +109,95 @@ LaserPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=LaserGains,
                     RepairVisits=Repair)
 ```
 '
+
+if (any(TheseLasers %in% "red")){
+
+  if (timepointType == "single"){
+RMFI_Intermediate <- '
+RedPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
+                          plotType = "individual", returntype = "plots",
+                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
+                          RepairVisits=Repair)
+    '
+      } else {
+RMFI_Intermediate <- '
+RedPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
+                         plotType = "comparison", returntype = "plots",
+                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                         RepairVisits=Repair)
+    '
+    }
+    
+    SectionMFI_2 <- paste(RMFI_Intermediate, SectionMFI_2, sep = "\n")
+    #cat(SectionMFI_2) 
+}
   
+if (any(TheseLasers %in% "yellowgreen")){
+
+  if (timepointType == "single"){
+YMFI_Intermediate <- '
+YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
+                          plotType = "individual", returntype = "plots",
+                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
+                          RepairVisits=Repair)
+    '
+      } else {
+YMFI_Intermediate <- '
+YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
+                         plotType = "comparison", returntype = "plots",
+                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                         RepairVisits=Repair)
+    '
+    }
+    
+    SectionMFI_2 <- paste(YMFI_Intermediate, SectionMFI_2, sep = "\n")
+    #cat(SectionMFI_2)  
+}
+  
+if (any(TheseLasers %in% "blue")){
+
+  if (timepointType == "single"){
+BMFI_Intermediate <- '
+BluePlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=BlueGains,
+                          plotType = "individual", returntype = "plots",
+                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
+                          RepairVisits=Repair)
+    '
+      } else {
+BMFI_Intermediate <- '
+BluePlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=BlueGains,
+                         plotType = "comparison", returntype = "plots",
+                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                         RepairVisits=Repair)
+    '
+    }
+    
+    SectionMFI_2 <- paste(BMFI_Intermediate, SectionMFI_2, sep = "\n")
+    #cat(SectionMFI_2) s
+}
+  
+if (any(TheseLasers %in% "violet")){
+
+  if (timepointType == "single"){
+VMFI_Intermediate <- '
+VioletPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=VioletGains,
+                          plotType = "individual", returntype = "plots",
+                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
+                          RepairVisits=Repair)
+    '
+      } else {
+VMFI_Intermediate <- '
+VioletPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=VioletGains,
+                         plotType = "comparison", returntype = "plots",
+                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                         RepairVisits=Repair)
+    '
+    }
+    
+  SectionMFI_2 <- paste(VMFI_Intermediate, SectionMFI_2, sep = "\n")
+  #cat(SectionMFI_2) 
+}
+
 if (any(TheseLasers %in% "uv")){
 
   if (timepointType == "single"){
@@ -116,7 +206,6 @@ UltraVioletPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=UltraViol
                       plotType = "individual", returntype = "plots",
                       Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
                       RepairVisits=Repair)
-
 '
   } else {
 UVMFI_Intermediate <- '
@@ -124,104 +213,14 @@ UltraVioletPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=UltraViol
                      plotType = "comparison", returntype = "plots",
                      Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
                      RepairVisits=Repair)
-
 '
 }
+  
 
-# MergeStreams
+SectionMFI_2 <- paste(UVMFI_Intermediate, SectionMFI_2, sep = "\n")
+#cat(SectionMFI_2) 
 }
   
-if (any(TheseLasers %in% "violet")){
-
-  if (timepointType == "single"){
-    VMFI_Intermediate <- '
-    VioletPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=VioletGains,
-                          plotType = "individual", returntype = "plots",
-                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
-                          RepairVisits=Repair)
-    
-    '
-      } else {
-    VMFI_Intermediate <- '
-    VioletPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=VioletGains,
-                         plotType = "comparison", returntype = "plots",
-                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
-                         RepairVisits=Repair)
-    
-    '
-    }
-    
-    # MergeStreams
-}
-  
-if (any(TheseLasers %in% "blue")){
-
-  if (timepointType == "single"){
-    BMFI_Intermediate <- '
-    BluePlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=BlueGains,
-                          plotType = "individual", returntype = "plots",
-                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
-                          RepairVisits=Repair)
-    
-    '
-      } else {
-    BMFI_Intermediate <- '
-    BluePlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=BlueGains,
-                         plotType = "comparison", returntype = "plots",
-                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
-                         RepairVisits=Repair)
-    
-    '
-    }
-    
-    # MergeStreams
-}
-  
-if (any(TheseLasers %in% "yellowgreen")){
-
-  if (timepointType == "single"){
-    YMFI_Intermediate <- '
-    YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
-                          plotType = "individual", returntype = "plots",
-                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
-                          RepairVisits=Repair)
-    
-    '
-      } else {
-    YMFI_Intermediate <- '
-    YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
-                         plotType = "comparison", returntype = "plots",
-                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
-                         RepairVisits=Repair)
-    
-    '
-    }
-    
-    # MergeStreams 
-}
-  
-if (any(TheseLasers %in% "red")){
-
-  if (timepointType == "single"){
-    RMFI_Intermediate <- '
-    RedPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
-                          plotType = "individual", returntype = "plots",
-                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
-                          RepairVisits=Repair)
-    
-    '
-      } else {
-    RMFI_Intermediate <- '
-    RedPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
-                         plotType = "comparison", returntype = "plots",
-                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
-                         RepairVisits=Repair)
-    
-    '
-    }
-    
-    # MergeStreams
-}
 
 SectionGain <- '
 ```{r}
@@ -240,10 +239,7 @@ RedGains <- TheColumnNames[str_detect(TheColumnNames, "^R")]
 ScatterGains <- TheColumnNames[str_detect(TheColumnNames, "SC-")]
 ScatterGains <- Luciernaga:::ScalePriority(ScatterGains)
 LaserGains <- TheColumns[str_detect(TheColumns, "Laser")]
-LaserDelayGains <- LaserGains[str_detect(LaserGains, "Delay")]
-LaserDelayGains <- Luciernaga:::ColorPriority(LaserDelayGains)
-LaserPowerGains <- LaserGains[str_detect(LaserGains, "Power")]
-LaserPowerGains <- Luciernaga:::ColorPriority(LaserPowerGains)
+LaserGains <- Luciernaga:::ColorPriority(LaserGains)
 ScalingGains <- TheColumns[str_detect(TheColumns, "Scaling")]
 ScalingGains <- Luciernaga:::ColorPriority(ScalingGains)
 '
@@ -254,13 +250,9 @@ ScatterPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=ScatterGains
                     plotType = "individual", returntype = "plots", YAxisLabel = " ",
                     RepairVisits=Repair)
 
-LaserDelayPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=LaserDelayGains,
+LaserPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=LaserGains,
                     plotType = "individual", returntype = "plots", YAxisLabel = " ",
                     RepairVisits=Repair)
-
-LaserPowerPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=LaserPowerGains,
-                               plotType = "individual", returntype = "plots",
-                               YAxisLabel = " ", RepairVisits=Repair)
 
 ScalingPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=ScalingGains,
                     plotType = "individual", returntype = "plots", YAxisLabel = " ",
@@ -269,67 +261,71 @@ ScalingPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=ScalingGains
 
 '
   
-if (any(TheseLasers %in% "uv")){
-
-UVGain_Intermediate <- '
-UltraVioletPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=UltraVioletGains,
-                      plotType = "individual", returntype = "plots",
-                      YAxisLabel = "Gain", RepairVisits=Repair)
-
-'
-
-# MergeStreams
-}
-  
-if (any(TheseLasers %in% "violet")){
-
-VGain_Intermediate <- '
-    VioletPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=VioletGains,
-                          plotType = "individual", returntype = "plots",
-                          YAxisLabel = "Gain", RepairVisits=Repair)
-    
-    '
-  
-    # MergeStreams
-}
-  
-if (any(TheseLasers %in% "blue")){
-
-
-BGain_Intermediate <- '
-    BluePlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=BlueGains,
-                          plotType = "individual", returntype = "plots",
-                          YAxisLabel = "Gain", RepairVisits=Repair)
-    
-    '
-    
-    # MergeStreams
-}
-  
-if (any(TheseLasers %in% "yellowgreen")){
-
-YGain_Intermediate <- '
-    YellowGreenPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
-                          plotType = "individual", returntype = "plots",
-                          YAxisLabel = "Gain", RepairVisits=Repair)
-    
-    '
-    
-    # MergeStreams 
-}
-  
 if (any(TheseLasers %in% "red")){
 
-    RGain_Intermediate <- '
-    RedPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
+RGain_Intermediate <- '
+RedPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
                          plotType = "individual", returntype = "plots",
                          YAxisLabel = "Gain", RepairVisits=Repair)
     
     '
     
-    # MergeStreams
-}  
+    SectionGain2 <- paste(RGain_Intermediate, SectionGain2, sep = "\n")
+    #cat(SectionGain2) 
+}
 
+if (any(TheseLasers %in% "yellowgreen")){
+
+YGain_Intermediate <- '
+YellowGreenPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
+                            plotType = "individual", returntype = "plots",
+                            YAxisLabel = "Gain", RepairVisits=Repair)
+      
+      '
+      
+      SectionGain2 <- paste(YGain_Intermediate, SectionGain2, sep = "\n")
+      #cat(SectionGain2)  
+}
+
+if (any(TheseLasers %in% "blue")){
+
+
+BGain_Intermediate <- '
+BluePlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=BlueGains,
+                                plotType = "individual", returntype = "plots",
+                                YAxisLabel = "Gain", RepairVisits=Repair)
+          
+          '
+          
+          SectionGain2 <- paste(BGain_Intermediate, SectionGain2, sep = "\n")
+          #cat(SectionGain2) s
+}
+  
+if (any(TheseLasers %in% "violet")){
+
+VGain_Intermediate <- '
+VioletPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=VioletGains,
+                            plotType = "individual", returntype = "plots",
+                            YAxisLabel = "Gain", RepairVisits=Repair)
+      
+      '
+    
+      SectionGain2 <- paste(VGain_Intermediate, SectionGain2, sep = "\n")
+      #cat(SectionGain2) 
+}
+  
+if (any(TheseLasers %in% "uv")){
+
+UVGain_Intermediate <- '
+UltraVioletPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=UltraVioletGains,
+                        plotType = "individual", returntype = "plots",
+                        YAxisLabel = "Gain", RepairVisits=Repair)
+  
+  '
+  
+  SectionGain2 <- paste(UVGain_Intermediate, SectionGain2, sep = "\n")
+  #cat(SectionGain2) 
+}
 
 SectionRCV <- '
 ```{r}
@@ -360,51 +356,6 @@ ScatterPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScatterGains,
                     RepairVisits=Repair)
 ```
 '
-
-if (any(TheseLasers %in% "uv")){
-
-  UVRCV_Intermediate <- '
-UltraVioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=UltraVioletGains,
-plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
-RepairVisits=Repair)
-  '
-  
-  # MergeStreams
-}
-    
-if (any(TheseLasers %in% "violet")){
-  
-  VRCV_Intermediate <- '
-VioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=VioletGains,
-plotType = "individual", returntype = "plots", strict=TRUE, YAxisLabel = "%rCV",
-RepairVisits=Repair)
-      '
-    
-      # MergeStreams
-}
-    
-if (any(TheseLasers %in% "blue")){
-  
-  
-  BRCV_Intermediate <- '
-BluePlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=BlueGains,
-plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
-RepairVisits=Repair)
-      '
-      
-      # MergeStreams
-}
-    
-if (any(TheseLasers %in% "yellowgreen")){
-  
-  YRCV_Intermediate <- '
-YellowGreenPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=YellowGreenGains,
-plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
-RepairVisits=Repair)
-      '
-      
-      # MergeStreams 
-}
     
 if (any(TheseLasers %in% "red")){
   
@@ -414,7 +365,57 @@ plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
 RepairVisits=Repair)
       '
       
-      # MergeStreams
+      SectionRCV2 <- paste(RRCV_Intermediate, SectionRCV2, sep = "\n")
+      #cat(SectionRCV2) 
+}
+  
+if (any(TheseLasers %in% "yellowgreen")){
+  
+  YRCV_Intermediate <- '
+YellowGreenPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=YellowGreenGains,
+plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+RepairVisits=Repair)
+      '
+      
+      SectionRCV2 <- paste(YRCV_Intermediate, SectionRCV2, sep = "\n")
+      #cat(SectionRCV2) 
+}  
+  
+if (any(TheseLasers %in% "blue")){
+  
+  
+  BRCV_Intermediate <- '
+BluePlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=BlueGains,
+plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+RepairVisits=Repair)
+      '
+      
+      SectionRCV2 <- paste(BRCV_Intermediate, SectionRCV2, sep = "\n")
+      #cat(SectionRCV2) 
+}  
+  
+if (any(TheseLasers %in% "violet")){
+  
+  VRCV_Intermediate <- '
+VioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=VioletGains,
+plotType = "individual", returntype = "plots", strict=TRUE, YAxisLabel = "%rCV",
+RepairVisits=Repair)
+      '
+    
+      SectionRCV2 <- paste(VRCV_Intermediate, SectionRCV2, sep = "\n")
+      #cat(SectionRCV2) 
+} 
+  
+if (any(TheseLasers %in% "uv")){
+
+  UVRCV_Intermediate <- '
+UltraVioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=UltraVioletGains,
+plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+RepairVisits=Repair)
+  '
+  
+  SectionRCV2 <- paste(UVRCV_Intermediate, SectionRCV2, sep = "\n")
+  #cat(SectionRCV2) 
 }
   
 # Handling the PDF plot arguments
@@ -453,6 +454,10 @@ TheGains <- paste0(TheGains, "RedPlotsGain, ")
 TheRCVs <- paste0(TheRCVs, "RedPlotsRCV, ")
 }
   
+TheMFIs <- paste0(TheMFIs, "ScatterPlotsMFI, ", "LaserPlotsMFI, ")
+TheGains <- paste0(TheGains, "ScatterPlotsGain, ", "LaserPlotsGain, ", "ScalingPlotsGain, ")
+TheRCVs <- paste0(TheRCVs, "ScatterPlotsRCV")
+  
 TheCongregation <- paste0(TheMFIs, TheGains, TheRCVs)
 # Please Remove Final Comma if terminal.
   
@@ -470,8 +475,8 @@ PDF <- Utility_Patchwork(x=PDFPlots, filename=Filename, returntype="pdf", outfol
 ', TheCongregation, PDFValue)
 
 if (timepointType == "single"){  
-TextInput <- "before and after daily"
-} else {TextInput <- "during daily"}
+TextInput <- "during daily"
+} else {TextInput <- "before and after daily"}
 
 Section2 <- sprintf('
 
@@ -499,9 +504,23 @@ This dashboard was created with [Quarto](https://quarto.org/) using [CytometryQC
 
 ', InstrumentName, TextInput, organization_name, organization_website)
  
-cat(Section1, SectionMFI, SectionGain, SectionRCV, SectionPDF, Section2, file = StorageLocation)
+cat(Section1, SectionMFI, SectionMFI_2, SectionGain, SectionGain2,
+    SectionRCV, SectionRCV2, SectionPDF, Section2, file = StorageLocation)
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #' Internal for AddInstruments, creates initial template for an instrument.qmd file

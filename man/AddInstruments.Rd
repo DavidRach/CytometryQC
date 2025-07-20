@@ -16,7 +16,9 @@ AddInstruments(
   organization_website = NULL,
   githubusername = NULL,
   TheFCSFolderPath = NULL,
-  CytekbioExportFolderPath = NULL
+  CytekbioExportFolderPath = NULL,
+  FolderName = "InstrumentQC2",
+  timepointType
 )
 }
 \arguments{
@@ -49,6 +51,10 @@ provide a file.path to the fcs folder location}
 
 \item{CytekbioExportFolderPath}{Default NULL sets path to Cytek file.path 'C:/CytekbioExport',
 for alternate locations of the CytekbioExport folder, please provide a file path.}
+
+\item{FolderName}{Default is InstrumentQC2}
+
+\item{timepointType}{Whether QC .fcs files are "single" or "double" (ie, before and after)}
 }
 \value{
 Updated webpage

@@ -19,6 +19,7 @@
 #' @param CytekbioExportFolderPath Default NULL sets path to Cytek file.path 'C:/CytekbioExport',
 #'  for alternate locations of the CytekbioExport folder, please provide a file path.  
 #' @param FolderName Default is InstrumentQC2
+#' @param timepointType Whether QC .fcs files are "single" or "double" (ie, before and after)
 #' 
 #' @importFrom purrr map
 #' @importFrom stringr str_which
@@ -37,7 +38,7 @@
 #' 
 AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16, blue=14,
 yellowgreen=10, red=8, organization_name=NULL, organization_website=NULL, githubusername=NULL,
-TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL, FolderName="InstrumentQC2"){
+TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL, FolderName="InstrumentQC2", timepointType){
 
 # Start Checks
   
@@ -112,9 +113,10 @@ TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL, FolderName="InstrumentQC2"
   )
 
   # Add Instrument QMD file
-  AddInstrumentQMD_Single(name=name, manufacturer=manufacturer,
+  AddInstrumentQMD_Reorganized(name=name, manufacturer=manufacturer,
      outpath=InstrumentQCPath, organization_name=organization_name,
-     organization_website=organization_website, references=References)
+     organization_website=organization_website, timepointType=timepointType,
+     references=References)
   
   Items <- list.files(InstrumentQCPath, pattern=paste0(name, ".qmd"),
    full.names=TRUE)
