@@ -5,11 +5,520 @@
 #' @param outpath Location to save file, default is the InstrumentQC folder
 #' @param organization_name See \code{\link{AddInstruments}}
 #' @param organization_website See \code{\link{AddInstruments}}
+#' @param timepointType Whether QC .fcs files are "single" or "double" (ie, before and after)
+#' @param references The reference data.frame of laser detectors for the instrument
 #' 
 #' @return The Instrument.qmd template to the designated location
 #' 
 #' @noRd
-AddInstrumentQMD <- function(name, manufacturer, outpath, organization_name, organization_website){
+AddInstrumentQMD_Reorganized <- function(name, manufacturer, outpath, organization_name,
+  organization_website, timepointType, references){
+ 
+ # Input values
+ filename <- paste0(name, ".qmd")
+ PDFValue <- paste0("QCPlots_", name)
+ InstrumentName <- paste0(manufacturer, " ", name)
+ StorageLocation <- file.path(outpath, filename)
+
+ # Quarto Document Start
+ Section1 <- sprintf('---
+format:
+ dashboard:
+   orientation: columns
+   scrolling: true
+---
+```{r}
+#| message: FALSE
+library(dplyr)
+library(purrr)
+library(stringr)
+library(plotly)
+library(Luciernaga)
+
+Computer <- getwd()
+MainFolder <- file.path(Computer, "data")
+TheList <- c("%s")
+
+# Updating Data
+CSTGates <- file.path(Computer, "Gates.csv")
+
+walk(.x=TheList, .f=Luciernaga:::HolisticQCParse, MainFolder=MainFolder,
+ Template=CSTGates, subsets="Staining")
+```
+
+```{r}
+InstrumentData <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Both")
+TheDate <- InstrumentData |> slice(1) |> pull(DATE)
+```
+
+```{r}
+WindowOfInterest <- Sys.time() - months(12)
+
+InstrumentData <- InstrumentData |> filter(DateTime >= WindowOfInterest)
+```
+
+```{r}
+Data <- read.csv("Maintenance.csv", check.names=FALSE)
+
+Data <- Data |> filter(!str_detect(reason, "lean"))
+
+Repair <- Data |> filter(instrument %%in%% "%s")
+```
+', name, name, name, name)
+
+SectionMFI <- '
+```{r}
+x <- InstrumentData
+TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
+TheColumns <- setdiff(TheColumns, "TIME")
+
+# MFIs
+TheIntermediate <- TheColumns[!str_detect(TheColumns, "Gain")]
+TheIntermediate <- TheIntermediate[!str_detect(TheIntermediate, "rCV")]
+TheColumnNames <- TheIntermediate[str_detect(TheIntermediate, "-A")]
+
+UltraVioletGains <- TheColumnNames[str_detect(TheColumnNames, "^UV")]
+VioletGains <- TheColumnNames[str_detect(TheColumnNames, "^V")]
+BlueGains <- TheColumnNames[str_detect(TheColumnNames, "^B")]
+YellowGreenGains <- TheColumnNames[str_detect(TheColumnNames, "^Y")]
+RedGains <- TheColumnNames[str_detect(TheColumnNames, "^R")]
+
+ScatterGains <- TheIntermediate[str_detect(TheIntermediate, "SC-")]
+ScatterGains <- Luciernaga:::ScalePriority(ScatterGains)
+LaserGains <- TheIntermediate[str_detect(TheIntermediate, "Laser")]
+LaserGains <- Luciernaga:::ColorPriority(LaserGains)
+ScalingGains <- TheIntermediate[str_detect(TheIntermediate, "Scaling")]
+ScalingGains <- Luciernaga:::ColorPriority(ScalingGains)
+OtherGains <- c(ScatterGains, LaserGains, ScalingGains)
+'
+
+TheseLasers <- references |> filter(Detector > 0) |> pull(Laser)
+  
+SectionMFI_2 <- '
+
+ScatterPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=ScatterGains,
+                    plotType = "comparison", returntype = "plots",
+                    Metadata="Timepoint", strict = TRUE, YAxisLabel = " ",
+                    RepairVisits=Repair)
+
+LaserPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=LaserGains,
+                    plotType = "comparison", returntype = "plots",
+                    Metadata="Timepoint", strict = TRUE, YAxisLabel = " ",
+                    RepairVisits=Repair)
+```
+'
+  
+if (any(TheseLasers %in% "uv")){
+
+  if (timepointType == "single"){
+UVMFI_Intermediate <- '
+UltraVioletPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=UltraVioletGains,
+                      plotType = "individual", returntype = "plots",
+                      Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
+                      RepairVisits=Repair)
+
+'
+  } else {
+UVMFI_Intermediate <- '
+UltraVioletPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=UltraVioletGains,
+                     plotType = "comparison", returntype = "plots",
+                     Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                     RepairVisits=Repair)
+
+'
+}
+
+# MergeStreams
+}
+  
+if (any(TheseLasers %in% "violet")){
+
+  if (timepointType == "single"){
+    VMFI_Intermediate <- '
+    VioletPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=VioletGains,
+                          plotType = "individual", returntype = "plots",
+                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
+                          RepairVisits=Repair)
+    
+    '
+      } else {
+    VMFI_Intermediate <- '
+    VioletPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=VioletGains,
+                         plotType = "comparison", returntype = "plots",
+                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                         RepairVisits=Repair)
+    
+    '
+    }
+    
+    # MergeStreams
+}
+  
+if (any(TheseLasers %in% "blue")){
+
+  if (timepointType == "single"){
+    BMFI_Intermediate <- '
+    BluePlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=BlueGains,
+                          plotType = "individual", returntype = "plots",
+                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
+                          RepairVisits=Repair)
+    
+    '
+      } else {
+    BMFI_Intermediate <- '
+    BluePlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=BlueGains,
+                         plotType = "comparison", returntype = "plots",
+                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                         RepairVisits=Repair)
+    
+    '
+    }
+    
+    # MergeStreams
+}
+  
+if (any(TheseLasers %in% "yellowgreen")){
+
+  if (timepointType == "single"){
+    YMFI_Intermediate <- '
+    YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
+                          plotType = "individual", returntype = "plots",
+                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
+                          RepairVisits=Repair)
+    
+    '
+      } else {
+    YMFI_Intermediate <- '
+    YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
+                         plotType = "comparison", returntype = "plots",
+                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                         RepairVisits=Repair)
+    
+    '
+    }
+    
+    # MergeStreams 
+}
+  
+if (any(TheseLasers %in% "red")){
+
+  if (timepointType == "single"){
+    RMFI_Intermediate <- '
+    RedPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
+                          plotType = "individual", returntype = "plots",
+                          Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
+                          RepairVisits=Repair)
+    
+    '
+      } else {
+    RMFI_Intermediate <- '
+    RedPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
+                         plotType = "comparison", returntype = "plots",
+                         Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                         RepairVisits=Repair)
+    
+    '
+    }
+    
+    # MergeStreams
+}
+
+SectionGain <- '
+```{r}
+x <- InstrumentData
+TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
+TheColumns <- setdiff(TheColumns, "TIME")
+TheColumnNames <- TheColumns[str_detect(TheColumns, "Gain")]
+TheColumnNames <- TheColumnNames[str_detect(TheColumnNames, "-A")]
+
+UltraVioletGains <- TheColumnNames[str_detect(TheColumnNames, "^UV")]
+VioletGains <- TheColumnNames[str_detect(TheColumnNames, "^V")]
+BlueGains <- TheColumnNames[str_detect(TheColumnNames, "^B")]
+YellowGreenGains <- TheColumnNames[str_detect(TheColumnNames, "^YG")]
+RedGains <- TheColumnNames[str_detect(TheColumnNames, "^R")]
+
+ScatterGains <- TheColumnNames[str_detect(TheColumnNames, "SC-")]
+ScatterGains <- Luciernaga:::ScalePriority(ScatterGains)
+LaserGains <- TheColumns[str_detect(TheColumns, "Laser")]
+LaserDelayGains <- LaserGains[str_detect(LaserGains, "Delay")]
+LaserDelayGains <- Luciernaga:::ColorPriority(LaserDelayGains)
+LaserPowerGains <- LaserGains[str_detect(LaserGains, "Power")]
+LaserPowerGains <- Luciernaga:::ColorPriority(LaserPowerGains)
+ScalingGains <- TheColumns[str_detect(TheColumns, "Scaling")]
+ScalingGains <- Luciernaga:::ColorPriority(ScalingGains)
+'
+
+SectionGain2 <- '
+
+ScatterPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=ScatterGains,
+                    plotType = "individual", returntype = "plots", YAxisLabel = " ",
+                    RepairVisits=Repair)
+
+LaserDelayPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=LaserDelayGains,
+                    plotType = "individual", returntype = "plots", YAxisLabel = " ",
+                    RepairVisits=Repair)
+
+LaserPowerPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=LaserPowerGains,
+                               plotType = "individual", returntype = "plots",
+                               YAxisLabel = " ", RepairVisits=Repair)
+
+ScalingPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=ScalingGains,
+                    plotType = "individual", returntype = "plots", YAxisLabel = " ",
+                    RepairVisits=Repair)
+```
+
+'
+  
+if (any(TheseLasers %in% "uv")){
+
+UVGain_Intermediate <- '
+UltraVioletPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=UltraVioletGains,
+                      plotType = "individual", returntype = "plots",
+                      YAxisLabel = "Gain", RepairVisits=Repair)
+
+'
+
+# MergeStreams
+}
+  
+if (any(TheseLasers %in% "violet")){
+
+VGain_Intermediate <- '
+    VioletPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=VioletGains,
+                          plotType = "individual", returntype = "plots",
+                          YAxisLabel = "Gain", RepairVisits=Repair)
+    
+    '
+  
+    # MergeStreams
+}
+  
+if (any(TheseLasers %in% "blue")){
+
+
+BGain_Intermediate <- '
+    BluePlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=BlueGains,
+                          plotType = "individual", returntype = "plots",
+                          YAxisLabel = "Gain", RepairVisits=Repair)
+    
+    '
+    
+    # MergeStreams
+}
+  
+if (any(TheseLasers %in% "yellowgreen")){
+
+YGain_Intermediate <- '
+    YellowGreenPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
+                          plotType = "individual", returntype = "plots",
+                          YAxisLabel = "Gain", RepairVisits=Repair)
+    
+    '
+    
+    # MergeStreams 
+}
+  
+if (any(TheseLasers %in% "red")){
+
+    RGain_Intermediate <- '
+    RedPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
+                         plotType = "individual", returntype = "plots",
+                         YAxisLabel = "Gain", RepairVisits=Repair)
+    
+    '
+    
+    # MergeStreams
+}  
+
+
+SectionRCV <- '
+```{r}
+x <- InstrumentData
+TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
+TheColumns <- setdiff(TheColumns, "TIME")
+TheColumnNames <- TheColumns[str_detect(TheColumns, "rCV")]
+
+UltraVioletGains <- TheColumnNames[str_detect(TheColumnNames, "^UV")]
+VioletGains <- TheColumnNames[str_detect(TheColumnNames, "^V")]
+BlueGains <- TheColumnNames[str_detect(TheColumnNames, "^B")]
+YellowGreenGains <- TheColumnNames[str_detect(TheColumnNames, "^YG")]
+RedGains <- TheColumnNames[str_detect(TheColumnNames, "^R")]
+
+ScatterGains <- TheColumnNames[str_detect(TheColumnNames, "SC-")]
+ScatterGains <- Luciernaga:::ScalePriority(ScatterGains)
+LaserGains <- TheColumns[str_detect(TheColumns, "Laser")]
+LaserGains <- Luciernaga:::ColorPriority(LaserGains)
+ScalingGains <- TheColumns[str_detect(TheColumns, "Scaling")]
+ScalingGains <- Luciernaga:::ColorPriority(ScalingGains)
+OtherGains <- c(ScatterGains)
+'
+
+SectionRCV2 <- '
+
+ScatterPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScatterGains,
+                    plotType = "individual", returntype = "plots", YAxisLabel = " ",
+                    RepairVisits=Repair)
+```
+'
+
+if (any(TheseLasers %in% "uv")){
+
+  UVRCV_Intermediate <- '
+UltraVioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=UltraVioletGains,
+plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+RepairVisits=Repair)
+  '
+  
+  # MergeStreams
+}
+    
+if (any(TheseLasers %in% "violet")){
+  
+  VRCV_Intermediate <- '
+VioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=VioletGains,
+plotType = "individual", returntype = "plots", strict=TRUE, YAxisLabel = "%rCV",
+RepairVisits=Repair)
+      '
+    
+      # MergeStreams
+}
+    
+if (any(TheseLasers %in% "blue")){
+  
+  
+  BRCV_Intermediate <- '
+BluePlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=BlueGains,
+plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+RepairVisits=Repair)
+      '
+      
+      # MergeStreams
+}
+    
+if (any(TheseLasers %in% "yellowgreen")){
+  
+  YRCV_Intermediate <- '
+YellowGreenPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=YellowGreenGains,
+plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+RepairVisits=Repair)
+      '
+      
+      # MergeStreams 
+}
+    
+if (any(TheseLasers %in% "red")){
+  
+      RRCV_Intermediate <- '
+RedPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=RedGains,
+plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+RepairVisits=Repair)
+      '
+      
+      # MergeStreams
+}
+  
+# Handling the PDF plot arguments
+  
+TheMFIs <- ""
+TheGains <- ""
+TheRCVs <- ""
+
+if (any(TheseLasers %in% "uv")){
+TheMFIs <- paste0(TheMFIs, "UltraVioletPlotsMFI, ")
+TheGains <- paste0(TheGains, "UltraVioletPlotsGain, ")
+TheRCVs <- paste0(TheRCVs, "UltraVioletPlotsRCV, ")
+}
+  
+if (any(TheseLasers %in% "violet")){
+TheMFIs <- paste0(TheMFIs, "VioletPlotsMFI, ")
+TheGains <- paste0(TheGains, "VioletPlotsGain, ")
+TheRCVs <- paste0(TheRCVs, "VioletPlotsRCV, ")
+}
+
+if (any(TheseLasers %in% "blue")){
+TheMFIs <- paste0(TheMFIs, "BluePlotsMFI, ")
+TheGains <- paste0(TheGains, "BluePlotsGain, ")
+TheRCVs <- paste0(TheRCVs, "BluePlotsRCV, ")
+}
+  
+if (any(TheseLasers %in% "yellowgreen")){
+TheMFIs <- paste0(TheMFIs, "UltraVioletPlotsMFI, ")
+TheGains <- paste0(TheGains, "UltraVioletPlotsGain, ")
+TheRCVs <- paste0(TheRCVs, "UltraVioletPlotsRCV, ")
+}
+  
+if (any(TheseLasers %in% "red")){
+TheMFIs <- paste0(TheMFIs, "RedPlotsMFI, ")
+TheGains <- paste0(TheGains, "RedPlotsGain, ")
+TheRCVs <- paste0(TheRCVs, "RedPlotsRCV, ")
+}
+  
+TheCongregation <- paste0(TheMFIs, TheGains, TheRCVs)
+# Please Remove Final Comma if terminal.
+  
+SectionPDF <- sprintf('
+```{r}
+#| include: false
+#| echo: false
+
+PDFPlots <- c(%s)
+
+Filename <- paste0("%s")
+
+PDF <- Utility_Patchwork(x=PDFPlots, filename=Filename, returntype="pdf", outfolder=MainFolder, thecolumns=1)
+```
+', TheCongregation, PDFValue)
+
+if (timepointType == "single"){  
+TextInput <- "before and after daily"
+} else {TextInput <- "during daily"}
+
+Section2 <- sprintf('
+
+## {.sidebar}
+Dashboard data for the **%s** last updated on **`r TheDate`**
+
+**First Column: MFI** Median Fluorescent Intensity (MFI) values for QC beads acquired %s QC. Measures stability over time. 
+**Second Column: Gain** Gain (Voltage) values set for instrument after QC. Changes over time reflective of laser health. 
+**Third Colum: RCV** Percentage change of Robust Coefficient Variation (RCV) after QC. Higher values reflect decreased resolution between positive and negative for that detector. 
+
+For additional information concerning individual parameter tabs, navigate to the [Help](help.qmd) page.
+
+**About**
+
+This dashboard contains the visualized QC data for the cytometers at the [%s](%s)
+
+
+This dashboard was created with [Quarto](https://quarto.org/) using [CytometryQC](https://github.com/DavidRach/CytometryQC)
+
+## MFI {.tabset}
+
+## Gain {.tabset}
+
+## rCV {.tabset}
+
+', InstrumentName, TextInput, organization_name, organization_website)
+ 
+cat(Section1, SectionMFI, SectionGain, SectionRCV, SectionPDF, Section2, file = StorageLocation)
+
+}
+
+
+#' Internal for AddInstruments, creates initial template for an instrument.qmd file
+#' 
+#' @param name See \code{\link{AddInstruments}}
+#' @param manufacturer See \code{\link{AddInstruments}}
+#' @param outpath Location to save file, default is the InstrumentQC folder
+#' @param organization_name See \code{\link{AddInstruments}}
+#' @param organization_website See \code{\link{AddInstruments}}
+#' @param timepointType Whether QC .fcs files are "single" or "double" (ie, before and after)
+#' @param references The reference data.frame of laser detectors for the instrument
+#' 
+#' @return The Instrument.qmd template to the designated location
+#' 
+#' @noRd
+AddInstrumentQMD_Single <- function(name, manufacturer, outpath, organization_name,
+   organization_website, timepointType, references){
   
   filename <- paste0(name, ".qmd")
   PDFValue <- paste0("QCPlots_", name)
@@ -270,6 +779,285 @@ This dashboard was created with [Quarto](https://quarto.org/) using [CytometryQC
 
 ', InstrumentName, organization_name, organization_website)
   
+cat(Section1, SectionMFI, SectionGain, SectionRCV, SectionPDF, Section2, file = StorageLocation)
+
+}
+
+
+#' Internal for AddInstruments, creates initial template for an instrument.qmd file
+#' 
+#' @param name See \code{\link{AddInstruments}}
+#' @param manufacturer See \code{\link{AddInstruments}}
+#' @param outpath Location to save file, default is the InstrumentQC folder
+#' @param organization_name See \code{\link{AddInstruments}}
+#' @param organization_website See \code{\link{AddInstruments}}
+#' @param timepointType Whether QC .fcs files are "single" or "double" (ie, before and after)
+#' 
+#' @return The Instrument.qmd template to the designated location
+#' 
+#' @noRd
+AddInstrumentQMD_Double <- function(name, manufacturer, outpath, organization_name,
+  organization_website, timepointType){
+ 
+ filename <- paste0(name, ".qmd")
+ PDFValue <- paste0("QCPlots_", name)
+ InstrumentName <- paste0(manufacturer, " ", name)
+
+ StorageLocation <- file.path(outpath, filename)
+
+ Section1 <- sprintf('---
+format:
+ dashboard:
+   orientation: columns
+   scrolling: true
+---
+```{r}
+#| message: FALSE
+library(dplyr)
+library(purrr)
+library(stringr)
+library(plotly)
+library(Luciernaga)
+
+Computer <- getwd()
+MainFolder <- file.path(Computer, "data")
+TheList <- c("%s")
+
+# Updating Data
+walk(.x=TheList, MainFolder=MainFolder, .f=Luciernaga:::DailyQCParse)
+walk(.x=TheList, .f=Luciernaga:::QCBeadParse, MainFolder=MainFolder)
+```
+
+```{r}
+MFI <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "MFI")
+Gain <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Gain")
+TheDate <- MFI |> slice(1) |> pull(DATE)
+```
+
+```{r}
+WindowOfInterest <- Sys.time() - months(12)
+
+MFI <- MFI |> filter(DateTime >= WindowOfInterest)
+Gain <- Gain |> filter(DateTime >= WindowOfInterest)
+```
+
+```{r}
+Data <- read.csv("Maintenance.csv", check.names=FALSE)
+
+Data <- Data |> filter(!str_detect(reason, "lean"))
+
+Repair <- Data |> filter(instrument %%in%% "%s")
+```
+', name, name, name, name)
+
+SectionMFI <- '
+```{r}
+x <- MFI
+x <- x |> dplyr::filter(Timepoint %in% c("Before", "After"))
+TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
+TheColumns <- setdiff(TheColumns, "TIME")
+TheIntermediate <- TheColumns[!str_detect(TheColumns, "Gain")]
+TheColumnNames <- TheIntermediate[str_detect(TheIntermediate, "-A")]
+ 
+UltraVioletGains <- TheColumnNames[str_detect(TheColumnNames, "^UV")]
+VioletGains <- TheColumnNames[str_detect(TheColumnNames, "^V")]
+BlueGains <- TheColumnNames[str_detect(TheColumnNames, "^B")]
+YellowGreenGains <- TheColumnNames[str_detect(TheColumnNames, "^YG")]
+RedGains <- TheColumnNames[str_detect(TheColumnNames, "^R")]
+
+ScatterGains <- TheIntermediate[str_detect(TheIntermediate, "SC-")]
+ScatterGains <- Luciernaga:::ScalePriority(ScatterGains)
+LaserGains <- TheIntermediate[str_detect(TheIntermediate, "Laser")]
+LaserGains <- Luciernaga:::ColorPriority(LaserGains)
+ScalingGains <- TheIntermediate[str_detect(TheIntermediate, "Scaling")]
+ScalingGains <- Luciernaga:::ColorPriority(ScalingGains)
+OtherGains <- c(ScatterGains, LaserGains, ScalingGains)
+
+UltraVioletPlotsMFI <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=UltraVioletGains,
+                     plotType = "comparison", returntype = "plots",
+                     Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                     RepairVisits=Repair)
+
+VioletPlotsMFI <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=VioletGains,
+                     plotType = "comparison", returntype = "plots",
+                     Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                     RepairVisits=Repair)
+
+BluePlotsMFI <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=BlueGains,
+                     plotType = "comparison", returntype = "plots",
+                     Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                     RepairVisits=Repair)
+
+YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=YellowGreenGains,
+                     plotType = "comparison", returntype = "plots",
+                     Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                     RepairVisits=Repair)
+
+RedPlotsMFI <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=RedGains,
+                    plotType = "comparison", returntype = "plots",
+                    Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
+                    RepairVisits=Repair)
+
+ScatterPlotsMFI <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScatterGains,
+                    plotType = "comparison", returntype = "plots",
+                    Metadata="Timepoint", strict = TRUE, YAxisLabel = " ",
+                    RepairVisits=Repair)
+
+LaserPlotsMFI <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=LaserGains,
+                    plotType = "comparison", returntype = "plots",
+                    Metadata="Timepoint", strict = TRUE, YAxisLabel = " ",
+                    RepairVisits=Repair)
+```
+'
+
+SectionGain <- '
+```{r}
+x <- Gain
+TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
+TheColumns <- setdiff(TheColumns, "TIME")
+TheColumnNames <- TheColumns[str_detect(TheColumns, "Gain")]
+
+UltraVioletGains <- TheColumnNames[str_detect(TheColumnNames, "^UV")]
+VioletGains <- TheColumnNames[str_detect(TheColumnNames, "^V")]
+BlueGains <- TheColumnNames[str_detect(TheColumnNames, "^B")]
+YellowGreenGains <- TheColumnNames[str_detect(TheColumnNames, "^YG")]
+RedGains <- TheColumnNames[str_detect(TheColumnNames, "^R")]
+
+ScatterGains <- TheColumnNames[str_detect(TheColumnNames, "SC-")]
+ScatterGains <- Luciernaga:::ScalePriority(ScatterGains)
+LaserGains <- TheColumns[str_detect(TheColumns, "Laser")]
+LaserDelayGains <- LaserGains[str_detect(LaserGains, "Delay")]
+LaserDelayGains <- Luciernaga:::ColorPriority(LaserDelayGains)
+LaserPowerGains <- LaserGains[str_detect(LaserGains, "Power")]
+LaserPowerGains <- Luciernaga:::ColorPriority(LaserPowerGains)
+ScalingGains <- TheColumns[str_detect(TheColumns, "Scaling")]
+ScalingGains <- Luciernaga:::ColorPriority(ScalingGains)
+
+UltraVioletPlotsGain <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=UltraVioletGains,
+                     plotType = "individual", returntype = "plots", YAxisLabel = "Gain",
+                     RepairVisits=Repair)
+
+VioletPlotsGain <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=VioletGains,
+                     plotType = "individual", returntype = "plots", strict = TRUE, YAxisLabel = "Gain",
+                     RepairVisits=Repair)
+
+BluePlotsGain <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=BlueGains,
+                     plotType = "individual", returntype = "plots", YAxisLabel = "Gain",
+                     RepairVisits=Repair)
+
+YellowGreenPlotsGain <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=YellowGreenGains,
+                     plotType = "individual", returntype = "plots", YAxisLabel = "Gain",
+                     RepairVisits=Repair)
+
+RedPlotsGain <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=RedGains,
+                    plotType = "individual", returntype = "plots", YAxisLabel = "Gain",
+                    RepairVisits=Repair)
+
+ScatterPlotsGain <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScatterGains,
+                    plotType = "individual", returntype = "plots", YAxisLabel = " ",
+                    RepairVisits=Repair)
+
+LaserDelayPlotsGain <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=LaserDelayGains,
+                    plotType = "individual", returntype = "plots", YAxisLabel = " ",
+                    RepairVisits=Repair)
+
+LaserPowerPlotsGain <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=LaserPowerGains,
+                               plotType = "individual", returntype = "plots",
+                               YAxisLabel = " ", RepairVisits=Repair)
+
+ScalingPlotsGain <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScalingGains,
+                    plotType = "individual", returntype = "plots", YAxisLabel = " ",
+                    RepairVisits=Repair)
+```
+
+'
+
+SectionRCV <- '
+```{r}
+x <- Gain
+TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
+TheColumns <- setdiff(TheColumns, "TIME")
+
+TheColumnNames <- TheColumns[str_detect(TheColumns, "rCV")]
+UltraVioletGains <- TheColumnNames[str_detect(TheColumnNames, "^UV")]
+VioletGains <- TheColumnNames[str_detect(TheColumnNames, "^V")]
+BlueGains <- TheColumnNames[str_detect(TheColumnNames, "^B")]
+YellowGreenGains <- TheColumnNames[str_detect(TheColumnNames, "^YG")]
+RedGains <- TheColumnNames[str_detect(TheColumnNames, "^R")]
+
+ScatterGains <- TheColumnNames[str_detect(TheColumnNames, "SC-")]
+ScatterGains <- Luciernaga:::ScalePriority(ScatterGains)
+LaserGains <- TheColumns[str_detect(TheColumns, "Laser")]
+LaserGains <- Luciernaga:::ColorPriority(LaserGains)
+ScalingGains <- TheColumns[str_detect(TheColumns, "Scaling")]
+ScalingGains <- Luciernaga:::ColorPriority(ScalingGains)
+OtherGains <- c(ScatterGains)
+
+UltraVioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=UltraVioletGains,
+                     plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+                     RepairVisits=Repair)
+
+VioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=VioletGains,
+                     plotType = "individual", returntype = "plots", strict=TRUE, YAxisLabel = "%rCV",
+                     RepairVisits=Repair)
+
+BluePlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=BlueGains,
+                     plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+                     RepairVisits=Repair)
+
+YellowGreenPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=YellowGreenGains,
+                     plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+                     RepairVisits=Repair)
+
+RedPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=RedGains,
+                    plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
+                    RepairVisits=Repair)
+
+ScatterPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScatterGains,
+                    plotType = "individual", returntype = "plots", YAxisLabel = " ",
+                    RepairVisits=Repair)
+```
+'
+ 
+SectionPDF <- sprintf('
+```{r}
+#| include: false
+#| echo: false
+
+PDFPlots <- c(UltraVioletPlotsMFI, VioletPlotsMFI, BluePlotsMFI, YellowGreenPlotsMFI, RedPlotsMFI, LaserPlotsMFI, ScatterPlotsMFI, UltraVioletPlotsGain, VioletPlotsGain, BluePlotsGain, YellowGreenPlotsGain, RedPlotsGain, ScatterPlotsGain, LaserDelayPlotsGain, LaserPowerPlotsGain,  ScalingPlotsGain, UltraVioletPlotsRCV, VioletPlotsRCV, BluePlotsRCV, YellowGreenPlotsRCV, RedPlotsRCV, ScatterPlotsRCV)
+
+Filename <- paste0("%s")
+
+PDF <- Utility_Patchwork(x=PDFPlots, filename=Filename, returntype="pdf", outfolder=MainFolder, thecolumns=1)
+```
+', PDFValue)
+
+Section2 <- sprintf('
+
+## {.sidebar}
+Dashboard data for the **%s** last updated on **`r TheDate`**
+
+**First Column: MFI** Median Fluorescent Intensity (MFI) values for QC beads acquired Before and After QC. Measures stability over time. 
+**Second Column: Gain** Gain (Voltage) values set for instrument after QC. Changes over time reflective of laser health. 
+**Third Colum: RCV** Percentage change of Robust Coefficient Variation (RCV) after QC. Higher values reflect decreased resolution between positive and negative for that detector. 
+
+For additional information concerning individual parameter tabs, navigate to the [Help](help.qmd) page.
+
+**About**
+
+This dashboard contains the visualized QC data for the cytometers at the [%s](%s)
+
+
+This dashboard was created with [Quarto](https://quarto.org/) using [CytometryQC](https://github.com/DavidRach/CytometryQC)
+
+## MFI {.tabset}
+
+## Gain {.tabset}
+
+## rCV {.tabset}
+
+', InstrumentName, organization_name, organization_website)
+ 
 cat(Section1, SectionMFI, SectionGain, SectionRCV, SectionPDF, Section2, file = StorageLocation)
 
 }

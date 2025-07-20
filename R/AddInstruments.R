@@ -105,10 +105,16 @@ TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL, FolderName="InstrumentQC2"
     dir.create(file.path(DataPath, name, "Archive"),
      showWarnings = FALSE)
   }
+  
+  References <- data.frame(
+    Laser = c("uv", "violet", "blue", "yellowgreen", "red"),
+    Detector = c(uv, violet, blue, yellowgreen, red)
+  )
 
   # Add Instrument QMD file
-  AddInstrumentQMD(name=name, manufacturer=manufacturer, outpath=InstrumentQCPath,
-    organization_name=organization_name, organization_website=organization_website)
+  AddInstrumentQMD_Single(name=name, manufacturer=manufacturer,
+     outpath=InstrumentQCPath, organization_name=organization_name,
+     organization_website=organization_website, references=References)
   
   Items <- list.files(InstrumentQCPath, pattern=paste0(name, ".qmd"),
    full.names=TRUE)
