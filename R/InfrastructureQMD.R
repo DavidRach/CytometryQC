@@ -804,4 +804,29 @@ format:
   
 cat(content, file = StorageLocation)    
 }
+
+#' Internal, writes a Gates.csv for beads
+#' 
+#' @param outpath Location to store file
+#' @param name Name for file, default is "Gates"
+#' 
+#' @noRd
+CSV_Gates <- function(outpath, name="Gates"){
+  Data <- data.frame(
+    alias=c("nonDebris", "Staining"),
+    pop=c("+", "+"),
+    parent=c("root", "nonDebris"),
+    dims=c("FSC-A", "B530-A"),
+    gating_method=c("gate_mindensity", "gate_mindensity"),
+    gating_args=c("gate_range=c(3e4, 5e4)", "gate_range=c(3e4, 5e4)"),
+    collapseDataForGating=c("FALSE", "FALSE"),
+    groupBy=c("NA", "NA"),
+    preprocessing_method=c("NA", "NA"),
+    preprocessing_args=c("", "")
+  )
+
+  FileName <- paste0(name, ".csv")
+  StorageLocation <- file.path(outpath, FileName)
+  write.csv(Data, StorageLocation, row.names=FALSE)
+}
   

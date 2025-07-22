@@ -61,6 +61,7 @@ if(!any(stringr::str_detect(TheProcessed, "Holistic"))){
     FCSFolder <-  "%s"
     TheFCSFiles <- list.files(FCSFolder, pattern="fcs", full.names=TRUE)
     file.copy(TheFCSFiles, MainFolder)
+    CSTGates <- list.files(path=Computer, pattern="Gates.csv", full.names=TRUE)
     walk(.x=name, .f=Luciernaga:::HolisticQCParse, MainFolder=WorkingFolder,
     Template=CSTGates, subsets="Staining")
 }  

@@ -121,6 +121,8 @@ FolderSetup <- function(SetUpGit=FALSE, organization_name="UMGCC FCSS",
     # README.md
     QMD_README(outpath=InstrumentQCPath, organization_name=organization_name,
      organization_website=organization_website)
+    
+    CSV_Gates(outpath=InstrumentQCPath)
 
     create_project(InstrumentQCPath, open=FALSE)
 
@@ -129,7 +131,7 @@ FolderSetup <- function(SetUpGit=FALSE, organization_name="UMGCC FCSS",
         use_git(message="Initial project setup")
         use_github(private=FALSE)
       }
-    }
+  }
   
   return(InstrumentQCPath)
 }
