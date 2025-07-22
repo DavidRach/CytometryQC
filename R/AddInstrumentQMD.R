@@ -351,7 +351,7 @@ OtherGains <- c(ScatterGains)
 
 SectionRCV2 <- '
 
-ScatterPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScatterGains,
+ScatterPlotsRCV <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=ScatterGains,
                     plotType = "individual", returntype = "plots", YAxisLabel = " ",
                     RepairVisits=Repair)
 ```
@@ -360,7 +360,7 @@ ScatterPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=ScatterGains,
 if (any(TheseLasers %in% "red")){
   
       RRCV_Intermediate <- '
-RedPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=RedGains,
+RedPlotsRCV <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
 plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
 RepairVisits=Repair)
       '
@@ -372,7 +372,7 @@ RepairVisits=Repair)
 if (any(TheseLasers %in% "yellowgreen")){
   
   YRCV_Intermediate <- '
-YellowGreenPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=YellowGreenGains,
+YellowGreenPlotsRCV <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenGains,
 plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
 RepairVisits=Repair)
       '
@@ -385,7 +385,7 @@ if (any(TheseLasers %in% "blue")){
   
   
   BRCV_Intermediate <- '
-BluePlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=BlueGains,
+BluePlotsRCV <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=BlueGains,
 plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
 RepairVisits=Repair)
       '
@@ -397,7 +397,7 @@ RepairVisits=Repair)
 if (any(TheseLasers %in% "violet")){
   
   VRCV_Intermediate <- '
-VioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=VioletGains,
+VioletPlotsRCV <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=VioletGains,
 plotType = "individual", returntype = "plots", strict=TRUE, YAxisLabel = "%rCV",
 RepairVisits=Repair)
       '
@@ -409,7 +409,7 @@ RepairVisits=Repair)
 if (any(TheseLasers %in% "uv")){
 
   UVRCV_Intermediate <- '
-UltraVioletPlotsRCV <- QC_Plots(x=x, FailedFlag=TRUE, MeasurementType=UltraVioletGains,
+UltraVioletPlotsRCV <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=UltraVioletGains,
 plotType = "individual", returntype = "plots", YAxisLabel = "%rCV",
 RepairVisits=Repair)
   '

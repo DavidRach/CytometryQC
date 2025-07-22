@@ -813,16 +813,16 @@ cat(content, file = StorageLocation)
 #' @noRd
 CSV_Gates <- function(outpath, name="Gates"){
   Data <- data.frame(
-    alias=c("nonDebris", "Staining"),
-    pop=c("+", "+"),
-    parent=c("root", "nonDebris"),
-    dims=c("FSC-A", "B530-A"),
-    gating_method=c("gate_mindensity", "gate_mindensity"),
-    gating_args=c("gate_range=c(3e4, 5e4)", "gate_range=c(3e4, 5e4)"),
-    collapseDataForGating=c("FALSE", "FALSE"),
-    groupBy=c("NA", "NA"),
-    preprocessing_method=c("NA", "NA"),
-    preprocessing_args=c("", "")
+    alias=c("nonDebris"),
+    pop=c("+"),
+    parent=c("root"),
+    dims=c("FSC-A"),
+    gating_method=c("gate_mindensity"),
+    gating_args=c("gate_range=c(3e4, 5e4)"),
+    collapseDataForGating=c("FALSE"),
+    groupBy=c("NA"),
+    preprocessing_method=c("NA"),
+    preprocessing_args=c("")
   )
 
   FileName <- paste0(name, ".csv")
