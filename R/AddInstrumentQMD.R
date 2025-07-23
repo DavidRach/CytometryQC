@@ -66,6 +66,7 @@ Data <- Data |> filter(!str_detect(reason, "lean"))
 
 Repair <- Data |> filter(instrument %%in%% "%s")
 ```
+
 ', name, name, name)
 
 SectionMFI <- '
@@ -108,6 +109,7 @@ LaserPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=LaserGains,
                     Metadata="Timepoint", strict = TRUE, YAxisLabel = " ",
                     RepairVisits=Repair)
 ```
+
 '
 
 if (any(TheseLasers %in% "red")){
@@ -136,14 +138,14 @@ if (any(TheseLasers %in% "yellowgreen")){
 
   if (timepointType == "single"){
 YMFI_Intermediate <- '
-YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
+YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenGains,
                           plotType = "individual", returntype = "plots",
                           Metadata="NULL", strict = TRUE, YAxisLabel = "MFI",
                           RepairVisits=Repair)
     '
       } else {
 YMFI_Intermediate <- '
-YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
+YellowGreenPlotsMFI <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenGains,
                          plotType = "comparison", returntype = "plots",
                          Metadata="Timepoint", strict = TRUE, YAxisLabel = "MFI",
                          RepairVisits=Repair)
@@ -277,7 +279,7 @@ RedPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=RedGains,
 if (any(TheseLasers %in% "yellowgreen")){
 
 YGain_Intermediate <- '
-YellowGreenPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenPlotsGains,
+YellowGreenPlotsGain <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=YellowGreenGains,
                             plotType = "individual", returntype = "plots",
                             YAxisLabel = "Gain", RepairVisits=Repair)
       
@@ -333,6 +335,7 @@ x <- InstrumentData
 TheColumns <- x %>% select(where(~is.numeric(.)||is.integer(.))) %>% colnames()
 TheColumns <- setdiff(TheColumns, "TIME")
 TheColumnNames <- TheColumns[str_detect(TheColumns, "rCV")]
+TheColumnNames <- TheColumnNames[!str_detect(TheColumnNames, "-H")]
 
 UltraVioletGains <- TheColumnNames[str_detect(TheColumnNames, "^UV")]
 VioletGains <- TheColumnNames[str_detect(TheColumnNames, "^V")]
@@ -355,6 +358,7 @@ ScatterPlotsRCV <- QC_Plots(x=x, FailedFlag=FALSE, MeasurementType=ScatterGains,
                     plotType = "individual", returntype = "plots", YAxisLabel = " ",
                     RepairVisits=Repair)
 ```
+
 '
     
 if (any(TheseLasers %in% "red")){

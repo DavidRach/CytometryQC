@@ -125,11 +125,11 @@ TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL, FolderName="InstrumentQC2"
       blue=blue, yellowgreen=yellowgreen, red=red)
     
     GainSegment <- grep("^## Gain", Draft)
-    GainAddition <- MFI_Display(uv=uv, violet=violet,
+    GainAddition <- Gain_Display(uv=uv, violet=violet,
       blue=blue, yellowgreen=yellowgreen, red=red)
     
     RCVSegment <- grep("^## rCV", Draft)
-    RCVAddition <- MFI_Display(uv=uv, violet=violet,
+    RCVAddition <- RCV_Display(uv=uv, violet=violet,
       blue=blue, yellowgreen=yellowgreen, red=red) 
     
     Draft[MFISegment] <- paste0("## MFI {.tabset}\n", MFIAddition)

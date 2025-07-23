@@ -150,7 +150,6 @@ GainMatches <- TheSetupFiles[str_detect(TheSetupFiles, str_c(Dates, collapse = "
 if (!length(GainMatches) == 0){
 file.copy(GainMatches, WorkingFolder)
 walk(.x=Instrument, .f=Luciernaga:::DailyQCParse, MainFolder=MainFolder)
-}
 } else {message("QC data has already been transferred")
   GainMatches <- NULL
 }
