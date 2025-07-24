@@ -20,7 +20,7 @@
 #'  for alternate locations of the CytekbioExport folder, please provide a file path.  
 #' @param FolderName Default is InstrumentQC2
 #' @param timepointType Whether QC .fcs files are "single" or "double" (ie, before and after)
-#' 
+#' @param datasource Whether to use the Archived, Bead or Holistic data .csv as source file 
 #' @importFrom stringr str_which str_detect fixed str_replace
 #' 
 #' @return Updated webpage
@@ -32,9 +32,19 @@
 #' AddInstruments(name="5L", manufacturer="Cytek", uv=16, violet=16, blue=14,
 #' yellowgreen=10, red=8, TheFCSFolderPath="C:/CytekbioExport/Setup/DailyQC")
 #' 
-AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16, blue=14,
-yellowgreen=10, red=8, organization_name=NULL, organization_website=NULL, githubusername=NULL,
-TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL, FolderName="InstrumentQC2", timepointType){
+AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16,
+ blue=14, yellowgreen=10, red=8, organization_name=NULL, organization_website=NULL,
+ githubusername=NULL, TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL,
+ FolderName="InstrumentQC2", timepointType, datasource="Both"){
+
+  if (any(stringr::str_detect(datasource, "rchived"))){Gain <- TRUE
+  } else {Gain <- FALSE}
+  
+  if (any(stringr::str_detect(datasource, "ead"))){MFI <- TRUE
+  } else {MFI <- FALSE}
+
+  if (any(stringr::str_detect(datasource, "olistic"))){Holistic <- TRUE
+  } else {Holistic <- FALSE} 
 
 # Start Checks
   
@@ -212,7 +222,8 @@ TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL, FolderName="InstrumentQC2"
      timepointType=timepointType, FolderName=FolderName)
   
   # Update Index
-  IndexUpdate(outpath=InstrumentQCPath, name=name, githubusername=githubusername)
+  IndexUpdate(outpath=InstrumentQCPath, name=name, githubusername=githubusername,
+  Gain=Gain, MFI=MFI, Holistic=Holistic)
   
   # Update Data
   DataUpdate(outpath=InstrumentQCPath, name=name)

@@ -393,9 +393,6 @@ Computer <- getwd()
 MainFolder <- file.path(Computer, "data")
 TheList <- c("Placeholder")
 
-# Updating Data
-walk(.x=TheList, MainFolder=MainFolder, .f=Luciernaga:::DailyQCParse)
-walk(.x=TheList, .f=Luciernaga:::QCBeadParse, MainFolder=MainFolder)
 ```
 
 

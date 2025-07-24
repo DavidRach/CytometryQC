@@ -3,11 +3,16 @@
 #' @param outpath Location to save file, default in InstrumentQC folder
 #' @param name See \code{\link{AddInstruments}}
 #' @param githubusername See \code{\link{AddInstruments}}
+#' @param Gain True or False for data source
+#' @param MFI True or False for data source
+#' @param Holistic True or False for data source
 #' 
 #' @importFrom stringr str_replace_all str_starts str_replace fixed
 #' 
 #' @noRd
-IndexUpdate <- function(outpath, name, githubusername){
+IndexUpdate <- function(outpath, name, githubusername,
+Gain, MFI, Holistic){
+
   InstrumentQC <- outpath
   Index <- list.files(InstrumentQC, pattern="index.qmd", full.names=TRUE)
 
@@ -30,9 +35,22 @@ IndexUpdate <- function(outpath, name, githubusername){
 
   Pattern <- '#MFIPlaceholder'
   Matches <- which(Data == Pattern)
-  Chunk1 <- str_replace_all('MFI_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "MFI")
-  Gain_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Gain")
-  ', fixed("%s"), name)
+
+  if (Gain == TRUE){
+    Chunk1a <- str_replace_all('Gain_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Gain")', fixed("%s"), name)
+  } else if (Holistic == TRUE){Chunk1a <- str_replace_all('Gain_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Both")', fixed("%s"), name)
+  } else {Chunk1a <- NULL}
+
+  if (Holistic == TRUE){
+    Chunk1 <- str_replace_all('MFI_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Both")', fixed("%s"), name)
+  } else if (Bead == TRUE){
+    Chunk1 <- str_replace_all('MFI_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "MFI")', fixed("%s"), name)
+  } else {message("Not applicable for #MFIPlaceholder")}
+
+  if (!is.null(Chunk1a)){
+    CombinedChunk <- paste(Chunk1a, Chunk1, sep = "\n")
+  }
+
   Data <- append(Data, values = unlist(strsplit(Chunk1, "\n")), after = Matches[1] - 1)
 
   Pattern <- '#CurrentWindowPlaceholder'
