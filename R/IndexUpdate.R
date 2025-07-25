@@ -38,17 +38,17 @@ Gain, MFI, Holistic){
 
   if (Gain == TRUE){
     Chunk1a <- str_replace_all('Gain_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Gain")', fixed("%s"), name)
-  } else if (Holistic == TRUE){Chunk1a <- str_replace_all('Gain_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Both")', fixed("%s"), name)
+  } else if (Holistic == TRUE){Chunk1a <- str_replace_all('Gain_%s <- MFI_%s', fixed("%s"), name)
   } else {Chunk1a <- NULL}
 
   if (Holistic == TRUE){
     Chunk1 <- str_replace_all('MFI_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "Both")', fixed("%s"), name)
-  } else if (Bead == TRUE){
+  } else if (MFI == TRUE){
     Chunk1 <- str_replace_all('MFI_%s <- Luciernaga:::CurrentData(x="%s", MainFolder=MainFolder, type = "MFI")', fixed("%s"), name)
   } else {message("Not applicable for #MFIPlaceholder")}
 
   if (!is.null(Chunk1a)){
-    CombinedChunk <- paste(Chunk1a, Chunk1, sep = "\n")
+    Chunk1 <- paste(Chunk1, Chunk1a, sep = "\n")
   }
 
   Data <- append(Data, values = unlist(strsplit(Chunk1, "\n")), after = Matches[1] - 1)

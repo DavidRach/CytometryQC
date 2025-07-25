@@ -6,6 +6,7 @@
 #' @param organization_name See \code{\link{AddInstruments}}
 #' @param organization_website See \code{\link{AddInstruments}}
 #' @param timepointType Whether QC .fcs files are "single" or "double" (ie, before and after)
+#' @param datasource Whether to use the Archived, Bead or Holistic data .csv as source file 
 #' @param references The reference data.frame of laser detectors for the instrument
 #' 
 #' @importFrom dplyr filter pull
@@ -14,7 +15,7 @@
 #' 
 #' @noRd
 AddInstrumentQMD_Reorganized <- function(name, manufacturer, outpath, organization_name,
-  organization_website, timepointType, references){
+  organization_website, timepointType, datasource, references){
  
  # Input values
  filename <- paste0(name, ".qmd")

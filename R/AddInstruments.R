@@ -21,6 +21,7 @@
 #' @param FolderName Default is InstrumentQC2
 #' @param timepointType Whether QC .fcs files are "single" or "double" (ie, before and after)
 #' @param datasource Whether to use the Archived, Bead or Holistic data .csv as source file 
+#' 
 #' @importFrom stringr str_which str_detect fixed str_replace
 #' 
 #' @return Updated webpage
@@ -35,16 +36,25 @@
 AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16,
  blue=14, yellowgreen=10, red=8, organization_name=NULL, organization_website=NULL,
  githubusername=NULL, TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL,
- FolderName="InstrumentQC2", timepointType, datasource="Both"){
+ FolderName="InstrumentQC2", timepointType="single", datasource="Both"){
 
   if (any(stringr::str_detect(datasource, "rchived"))){Gain <- TRUE
+  } else {Gain <- FALSE}
+
+  if (any(stringr::str_detect(datasource, "Gain"))){Gain <- TRUE
   } else {Gain <- FALSE}
   
   if (any(stringr::str_detect(datasource, "ead"))){MFI <- TRUE
   } else {MFI <- FALSE}
 
+  if (any(stringr::str_detect(datasource, "MFI"))){MFI <- TRUE
+  } else {MFI <- FALSE}
+
   if (any(stringr::str_detect(datasource, "olistic"))){Holistic <- TRUE
   } else {Holistic <- FALSE} 
+
+  if (any(stringr::str_detect(datasource, "oth"))){Holistic <- TRUE
+  } else {Holistic <- FALSE}
 
 # Start Checks
   
@@ -122,7 +132,7 @@ AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16,
   AddInstrumentQMD_Reorganized(name=name, manufacturer=manufacturer,
      outpath=InstrumentQCPath, organization_name=organization_name,
      organization_website=organization_website, timepointType=timepointType,
-     references=References)
+     datasource=datasource, references=References)
   
   Items <- list.files(InstrumentQCPath, pattern=paste0(name, ".qmd"),
    full.names=TRUE)
