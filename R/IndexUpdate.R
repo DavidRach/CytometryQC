@@ -78,26 +78,6 @@ Gain, MFI, Holistic){
   ', fixed("%s"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk5, "\n")), after = Matches[1] - 1)
 
-  Pattern <- '#HistPlaceholder1'
-  Matches <- which(Data == Pattern)
-  Chunk6 <- str_replace_all('Data%s <- Luciernaga:::ShinyQCSummary(x=Gain_%s, Instrument="%s")
-  ', fixed("%s"), name)
-  Data <- append(Data, values = unlist(strsplit(Chunk6, "\n")), after = Matches[1] - 1)
-  
-  # Adding HistoricalData
-  Pattern <- '#HistPlaceholder2'
-  Matches <- which(Data == Pattern)
-  if (length(Matches) == 1){
-    TheReplacement <- paste0("HistoricalData <- rbind(\"", name, "\")")
-    Data[Matches] <- str_replace(Data[Matches], fixed("#HistPlaceholder2"), TheReplacement)
-  } else {
-    Pattern <- 'HistoricalData <- rbind('
-    Matches <- which(str_starts(Data, fixed(Pattern)))
-    ThisString <- Data[Matches]
-    ThisString <- sub("\\)$", paste0(", \"", name, "\")"), ThisString)
-    Data[Matches] <- ThisString
-  }
-
   # Replacing Global Summary Placeholder1
   Pattern <- '# Global Summary Placeholder1'
   Matches <- which(Data == Pattern)
@@ -107,21 +87,6 @@ Gain, MFI, Holistic){
       fixed("# Global Summary Placeholder1"), TheReplacement)
   } else {
     Pattern <- 'x <- c('
-    Matches <- which(str_starts(Data, fixed(Pattern)))
-    ThisString <- Data[Matches]
-    ThisString <- sub("\\)$", paste0(", \"", name, "\")"), ThisString)
-    Data[Matches] <- ThisString
-  }
-
-  # Replacing Global Summary Placeholder2
-  Pattern <- '# Global Summary Placeholder2'
-  Matches <- which(Data == Pattern)
-  if (length(Matches) == 1){
-    TheReplacement <- paste0("y <- list(\"", name, "\")")
-    Data[Matches] <- str_replace(Data[Matches],
-      fixed("# Global Summary Placeholder2"), TheReplacement)
-  } else {
-    Pattern <- 'y <- list('
     Matches <- which(str_starts(Data, fixed(Pattern)))
     ThisString <- Data[Matches]
     ThisString <- sub("\\)$", paste0(", \"", name, "\")"), ThisString)
@@ -208,7 +173,9 @@ Gain, MFI, Holistic){
   Pattern <- '## Second {.tabset}'
   Matches <- which(Data == Pattern)  
   Data <- append(Data, values = unlist(strsplit(ChunkReplacement, "\n")), after = Matches[1] - 1)
-  Pattern1 <- '#| title: \"PlaceHolder1\"'
+  Pattern1 <- '
+  #| title: \"PlaceHolder1\"
+  '
   Matches1 <- which(Data == Pattern1)
 
   if (length(Matches1) == 1){
@@ -227,12 +194,13 @@ Gain, MFI, Holistic){
 
   Pattern <- '## Second {.tabset}'
   Matches <- which(Data == Pattern)
-  Chunk10 <- str_replace_all('```{r}
-  #| title: Placeholder
-  TablePlaceholder
+  Chunk10 <- str_replace_all('
+```{r}
+#| title: Placeholder
+TablePlaceholder
 ```
 
-  ', fixed("Placeholder"), name)
+', fixed("Placeholder"), name)
   Data <- append(Data, values = unlist(strsplit(Chunk10, "\n")), after = Matches[1])
 
 

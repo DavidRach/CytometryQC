@@ -437,10 +437,6 @@ Chunk3 <- '
 #| include: false
 #| echo: false
 
-#HistPlaceholder1
-
-#HistPlaceholder2
-
 Computer <- getwd()
 MainFolder <- file.path(Computer, "data")
 TheName <- "HistoricalData.csv"
@@ -456,14 +452,12 @@ Chunk4 <- '
 ```{r}
 # Global Summary Placeholder1
 
-# Global Summary Placeholder2
-
 DataForPlot <- Luciernaga:::QCHistoryArchive(x=x, historydata=ShinyData, timewindow=24)
 Transposed <- t(DataForPlot)
+colnames(Transposed) <- Transposed [1,]
+Transposed <- Transposed[-1,]
 DataForPlot1 <- data.frame(Transposed, check.names=FALSE)
-colnames(DataForPlot1) <- DataForPlot1[1,]
 DataForPlot1 <- DataForPlot1 %>% tibble::rownames_to_column(., var="Date")
-DataForPlot1 <- DataForPlot1[-1,]
 DataForPlot1$Date <- as.Date(DataForPlot1$Date) 
 Data <- DataForPlot1 |> arrange(desc(Date))
 
