@@ -17,29 +17,52 @@ vignette: |
   %\VignetteEncoding{UTF-8}
 ---
 
-The end goal is to enable everyone to with little hassle set up their own InstrumentQC websites without needing to be as aware of R, Quarto and Git concepts as is currently required by following the [How-To-Tutorial](https://github.com/UMGCCFCSS/InstrumentQC).
+Our end goal is to enable everyone to rapidly set up their own initial [InstrumentQC](https://umgccfcss.github.io/InstrumentQC/) style website without needing to manually edit as many lines of code across separate .QMD files as currently required by following the [How-To-Tutorial](https://davidrach.github.io/InstrumentQC_Install/).
 
-CytometryQC is a rather non-traditional in terms on an R package. Namely, it's sole purpose is to write code tailored to your individual instrument computers, that can then be run automatically to process the QC data present at particular folders.
+CytometryQC is a rather non-traditional R package. Namely, it's sole purpose is to write code tailored to your individual instrument computers, that can then be automated to process the QC data files present in a particular folder. CytometryQC also generates customized .qmd files that provide the stylistic elements that make up the InstrumentQC website after rendering. 
 
-CytometryQC also generates .qmd that make up the stylistic elements that are visible on the InstrumentQC website after rendering. 
+It also provides helper files to set up automated processing of the QC files at designated times of the day via Windows Taskscheduler; create the GitHub repositories, and run the core git commands needed to to ensure the processed data gets archived and is available for visualization by the website. 
 
-It additionally sets out to set up the taskscheduling that allows for automated processing; the creation of the GitHub repositories and the basic git commands to ensure the processed data gets archived and is available for visualization by the website. 
+As of early November 2025, we are nearing completion, wrapping up a couple bugs and implementing additional instruments. Please reach out to David if you are interested in getting assistance with setting up at your own institution, since each new location reveals a couple bugs we had not previously encountered in the last implementation. 
 
-As of May 31 at the Cyto conference, a good chunk of the above is now complete. However, still bugs I am working to enable fully smooth setup for both the Cytek and BD instruments. This will take a few weekends worth of free time to work out, so circle back later if you would prefer. 
+For those curious how this automated setup differs compared to the previously outline [How-To-Tutorial](https://davidrach.github.io/InstrumentQC_Install/), follow along for what will be the CytometryQC installation vignette once we complete debugging the current workflow.
 
-For those currently curious how this automated setup differs compared to the previously outline [How-To-Tutorial](https://github.com/UMGCCFCSS/InstrumentQC), follow along for the bulletpoint version of the current workflow.
+Thanks!
+David Rach
 
-# Setup the InstrumentQC folder
+# Getting Set Up
 
-All the elements of our InstrumentQC website start off in an InstrumentQC folder that is tracked by Git. Everything within is used either for processing data, passing the data to GitHub, or is used to produce the Quarto website. 
+## Context
 
-Consequently, everyone trying to get set up will need to have this folder, with some customization for their own individual institution. 
+All elements of our [InstrumentQC](https://umgccfcss.github.io/InstrumentQC/) website start off as individual code files within an InstrumentQC folder that is version-controled (tracked) by Git. All the contents of this folder work together to process the QC data, pass it to GitHub, and/or cobble together the Quarto website. 
 
-To do so, we would first go to the main instrument computer (ideally connected to the internet) and run the following:
+As a result of this, generating an equivalent folder with the necessary components is the first step, while allowing for swapping in customized elements for the individual institution. 
+
+To get started, go to your instrument's computer (ideally connected to instrument, see [offline](offline.qmd) for other options) and make sure required [software](https://davidrach.github.io/InstrumentQC_Install/Installation.html) is installed, and that [Git and Rstudio](https://davidrach.github.io/InstrumentQC_Install/GitAndRstudio.html#linking-rstudio-and-github) are communicating with each other. 
+
+Once these steps are completed, we will install both the Luciernaga and CytometryQC packages from GitHub. 
+
+## Installing Packages
+
+```{r}
+#| eval: FALSE
+
+if(!require("remotes")) install.packages("remotes")
+
+remotes::install_github("https://github.com/DavidRach/Luciernaga")
+
+remotes::install_github("https://github.com/DavidRach/CytometryQC")
+```
+
+Once this is done, we will load CytometryQC via the library call
 
 ```{r}
 library(CytometryQC)
 ```
+
+## Folder Setup
+
+Setting up the InstrumentQC folder is executed via the FolderSetup() function, the basic format can be seen below. 
 
 ```{r}
 #| eval: FALSE
@@ -47,7 +70,7 @@ FolderSetup(organization_name="", organization_website="",
 githubusername="", institution_name = "")
 ```
 
-Filling in the values between the quotation marks. For our institution, this would look like this:
+In the context of our institution setup, we have provided the customized elements by placing the values within the " " marks. As you are setting up equivalent for your institution, edit in as appropiate. 
 
 ```{r}
 #| eval: FALSE
@@ -60,9 +83,9 @@ FolderSetup(
 )
 ```
 
-This in turn produces an InstrumentQC2 folder containing most of the website framework components. 
+Once you run enter, it should proceed to generate an initial InstrumentQC2 folder containing the necessary website framework components. 
 
-# Adding the Instruments
+# Adding Instruments
 
 Next step is adding the instruments. Note, some of the code chunks in the .qmd and .R files are the previously mentioned things not ready before Cyto I need a couple weekends to work out, but the majority of the code works as intended, so if you want to edit these manually, reach out and I can walk through the locations. Or hurry up my editing. Either way :D 
 
