@@ -20,6 +20,7 @@ Imports:
     flowWorkspace,
     ggcyto,
     ggplot2,
+    git2r,
     gt,
     htmltools,
     plotly,
