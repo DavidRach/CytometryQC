@@ -1,4 +1,4 @@
-test_that("Coereba_UpdateGates returns a dataframe with 1 row", {
+test_that("Operating System Check is functional", {
   library(CytometryQC)
 
   Location <- OperatingSystemCheck()

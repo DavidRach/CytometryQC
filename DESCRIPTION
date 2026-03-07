@@ -1,7 +1,7 @@
 Package: CytometryQC
 Type: Package
 Title: Tools for the Cytometry QC tracking 
-Version: 0.99.1
+Version: 0.99.2
 Authors@R: 
     person("David", "Rach", , "drach@som.umaryland.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2235-5585"))
@@ -12,7 +12,7 @@ Encoding: UTF-8
 LazyData: FALSE
 URL: https://davidrach.github.io/CytometryQC/
 BugReports: https://github.com/DavidRach/CytometryQC/issues
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     Biobase,
     dplyr,
@@ -40,6 +40,7 @@ Suggests:
     CytoML,
     openCyto,
     testthat (>= 3.0.0),
+    vdiffr
 biocViews: FlowCytometry, Preprocessing, Software, QualityControl
 Config/testthat/edition: 3
 VignetteBuilder: knitr
