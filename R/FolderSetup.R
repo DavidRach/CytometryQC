@@ -8,6 +8,7 @@
 #' @param SetUpGit Default is FALSE, when git token credentials are present, 
 #' it will generate a git repository for the folder and push to GitHub.
 #' @param FolderName Default InstrumentQC2, sets folder/repository name
+#' @param AlternateDirectory Provide a file path if desire to save somewhere not Documents folder. 
 #' 
 #' @importFrom utils write.csv
 #' @importFrom usethis create_project use_git use_github
@@ -25,13 +26,15 @@
 FolderSetup <- function(SetUpGit=FALSE, organization_name="UMGCC FCSS",
   organization_website="https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
   githubusername="umgccfcss", institution_name="University of Maryland, Baltimore", 
-  FolderName="InstrumentQC2"){
+  FolderName="InstrumentQC2", AlternateDirectory=NULL){
   
   TheURL <- paste0("https://", githubusername, ".github.io/", FolderName, "/")
 
   FolderPattern <- paste0("^", FolderName, "$")
 
-  DocumentsPath <- OperatingSystemCheck()
+  if(!is.null(AlternateDirectory)){(DocumentsPath <- AlternateDirectory)
+  } else {DocumentsPath <- OperatingSystemCheck()}
+
   InstrumentQC <- list.files(DocumentsPath, pattern=FolderPattern,
    full.names=TRUE)
   
