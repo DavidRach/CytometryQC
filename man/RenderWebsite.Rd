@@ -4,7 +4,11 @@
 \alias{RenderWebsite}
 \title{Quarto renders the project to produce the website, checks for git, sends to GitHub.}
 \usage{
-RenderWebsite(FolderName = "InstrumentQC2", GitArchive = FALSE)
+RenderWebsite(
+  FolderName = "InstrumentQC2",
+  GitArchive = FALSE,
+  AlternateRender = NULL
+)
 }
 \arguments{
 \item{FolderName}{Default is InstrumentQC2, if folder/repository was named as
@@ -12,6 +16,8 @@ something else, please specify}
 
 \item{GitArchive}{Default FALSE, when set true will (create if needed) and back up
 to GitHub}
+
+\item{AlternateRender}{When trigerred, runs on getwd() folder.}
 }
 \value{
 Rendered .html files containing the website to the docs folder, pushes changes

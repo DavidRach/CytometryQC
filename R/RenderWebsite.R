@@ -4,6 +4,7 @@
 #'  something else, please specify
 #' @param GitArchive Default FALSE, when set true will (create if needed) and back up
 #' to GitHub
+#' @param AlternateRender When trigerred, runs on getwd() folder. 
 #' 
 #' @importFrom usethis use_git use_github
 #' @importFrom git2r repository add commit
@@ -17,12 +18,18 @@
 #' 
 #' A <- 2 + 2
 #' 
-RenderWebsite <- function(FolderName="InstrumentQC2", GitArchive=FALSE){
+RenderWebsite <- function(FolderName="InstrumentQC2", GitArchive=FALSE,
+ AlternateRender=NULL){
+  
   FolderPattern <- paste0("^", FolderName, "$")
+
+  if (is.null(AlternateRender)){
   DocumentsPath <- OperatingSystemCheck()
+
   InstrumentQC <- list.files(DocumentsPath, pattern=FolderPattern,
    full.names=TRUE)
   if (length(InstrumentQC) == 0){stop("Run FolderSetup step first!")}
+  } else {InstrumentQC <- getwd()}
 
   GitPresent <- list.files(InstrumentQC, all.files=TRUE, pattern="\\.git$")
 
@@ -57,4 +64,4 @@ RenderWebsite <- function(FolderName="InstrumentQC2", GitArchive=FALSE){
   }
   } else {message("Website rendered")}
 
-}
+  }

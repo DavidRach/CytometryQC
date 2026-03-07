@@ -12,23 +12,35 @@ test_that("FolderSetup Creates Required Infrastructure", {
   )
 
   Folder <- list.files(tmp, pattern="InstrumentQC", full.names=TRUE)
+
+  # Main Folder was created
+  expect_true(file.exists(Folder))
+
   Files <- list.files(Folder)
 
-  expect_true("_quarto.yml" %in% Files)
-  expect_true("404.qmd" %in% Files)
+  # Subfolders were created
   expect_true("data" %in% Files)
-  expect_true("Data.qmd" %in% Files)
   expect_true("docs" %in% Files)
-  expect_true("Gates.csv" %in% Files)
-  expect_true("help.qmd" %in% Files)
-  expect_true("Historical.qmd" %in% Files)
   expect_true("images" %in% Files)
-  expect_true("index.qmd" %in% Files)
-  expect_true("Instrument.qmd" %in% Files)
-  expect_true("LICENSE.md" %in% Files)
-  expect_true("Maintenance.csv" %in% Files)
-  expect_true("Miscellaneous.qmd" %in% Files)
   expect_true("R" %in% Files)
-  expect_true("README.md" %in% Files)
+
+  # CytometryQC extdata files were copied over
+  expect_true("LICENSE.md" %in% Files)
   expect_true("styles.scss" %in% Files) 
+  expect_true("Maintenance.csv" %in% Files)
+
+  # QMD files were created
+  expect_true("404.qmd" %in% Files)
+  expect_true("help.qmd" %in% Files)
+  expect_true("Miscellaneous.qmd" %in% Files)
+  expect_true("Instrument.qmd" %in% Files)
+  expect_true("Historical.qmd" %in% Files)
+  expect_true("index.qmd" %in% Files)
+  expect_true("Data.qmd" %in% Files)
+  expect_true("README.md" %in% Files)
+  expect_true("_quarto.yml" %in% Files)
+
+  # openCyto Gating .csv
+  expect_true("Gates.csv" %in% Files)
+
 })

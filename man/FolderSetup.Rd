@@ -6,19 +6,16 @@
 and populates it with the required website components}
 \usage{
 FolderSetup(
-  SetUpGit = FALSE,
-  organization_name = "UMGCC FCSS",
+  organization_name = "UMGCCC FCSR",
   organization_website = "https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
-  githubusername = "umgccfcss",
+  githubusername = "umgcccfcsr",
   institution_name = "University of Maryland, Baltimore",
+  AlternateDirectory = NULL,
   FolderName = "InstrumentQC2",
-  AlternateDirectory = NULL
+  SetUpGit = FALSE
 )
 }
 \arguments{
-\item{SetUpGit}{Default is FALSE, when git token credentials are present, 
-it will generate a git repository for the folder and push to GitHub.}
-
 \item{organization_name}{The organization name, ex. UMGCC FCSS}
 
 \item{organization_website}{The organizations website, ex. https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/}
@@ -27,9 +24,12 @@ it will generate a git repository for the folder and push to GitHub.}
 
 \item{institution_name}{The institution name, ex. University of Maryland, Baltimore}
 
+\item{AlternateDirectory}{Provide a file path if desire to save somewhere not Documents folder.}
+
 \item{FolderName}{Default InstrumentQC2, sets folder/repository name}
 
-\item{AlternateDirectory}{Provide a file path if desire to save somewhere not Documents folder.}
+\item{SetUpGit}{Default is FALSE, when git token credentials are present, 
+it will generate a git repository for the folder and push to GitHub.}
 }
 \value{
 A generalized InstrumentQC folder to which additional elements can be added
@@ -40,8 +40,14 @@ and populates it with the required website components
 }
 \examples{
 
-\dontrun{
-FolderSetup()
-}
+tmp <- withr::local_tempdir(pattern = "CytometryQC")
+ FolderSetup(
+ organization_name = "UMGCCC FCSR",
+ organization_website = "https://www.medschool.umaryland.edu/cibr/core/umgccc_flow/",
+ githubusername = "umgcccfcsr",
+ institution_name = "University of Maryland, Baltimore",
+ AlternateDirectory = tmp # For Testing Only
+ )
+
 
 }
