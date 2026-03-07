@@ -21,6 +21,7 @@
 #' @param FolderName Default is InstrumentQC2
 #' @param timepointType Whether QC .fcs files are "single" or "double" (ie, before and after)
 #' @param datasource Whether to use the Archived, Bead or Holistic data .csv as source file 
+#' @param AlternateDirectory Provide a file path if desire to save somewhere not Documents folder. 
 #' 
 #' @importFrom stringr str_which str_detect fixed str_replace
 #' 
@@ -36,7 +37,7 @@
 AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16,
  blue=14, yellowgreen=10, red=8, organization_name=NULL, organization_website=NULL,
  githubusername=NULL, TheFCSFolderPath=NULL, CytekbioExportFolderPath=NULL,
- FolderName="InstrumentQC2", timepointType="single", datasource="Both"){
+ FolderName="InstrumentQC2", timepointType="single", datasource="Both",  AlternateDirectory=NULL){
 
   if (any(stringr::str_detect(datasource, "rchived"))){Gain <- TRUE
   } else {Gain <- FALSE}
@@ -58,7 +59,8 @@ AddInstruments <- function(name, manufacturer="Cytek", uv=16, violet=16,
 
 # Start Checks
   
-  DocumentsPath <- OperatingSystemCheck()
+  if(!is.null(AlternateDirectory)){(DocumentsPath <- AlternateDirectory)
+  } else {DocumentsPath <- OperatingSystemCheck()}
 
   FolderPattern <- paste0("^", FolderName, "$")
   InstrumentQC <- list.files(DocumentsPath, pattern=FolderPattern,

@@ -19,7 +19,8 @@ AddInstruments(
   CytekbioExportFolderPath = NULL,
   FolderName = "InstrumentQC2",
   timepointType = "single",
-  datasource = "Both"
+  datasource = "Both",
+  AlternateDirectory = NULL
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ for alternate locations of the CytekbioExport folder, please provide a file path
 \item{timepointType}{Whether QC .fcs files are "single" or "double" (ie, before and after)}
 
 \item{datasource}{Whether to use the Archived, Bead or Holistic data .csv as source file}
+
+\item{AlternateDirectory}{Provide a file path if desire to save somewhere not Documents folder.}
 }
 \value{
 Updated webpage

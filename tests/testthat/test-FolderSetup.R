@@ -1,4 +1,4 @@
-test_that("Operating System Check is functional", {
+test_that("FolderSetup Creates Required Infrastructure", {
   tmp <- withr::local_tempdir(pattern = "CytometryQC")
   withr::local_dir(tmp)
 
