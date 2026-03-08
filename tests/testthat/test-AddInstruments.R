@@ -31,5 +31,5 @@ test_that("Additional Instrument Pages Get Created", {
   expect_true("InitialData_The5Laser.R" %in% AdditionalFiles)
   expect_true("The5Laser.qmd" %in% AdditionalFiles)
   expect_true("TheScript_The5Laser.R" %in% AdditionalFiles)
-
+  
 })
