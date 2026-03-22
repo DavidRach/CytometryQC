@@ -12,7 +12,8 @@
 #' @param institution_name Default is "University of Maryland, Baltimore", provide
 #' your own institutions name within " " for it to appear on the offline webpage
 #' 
-Standalone_Chorus <- function(input, organization_name="UMGCC FCSS",
+Standalone_Chorus <- function(input,
+  organization_name="UMGCC FCSS",
   institution_name="University of Maryland, Baltimore", 
   FolderName="QC_Chorus"){
   
